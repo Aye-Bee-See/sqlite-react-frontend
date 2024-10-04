@@ -14,6 +14,26 @@ const NavBar = () => {
             Prisoners
           </Link>
         </NavItem>
+        <NavItem>
+          <Link to={'/users'} className='nav-link'>
+           Users
+          </Link>
+        </NavItem>
+        <NavItem>
+          <Link to={'/prisons'} className='nav-link'>
+          Prisons
+          </Link>
+        </NavItem>
+        <NavItem>
+          <Link to={'/messaging'} className='nav-link'>
+           Messaging
+          </Link>
+        </NavItem>
+        <NavItem>
+          <Link to={'/rules'} className='nav-link'>
+          Rules
+          </Link>
+        </NavItem>
       </Nav>
     </Navbar>
   )
