@@ -51,29 +51,32 @@ class InputForm extends React.Component {
   componentDidMount() {
     const {subject, solo} = this.props;
     const {id} = this.props.router.params;
-    console.log(`id = ${id}`)
-    console.log(`solo = ${solo}`)
-    console.log(`subject = ${subject}`)
+
     if (solo) {
-      // switch (subject) {
-      //   case "Prisoner": {
-      //     this.getPrisoner(id).then((response) => {
-      //       console.log(response)
-      //     })
-      //   }
-      // }
+      switch (subject) {
+        case "Prisoner": {
+          console.log(id)
+          this.getPrisoner(id)
+        }
+        case "User": {
+          console.log(id);
+        }
+      }
     }
   }
 
-  getPrisoner() {
-    const {id} = this.props.router.params;
-    // PrisonerDataService.getOne(id).then((response) => {
-    //   console.log(response)
-    // });
+  getPrisoner(id) {
+    PrisonerDataService.getOne(id).then((response) => {
+      this.setState({
+        ...response.data
+      })
+    });
   }
 
-  getUser() {
-    UserDataService.getAll(this.props.match.id);
+  getUser(id) {
+    UserDataService.getOne(id).then((response) => {
+      console.log(response)
+    });
   }
 
   clearFields() {
@@ -90,10 +93,10 @@ class InputForm extends React.Component {
   displayFields() {
     console.log(this.props.subject);
     return Object.keys(fields[this.props.subject]).map((key) => {
-      return <div>
-        <FormGroup key={key}>
+      return <div key={key}>
+        <FormGroup>
           <Label>{ fields[this.props.subject][key].title}: </Label>
-          <Input id={key} key={key} name={key} value={this.state[key]} type={fields[this.props.subject][key].type} />
+          <Input id={key} key={key} name={key} value={this.state[key]} onChange={this.handleChange} type={fields[this.props.subject][key].type} />
         </FormGroup>
         </div>
     })

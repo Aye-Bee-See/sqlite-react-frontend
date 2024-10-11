@@ -5,11 +5,10 @@ class UserDataService {
     return http.get('/auth/users', {
     });
   }
-
-  getOne(id) {
-    return http.get('/auth/user', {
-      params: { id: id }
-    })
+  
+  async getOne(pid) {
+    const response = await http.get(`/auth/user/${pid}`, {});
+    return response
   }
 
   async addOne(params) {

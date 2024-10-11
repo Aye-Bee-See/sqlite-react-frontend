@@ -19,6 +19,7 @@ class Prisoner extends Component {
     this.displayFields = this.displayFields.bind(this);
     this.getAllUsers = this.getAllUsers.bind(this);
     this.listData = this.listData.bind(this);
+    this.editButton = this.editButton.bind(this);
 
     this.state = {
       currentPrisoner: null,
@@ -28,7 +29,7 @@ class Prisoner extends Component {
       users: [],
       searchName: ' ',
       addForm: {}
-    }
+      }
   }
 
   componentDidMount() {
@@ -71,7 +72,7 @@ class Prisoner extends Component {
         Object.values(this.state.users).map((user, index) => (
                 <li
                   className={ 'list-group-item ' + (index === this.state.currentIndex ? 'active' : '') }
-                  onClick={ () => this.setActivePrisoner(user, index) }
+                  onClick={ () => this.setActiveUser(user, index) }
                   key={index}>
                   {user.username}
                 </li>
@@ -80,6 +81,15 @@ class Prisoner extends Component {
       default: {}
     }
   }
+
+  editButton() {
+    console.log(this.props.subject)
+    switch (this.props.subject) {
+      case "Prisoner": {
+        return this.state.currentPrisoner && `/prisoner/${this.state.currentPrisoner.id}`}
+      case "User": {
+        return this.state.currentUser && `/user/${this.state.currentUser.id}`}
+      } }
 
   handleDataFromChild(prisoner) {
     console.log('handling data from child');
@@ -117,16 +127,30 @@ class Prisoner extends Component {
     });
   }
 
-  displayFields(currentPrisoner) {
-    return Object.keys(fields[this.props.subject]).map((key) => {
-      return <div key={key}>
-        <strong>{ fields[this.props.subject][key].title}: </strong> {currentPrisoner[key]}
-      </div>
-    })
-  }
+  displayFields(currentPrisoner, currentUser) {
+    if (this.props.subject === "Prisoner" && currentPrisoner) {
+      return Object.keys(fields[this.props.subject]).map((key) => {
+        return <div key={key}>
+          <strong>{ fields[this.props.subject][key].title}: </strong> {currentPrisoner[key]}
+        </div>
+      })
+    }
+    else if (this.props.subject === "User" && currentUser) {
+      return Object.keys(fields[this.props.subject]).map((key) => {
+        return <div key={key}>
+          <strong>{ fields[this.props.subject][key].title}: </strong> {currentUser[key]}
+        </div>
+      })
+    }
+    else {
+      return null
+    }
+
+    }
 
   render() {
-    const { searchName, currentPrisoner, currentIndex, prisoners } = this.state;
+    const { searchName, currentPrisoner, currentUser, currentIndex, prisoners } = this.state;
+    var editLink = this.editButton();
 
     return (
       <Container>
@@ -163,14 +187,14 @@ class Prisoner extends Component {
           </Button>
         </div>
         <Col md={6}>
-          {currentPrisoner ? (
+          {currentPrisoner || currentUser ? (
             <>
               <Card>
                 <CardHeader>{this.props.subject}</CardHeader> 
                 <CardSubtitle></CardSubtitle>
                 <CardText tag="span">
-                  {this.displayFields(currentPrisoner)}
-                  <Link to={'/prisoner/' + currentPrisoner.uuid}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
+                  {this.displayFields(currentPrisoner, currentUser)}
+                  <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   <Button size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
               </Card>
