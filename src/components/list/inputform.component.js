@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import PrisonerDataService from '../../services/prisoner-network-service';
-import UserDataService from "../../services/user-data-service";
+import UserDataService from "../../services/user-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
 

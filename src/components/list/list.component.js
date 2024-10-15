@@ -4,7 +4,7 @@ import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input
 import {Link } from 'react-router-dom';
 import PrisonerForm from './inputform.component';
 import fields from '../../global_vars/fields';
-import userDataService from '../../services/user-data-service';
+import userDataService from '../../services/user-network-service';
 
 class Prisoner extends Component {
 
@@ -50,7 +50,7 @@ class Prisoner extends Component {
     userDataService.getAll().then((response) => {
       this.setState({
         users: response.data.users
-      }, () => { console.log(response.data.users) })
+      }, () => { Object.values(response.data.users) })
     })
   }
 
