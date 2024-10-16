@@ -57,6 +57,21 @@
     type: "text",
     default: 'admin'
   }
+ },
+ Prison: {
+  id: { title: "ID",
+        type: "number",
+        default: 0
+  },
+  prisonName: { title: "Prison Name",
+                type: "text",
+                default: "Default prison name"
+  },
+  // address: {  title: "Address",
+  //             type: "text",
+  //             default: "123 Fake St."
+        
+  // }
  }
 }
 

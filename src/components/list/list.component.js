@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import PrisonerDataService from '../../services/prisoner-network-service';
-import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, Row } from 'reactstrap';
+import PrisonerNetworkService from '../../services/prisoner-network-service';
 import {Link } from 'react-router-dom';
 import PrisonerForm from './inputform.component';
+import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, Row } from 'reactstrap';
 import fields from '../../global_vars/fields';
-import userDataService from '../../services/user-network-service';
+import UserNetworkService from '../../services/user-network-service';
+import PrisonNetworkService from '../../services/prison-network-service';
 
 class Prisoner extends Component {
 
@@ -20,13 +21,17 @@ class Prisoner extends Component {
     this.getAllUsers = this.getAllUsers.bind(this);
     this.listData = this.listData.bind(this);
     this.editButton = this.editButton.bind(this);
+    this.getAllPrisons = this.getAllPrisons.bind(this);
+    this.setActivePrison = this.setActivePrison.bind(this);
 
     this.state = {
       currentPrisoner: null,
       currentUser: null,
+      currentPrison: null,
       currentIndex: -1,
       prisoners: [],
       users: [],
+      prisons: [],
       searchName: ' ',
       addForm: {}
       }
@@ -35,22 +40,34 @@ class Prisoner extends Component {
   componentDidMount() {
     this.getAllPrisoners();
     this.getAllUsers();
+    this.getAllPrisons();
   }
 
   getAllPrisoners() {
-    PrisonerDataService.getAll().then((response) => {
+    PrisonerNetworkService.getAll().then((response) => {
+      console.log(Object.values(response.data.data))
       this.setState({
-        prisoners: response.data.prisoners
-      }, () => { console.log(response.data.prisoners) }
+        prisoners: Object.values(response.data.data)
+      }, () => { console.log(response.data.data) }
     )
     })
   };
 
   getAllUsers() {
-    userDataService.getAll().then((response) => {
+    UserNetworkService.getAll().then((response) => {
+      console.log(Object.values(response.data.data));
       this.setState({
-        users: response.data.users
-      }, () => { Object.values(response.data.users) })
+        users: Object.values(response.data.data)
+      }, () => {  })
+    })
+  };
+
+  getAllPrisons() {
+    PrisonNetworkService.getAll().then((response) => {
+      console.log(Object.values(response.data.data));
+      this.setState({
+        prisons: Object.values(response.data.data)
+      }, () => { console.log(this.state.prisons) })
     })
   }
 
@@ -69,12 +86,23 @@ class Prisoner extends Component {
       }
       case "User": {
         return this.state.users &&
-        Object.values(this.state.users).map((user, index) => (
+        this.state.users.map((user, index) => (
                 <li
                   className={ 'list-group-item ' + (index === this.state.currentIndex ? 'active' : '') }
                   onClick={ () => this.setActiveUser(user, index) }
                   key={index}>
                   {user.username}
+                </li>
+              ))
+      }
+      case "Prison": {
+        return this.state.prisons &&
+        this.state.prisons.map((prison, index) => (
+                <li
+                  className={ 'list-group-item ' + (index === this.state.currentIndex ? 'active' : '') }
+                  onClick={ () => this.setActivePrison(prison, index) }
+                  key={index}>
+                  {prison.prisonName}
                 </li>
               ))
       }
@@ -99,7 +127,7 @@ class Prisoner extends Component {
   }
 
   addPrisoner() {
-    PrisonerDataService.addOne().then((response) => {
+    PrisonerNetworkService.addOne().then((response) => {
       console.log(response);
     })
   }
@@ -120,6 +148,13 @@ class Prisoner extends Component {
     });
   }
 
+  setActivePrison(prison, index) {
+    this.setState({
+      currentPrison: prison,
+      currentIndex: index
+    })
+  }
+
   onChangeSearchName(e) {
     const searchName = e.target.value;
     this.setState({
@@ -127,7 +162,7 @@ class Prisoner extends Component {
     });
   }
 
-  displayFields(currentPrisoner, currentUser) {
+  displayFields(currentPrisoner, currentUser, currentPrison) {
     if (this.props.subject === "Prisoner" && currentPrisoner) {
       return Object.keys(fields[this.props.subject]).map((key) => {
         return <div key={key}>
@@ -142,6 +177,13 @@ class Prisoner extends Component {
         </div>
       })
     }
+    else if (this.props.subject === "Prison" && currentPrison) {
+      return Object.keys(fields[this.props.subject]).map((key) => {
+        return <div key={key}>
+          <strong>{ fields[this.props.subject][key].title}: </strong> {currentPrison[key]}
+        </div>
+      })
+    }
     else {
       return null
     }
@@ -149,7 +191,7 @@ class Prisoner extends Component {
     }
 
   render() {
-    const { searchName, currentPrisoner, currentUser, currentIndex, prisoners } = this.state;
+    const { searchName, currentPrisoner, currentUser, currentPrison, currentIndex, prisoners } = this.state;
     var editLink = this.editButton();
 
     return (
@@ -187,13 +229,13 @@ class Prisoner extends Component {
           </Button>
         </div>
         <Col md={6}>
-          {currentPrisoner || currentUser ? (
+          {currentPrisoner || currentUser || currentPrison ? (
             <>
               <Card>
                 <CardHeader>{this.props.subject}</CardHeader> 
                 <CardSubtitle></CardSubtitle>
                 <CardText tag="span">
-                  {this.displayFields(currentPrisoner, currentUser)}
+                  {this.displayFields(currentPrisoner, currentUser, currentPrison)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   <Button size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
