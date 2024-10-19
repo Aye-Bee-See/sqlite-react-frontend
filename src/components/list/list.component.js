@@ -6,6 +6,7 @@ import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input
 import fields from '../../global_vars/fields';
 import UserNetworkService from '../../services/user-network-service';
 import PrisonNetworkService from '../../services/prison-network-service';
+import Item from '../individual/item.component';
 
 class Prisoner extends Component {
 
@@ -13,16 +14,20 @@ class Prisoner extends Component {
     super(props);
     
     this.getAllPrisoners = this.getAllPrisoners.bind(this);
-    this.addPrisoner = this.addPrisoner.bind(this);
+    this.getAllUsers = this.getAllUsers.bind(this);
+    this.getAllPrisons = this.getAllPrisons.bind(this);
+
     this.setActivePrisoner = this.setActivePrisoner.bind(this);
+    this.setActivePrison = this.setActivePrison.bind(this);
+    this.setActiveUser = this.setActiveUser.bind(this);
+
+
+    this.addPrisoner = this.addPrisoner.bind(this);
     this.onChangeSearchName = this.onChangeSearchName.bind(this);
     this.handleDataFromChild = this.handleDataFromChild.bind(this);
     this.displayFields = this.displayFields.bind(this);
-    this.getAllUsers = this.getAllUsers.bind(this);
     this.listData = this.listData.bind(this);
     this.editButton = this.editButton.bind(this);
-    this.getAllPrisons = this.getAllPrisons.bind(this);
-    this.setActivePrison = this.setActivePrison.bind(this);
 
     this.state = {
       currentPrisoner: null,
@@ -76,34 +81,19 @@ class Prisoner extends Component {
       case "Prisoner": {
         return this.state.prisoners &&
         this.state.prisoners.map((prisoner, index) => (
-                <li
-                  className={ 'list-group-item ' + (index === this.state.currentIndex ? 'active' : '') }
-                  onClick={ () => this.setActivePrisoner(prisoner, index) }
-                  key={index}>
-                  {prisoner.chosenName}
-                </li>
+                <Item settingFunction={this.setActivePrisoner} individual={prisoner} index={index} toDisplay='chosenName' currentIndex={this.state.currentIndex} />
               ))
       }
       case "User": {
         return this.state.users &&
         this.state.users.map((user, index) => (
-                <li
-                  className={ 'list-group-item ' + (index === this.state.currentIndex ? 'active' : '') }
-                  onClick={ () => this.setActiveUser(user, index) }
-                  key={index}>
-                  {user.username}
-                </li>
+                <Item settingFunction={this.setActiveUser} individual={user} index={index} toDisplay='username' currentIndex={this.state.currentIndex} />
               ))
       }
       case "Prison": {
         return this.state.prisons &&
         this.state.prisons.map((prison, index) => (
-                <li
-                  className={ 'list-group-item ' + (index === this.state.currentIndex ? 'active' : '') }
-                  onClick={ () => this.setActivePrison(prison, index) }
-                  key={index}>
-                  {prison.prisonName}
-                </li>
+                <Item settingFunction={this.setActivePrison} individual={prison} index={index} toDisplay='prisonName' currentIndex={this.state.currentIndex} />
               ))
       }
       default: {}
