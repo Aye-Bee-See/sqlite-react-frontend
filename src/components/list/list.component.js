@@ -6,9 +6,10 @@ import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input
 import fields from '../../global_vars/fields';
 import UserNetworkService from '../../services/user-network-service';
 import PrisonNetworkService from '../../services/prison-network-service';
+import RuleNetworkService from '../../services/rule-network-service';
 import Item from '../individual/item.component';
 
-class Prisoner extends Component {
+class ListPage extends Component {
 
   constructor(props) {
     super(props);
@@ -16,11 +17,12 @@ class Prisoner extends Component {
     this.getAllPrisoners = this.getAllPrisoners.bind(this);
     this.getAllUsers = this.getAllUsers.bind(this);
     this.getAllPrisons = this.getAllPrisons.bind(this);
+    this.getAllRules = this.getAllRules.bind(this)
 
     this.setActivePrisoner = this.setActivePrisoner.bind(this);
     this.setActivePrison = this.setActivePrison.bind(this);
     this.setActiveUser = this.setActiveUser.bind(this);
-
+    this.setActiveRule = this.setActiveRule.bind(this);
 
     this.addPrisoner = this.addPrisoner.bind(this);
     this.onChangeSearchName = this.onChangeSearchName.bind(this);
@@ -33,10 +35,12 @@ class Prisoner extends Component {
       currentPrisoner: null,
       currentUser: null,
       currentPrison: null,
+      currentRule: null,
       currentIndex: -1,
       prisoners: [],
       users: [],
       prisons: [],
+      rules: [],
       searchName: ' ',
       addForm: {}
       }
@@ -46,21 +50,20 @@ class Prisoner extends Component {
     this.getAllPrisoners();
     this.getAllUsers();
     this.getAllPrisons();
+    this.getAllRules();
   }
 
   getAllPrisoners() {
     PrisonerNetworkService.getAll().then((response) => {
-      console.log(Object.values(response.data.data))
       this.setState({
         prisoners: Object.values(response.data.data)
-      }, () => { console.log(response.data.data) }
+      }, () => { }
     )
     })
   };
 
   getAllUsers() {
     UserNetworkService.getAll().then((response) => {
-      console.log(Object.values(response.data.data));
       this.setState({
         users: Object.values(response.data.data)
       }, () => {  })
@@ -69,10 +72,17 @@ class Prisoner extends Component {
 
   getAllPrisons() {
     PrisonNetworkService.getAll().then((response) => {
-      console.log(Object.values(response.data.data));
       this.setState({
         prisons: Object.values(response.data.data)
-      }, () => { console.log(this.state.prisons) })
+      }, () => { })
+    })
+  }
+
+  getAllRules() {
+    RuleNetworkService.getAll().then((response) => {
+      this.setState({
+        rules: Object.values(response.data.data)
+      }, () => { })
     })
   }
 
@@ -81,19 +91,25 @@ class Prisoner extends Component {
       case "Prisoner": {
         return this.state.prisoners &&
         this.state.prisoners.map((prisoner, index) => (
-                <Item settingFunction={this.setActivePrisoner} individual={prisoner} index={index} toDisplay='chosenName' currentIndex={this.state.currentIndex} />
+                <Item key={prisoner.id} settingFunction={this.setActivePrisoner} individual={prisoner} index={index} toDisplay='chosenName' currentIndex={this.state.currentIndex} />
               ))
       }
       case "User": {
         return this.state.users &&
         this.state.users.map((user, index) => (
-                <Item settingFunction={this.setActiveUser} individual={user} index={index} toDisplay='username' currentIndex={this.state.currentIndex} />
+                <Item key={user.id} settingFunction={this.setActiveUser} individual={user} index={index} toDisplay='username' currentIndex={this.state.currentIndex} />
               ))
       }
       case "Prison": {
         return this.state.prisons &&
         this.state.prisons.map((prison, index) => (
-                <Item settingFunction={this.setActivePrison} individual={prison} index={index} toDisplay='prisonName' currentIndex={this.state.currentIndex} />
+                <Item key={prison.id} settingFunction={this.setActivePrison} individual={prison} index={index} toDisplay='prisonName' currentIndex={this.state.currentIndex} />
+              ))
+      }
+      case "Rule": {
+        return this.state.rules &&
+        this.state.rules.map((rule, index) => (
+                <Item key={rule.id} settingFunction={this.setActiveRule} individual={rule} index={index} toDisplay='title' currentIndex={this.state.currentIndex} />
               ))
       }
       default: {}
@@ -101,16 +117,18 @@ class Prisoner extends Component {
   }
 
   editButton() {
-    console.log(this.props.subject)
     switch (this.props.subject) {
       case "Prisoner": {
         return this.state.currentPrisoner && `/prisoner/${this.state.currentPrisoner.id}`}
       case "User": {
         return this.state.currentUser && `/user/${this.state.currentUser.id}`}
+      case "Prison": {
+        return this.state.currentPrison && `/prison/${this.state.currentPrison.id}`}
+      case "Rule": {
+        return this.state.currentRule && `/rule/${this.state.currentRule.id}`}
       } }
 
   handleDataFromChild(prisoner) {
-    console.log('handling data from child');
     this.setState(prevState => ({
       prisoners: [...prevState.prisoners, prisoner]
     }));
@@ -118,12 +136,10 @@ class Prisoner extends Component {
 
   addPrisoner() {
     PrisonerNetworkService.addOne().then((response) => {
-      console.log(response);
     })
   }
 
   setActivePrisoner(prisoner, index) {
-    console.log(prisoner);
     this.setState({
       currentPrisoner: prisoner,
       currentIndex: index
@@ -131,7 +147,6 @@ class Prisoner extends Component {
   }
 
   setActiveUser(user, index) {
-    console.log(user);
     this.setState({
       currentUser: user,
       currentIndex: index
@@ -145,6 +160,13 @@ class Prisoner extends Component {
     })
   }
 
+  setActiveRule(rule, index) {
+    this.setState({
+      currentRule: rule,
+      currentIndex: index
+    })
+  }
+
   onChangeSearchName(e) {
     const searchName = e.target.value;
     this.setState({
@@ -152,7 +174,8 @@ class Prisoner extends Component {
     });
   }
 
-  displayFields(currentPrisoner, currentUser, currentPrison) {
+
+  displayFields(currentPrisoner, currentUser, currentPrison, currentRule) {
     if (this.props.subject === "Prisoner" && currentPrisoner) {
       return Object.keys(fields[this.props.subject]).map((key) => {
         return <div key={key}>
@@ -174,6 +197,13 @@ class Prisoner extends Component {
         </div>
       })
     }
+    else if (this.props.subject === "Rule" && currentRule) {
+      return Object.keys(fields[this.props.subject]).map((key) => {
+        return <div key={key}>
+          <strong>{ fields[this.props.subject][key].title}: </strong> {currentRule[key]}
+        </div>
+      })
+    }
     else {
       return null
     }
@@ -181,7 +211,7 @@ class Prisoner extends Component {
     }
 
   render() {
-    const { searchName, currentPrisoner, currentUser, currentPrison, currentIndex, prisoners } = this.state;
+    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentIndex } = this.state;
     var editLink = this.editButton();
 
     return (
@@ -212,20 +242,20 @@ class Prisoner extends Component {
         <ListGroup>
         {
           this.listData()
-              }
+        }
         </ListGroup>
         <Button color="danger" className="m-3">
             Remove All
           </Button>
         </div>
         <Col md={6}>
-          {currentPrisoner || currentUser || currentPrison ? (
+          {currentPrisoner || currentUser || currentPrison || currentRule ? (
             <>
               <Card>
                 <CardHeader>{this.props.subject}</CardHeader> 
                 <CardSubtitle></CardSubtitle>
                 <CardText tag="span">
-                  {this.displayFields(currentPrisoner, currentUser, currentPrison)}
+                  {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   <Button size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
@@ -245,4 +275,4 @@ class Prisoner extends Component {
   }
 }
 
-export default Prisoner;
+export default ListPage;

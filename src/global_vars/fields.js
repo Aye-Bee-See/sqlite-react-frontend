@@ -72,6 +72,22 @@
   //             default: "123 Fake St."
         
   // }
+ },
+ Rule: {
+  id: { title: "ID",
+        type: "number",
+        default: 0
+  },
+  title: {
+        title: "Title",
+        type: "text",
+        default: "Default rule title"
+  },
+  description: {
+    title: "Description",
+    type: "text",
+    default: "Default rule description"
+  }
  }
 }
 
