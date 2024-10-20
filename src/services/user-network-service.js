@@ -7,7 +7,7 @@ class UserDataService {
   }
   
   async getOne(pid) {
-    const response = await http.get(`/auth/user/${pid}`, {});
+    const response = await http.get(`/auth/user?id=${pid}`, {});
     return response
   }
 
