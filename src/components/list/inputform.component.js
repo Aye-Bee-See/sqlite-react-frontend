@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import { Button, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import PrisonerNetworkService from '../../services/prisoner-network-service';
 import UserNetworkService from "../../services/user-network-service";
 import PrisonNetworkService from "../../services/prison-network-service";
@@ -169,12 +169,18 @@ class InputForm extends React.Component {
     render() {
         return (
             <>
-            <Form>
-            {this.displayFields()}
-              <Button color="primary" onClick={this.buttonSubmit}>
-                {this.props.solo ? `Update ${this.props.subject}` : `Add ${this.props.subject}`}
-              </Button>
-            </Form>
+            <Container>
+              <Row>
+                <Form>
+                  {this.displayFields()}
+                  <Button color="primary" onClick={this.buttonSubmit}>
+                  {this.props.solo ? `Update ${this.props.subject}` : `Add ${this.props.subject}`}
+                  </Button>
+                </Form>  
+              </Row>
+
+            </Container>
+
             </>
         )
     }
