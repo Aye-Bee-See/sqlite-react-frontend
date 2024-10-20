@@ -47,38 +47,39 @@ class InputForm extends React.Component {
   async buttonSubmit(e) {
     e.preventDefault();
     switch (this.props.subject) {
-      case "Prisoner": {
+      case "Prisoner": 
         PrisonerNetworkService.addOne(this.state).then(response => {
           if (response.status === 200) { console.log("Success!")
             this.props.handleDataFromChild(this.state);
           }
           else { console.log("Fail :-(") }
-        })
-      };
-      case "User": {
+        });
+        break;
+      case "User":
         UserNetworkService.addOne(this.state).then(response => {
           if (response.status === 200) {
             this.props.handleDataFromChild(this.state);
           }
           else { console.log("Fail :-("); }
-        })
-      };
-      case "Prison": {
+        });
+        break;
+      case "Prison": 
         PrisonNetworkService.addOne(this.state).then(response => {
           if (response.status === 200) {
             this.props.handleDataFromChild(this.state);
           }
           else { console.log("Fail :-("); }
-        })
-      };
-      case "Rule": {
+        });
+        break;
+      case "Rule": 
         RuleNetworkService.addOne(this.state).then(response => {
           if (response.status === 200) {
             this.props.handleDataFromChild(this.state);
           }
           else { console.log("Fail :-("); }
-        })
-      };
+        });
+        break;
+        default:
     }
 
   }
@@ -91,16 +92,21 @@ class InputForm extends React.Component {
       switch (subject) {
         case "Prisoner": {
           this.getPrisoner(id);
+          break;
         }
         case "User": {
           this.getUser(id);
+          break;
         }
         case "Prison": {
           this.getPrison(id);
+          break;
         }
         case "Rule": {
           this.getRule(id);
+          break;
         }
+        default : {}
       }
     }
   }
@@ -165,8 +171,8 @@ class InputForm extends React.Component {
             <>
             <Form>
             {this.displayFields()}
-              <Button onClick={this.buttonSubmit}>
-                Submit
+              <Button color="primary" onClick={this.buttonSubmit}>
+                {this.props.solo ? `Update ${this.props.subject}` : `Add ${this.props.subject}`}
               </Button>
             </Form>
             </>
