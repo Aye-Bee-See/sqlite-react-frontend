@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PrisonerNetworkService from '../../services/prisoner-network-service';
 import {Link } from 'react-router-dom';
-import PrisonerForm from './inputform.component';
+import InputForm from './inputform.component';
 import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, Row } from 'reactstrap';
 import fields from '../../global_vars/fields';
 import UserNetworkService from '../../services/user-network-service';
@@ -10,6 +10,8 @@ import RuleNetworkService from '../../services/rule-network-service';
 import Item from '../individual/item.component';
 
 class ListPage extends Component {
+
+  //TODO: Get rid of all of these switch statements
 
   constructor(props) {
     super(props);
@@ -42,7 +44,6 @@ class ListPage extends Component {
       prisons: [],
       rules: [],
       searchName: ' ',
-      addForm: {}
       }
   }
 
@@ -128,6 +129,7 @@ class ListPage extends Component {
         return this.state.currentRule && `/rule/${this.state.currentRule.id}`}
       } }
 
+      //TODO: Make this work for all routes
   handleDataFromChild(prisoner) {
     this.setState(prevState => ({
       prisoners: [...prevState.prisoners, prisoner]
@@ -254,7 +256,7 @@ class ListPage extends Component {
               <Card>
                 <CardHeader>{this.props.subject}</CardHeader> 
                 <CardSubtitle></CardSubtitle>
-                <CardText tag="span">
+                <CardText className='p-3' tag="span">
                   {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   <Button size='sm' color='danger' className='mx-2'>Delete</Button>
@@ -269,7 +271,7 @@ class ListPage extends Component {
           )}
         </Col>
         </List>
-        <PrisonerForm key={this.props} subject={this.props.subject} handleDataFromChild={this.handleDataFromChild}/>
+        <InputForm key={this.props} subject={this.props.subject} handleDataFromChild={this.handleDataFromChild}/>
       </Container>
     )
   }
