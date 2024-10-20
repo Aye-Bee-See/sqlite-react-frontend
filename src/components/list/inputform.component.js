@@ -1,7 +1,9 @@
 import React from "react";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
-import PrisonerDataService from '../../services/prisoner-network-service';
-import UserDataService from "../../services/user-network-service";
+import PrisonerNetworkService from '../../services/prisoner-network-service';
+import UserNetworkService from "../../services/user-network-service";
+import PrisonNetworkService from "../../services/prison-network-service";
+import RuleNetworkService from "../../services/rule-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
 
@@ -14,7 +16,11 @@ class InputForm extends React.Component {
     this.clearFields = this.clearFields.bind(this);
     this.displayFields = this.displayFields.bind(this);
     this.propertyObject = this.propertyObject.bind(this);
+
     this.getPrisoner = this.getPrisoner.bind(this);
+    this.getUser = this.getUser.bind(this);
+    this.getPrison = this.getPrison.bind(this);
+    this.getRule = this.getRule.bind(this);
 
     var po = this.propertyObject()
 
@@ -37,15 +43,44 @@ class InputForm extends React.Component {
       [e.target.id]: e.target.value
     });
   }
-
+//TODO: Visible error handling
   async buttonSubmit(e) {
-    e.preventDefault()
-    PrisonerDataService.addOne(this.state).then(response => {
-      if (response.status === 200) { console.log("Success!")
-        this.props.handleDataFromChild(this.state);
-      }
-      else { console.log("Fail :-(") }
-    })
+    e.preventDefault();
+    switch (this.props.subject) {
+      case "Prisoner": {
+        PrisonerNetworkService.addOne(this.state).then(response => {
+          if (response.status === 200) { console.log("Success!")
+            this.props.handleDataFromChild(this.state);
+          }
+          else { console.log("Fail :-(") }
+        })
+      };
+      case "User": {
+        UserNetworkService.addOne(this.state).then(response => {
+          if (response.status === 200) {
+            this.props.handleDataFromChild(this.state);
+          }
+          else { console.log("Fail :-("); }
+        })
+      };
+      case "Prison": {
+        PrisonNetworkService.addOne(this.state).then(response => {
+          if (response.status === 200) {
+            this.props.handleDataFromChild(this.state);
+          }
+          else { console.log("Fail :-("); }
+        })
+      };
+      case "Rule": {
+        RuleNetworkService.addOne(this.state).then(response => {
+          if (response.status === 200) {
+            this.props.handleDataFromChild(this.state);
+          }
+          else { console.log("Fail :-("); }
+        })
+      };
+    }
+
   }
 
   componentDidMount() {
@@ -55,38 +90,61 @@ class InputForm extends React.Component {
     if (solo) {
       switch (subject) {
         case "Prisoner": {
-          console.log(id)
-          this.getPrisoner(id)
+          this.getPrisoner(id);
         }
         case "User": {
-          console.log(id);
+          this.getUser(id);
+        }
+        case "Prison": {
+          this.getPrison(id);
+        }
+        case "Rule": {
+          this.getRule(id);
         }
       }
     }
   }
 
   getPrisoner(id) {
-    PrisonerDataService.getOne(id).then((response) => {
+    PrisonerNetworkService.getOne(id).then((response) => {
+      console.log(response);
       this.setState({
-        ...response.data
+        ...response.data.data.dataValues
       })
     });
-  }
+  };
 
   getUser(id) {
-    UserDataService.getOne(id).then((response) => {
-      console.log(response)
+    UserNetworkService.getOne(id).then((response) => {
+    console.log(response)
+      this.setState({
+        ...response.data.data
+      })
     });
-  }
+  };
+
+  getPrison(id) {
+    PrisonNetworkService.getOne(id).then((response) => {
+      console.log(response);
+      this.setState({
+        ...response.data.data.dataValues
+      })
+    });
+  };
+
+  getRule(id) {
+    RuleNetworkService.getOne(id).then((response) => {
+      console.log(response);
+      this.setState({
+        ...response.data.data.dataValues
+      })
+    });
+  };
 
   clearFields() {
+    var po = this.propertyObject()
     this.setState({
-      chosenName: '',
-      birthName: '',
-      bio: '',
-      releaseDate: '1999-09-09',
-      prison: 1,
-      inmateID: 0
+      po
     })
   }
 
