@@ -67,11 +67,33 @@
                 type: "text",
                 default: "Default prison name"
   },
-  // address: {  title: "Address",
-  //             type: "text",
-  //             default: "123 Fake St."
-        
-  // }
+  address: {
+    meta: true,
+    title: 'Address',
+    subFields: {
+      street: {
+        title: "Street",
+        type: "text",
+        default: "123 Fake St."
+      },
+      city: {
+        title: "City",
+        type: "text",
+        default: "Anytown"
+      },
+      state: {
+        title: "State",
+        type: "text",
+        default: "California"
+      },
+      country: {
+        title: "Country",
+        type: "text",
+        default: "USA"
+      },
+
+    }
+  }
  },
  Rule: {
   id: { title: "ID",
