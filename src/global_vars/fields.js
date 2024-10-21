@@ -1,5 +1,11 @@
  var fields = {
   Prisoner: {
+    id: {
+      title: "ID",
+      type: 'number',
+      default: -1,
+      disabled: true,
+    },
     chosenName: {
      title: "Chosen Name",
      type: "text",
@@ -32,6 +38,12 @@
    }
  },
  User: {
+  id: {
+    title: "ID",
+    type: 'number',
+    default: -1,
+    disabled: true,
+  },
   username: {
     title: "Username",
     type: "text",
@@ -61,7 +73,8 @@
  Prison: {
   id: { title: "ID",
         type: "number",
-        default: 0
+        default: 0,
+        disabled: true
   },
   prisonName: { title: "Prison Name",
                 type: "text",
@@ -98,7 +111,8 @@
  Rule: {
   id: { title: "ID",
         type: "number",
-        default: 0
+        default: 0,
+        disabled: true
   },
   title: {
         title: "Title",

@@ -186,6 +186,7 @@ class InputForm extends React.Component {
                     <Input
                       id={subKey}
                       name={subKey}
+                      disabled={field.disabled}
                       value={this.state.address ? this.state.address[subKey] : this.state[subKey]}
                       onChange={this.handleChange}
                       type={field.subFields[subKey].type}
@@ -204,6 +205,7 @@ class InputForm extends React.Component {
               <Input
                 id={key}
                 name={key}
+                disabled={field.disabled}
                 value={this.state[key]}
                 onChange={this.handleChange}
                 type={field.type}
