@@ -21,12 +21,14 @@ class InputForm extends React.Component {
     this.getUser = this.getUser.bind(this);
     this.getPrison = this.getPrison.bind(this);
     this.getRule = this.getRule.bind(this);
+    this.fetchPrisons = this.fetchPrisons.bind(this);
 
     var po = this.propertyObject(this.props.subject)
     console.log(po)
 
     this.state = {
-      po
+      prisons: [],
+      item: po
       }
     }
 
@@ -64,45 +66,45 @@ class InputForm extends React.Component {
     e.preventDefault();
     switch (this.props.subject) {
       case "Prisoner": 
-        PrisonerNetworkService.addOne(this.state).then(response => {
+        PrisonerNetworkService.addOne(this.state.item).then(response => {
           if (response.status === 200) { console.log("Success!")
-            this.props.handleDataFromChild(this.state);
+            this.props.handleDataFromChild(this.state.item);
           }
           else { console.log("Fail :-(") }
         });
         break;
       case "User":
-        UserNetworkService.addOne(this.state).then(response => {
+        UserNetworkService.addOne(this.state.item).then(response => {
           if (response.status === 200) {
-            this.props.handleDataFromChild(this.state);
+            this.props.handleDataFromChild(this.state.item);
           }
           else { console.log("Fail :-("); }
         });
         break;
       case "Prison": 
-        PrisonNetworkService.addOne(this.state).then(response => {
+        PrisonNetworkService.addOne(this.state.item).then(response => {
           if (response.status === 200) {
-            this.props.handleDataFromChild(this.state);
+            this.props.handleDataFromChild(this.state.item);
           }
           else { console.log("Fail :-("); }
         });
         break;
       case "Rule": 
-        RuleNetworkService.addOne(this.state).then(response => {
+        RuleNetworkService.addOne(this.state.item).then(response => {
           if (response.status === 200) {
-            this.props.handleDataFromChild(this.state);
+            this.props.handleDataFromChild(this.state.item);
           }
           else { console.log("Fail :-("); }
         });
         break;
         default:
     }
-
   }
 
   componentDidMount() {
     const {subject, solo} = this.props;
     const {id} = this.props.router.params;
+    if (subject === "Prisoner") { this.fetchPrisons() }
 
     if (solo) {
       switch (subject) {
@@ -127,11 +129,24 @@ class InputForm extends React.Component {
     }
   }
 
+  async fetchPrisons() {
+    try {
+      const response = await PrisonNetworkService.getAll();
+      if (response.status === 200) {
+        this.setState({ prisons: Object.values(response.data.data) });
+      } else {
+        console.error("Failed to fetch prisons");
+      }
+    } catch (error) {
+      console.error("Error fetching prisons:", error);
+    }
+  }
+
   getPrisoner(id) {
     PrisonerNetworkService.getOne(id).then((response) => {
       console.log(response);
       this.setState({
-        ...response.data.data.dataValues
+        item: {...response.data.data.dataValues}
       })
     });
   };
@@ -140,7 +155,7 @@ class InputForm extends React.Component {
     UserNetworkService.getOne(id).then((response) => {
     console.log(response)
       this.setState({
-        ...response.data.data
+        item: {...response.data.data}
       })
     });
   };
@@ -149,7 +164,7 @@ class InputForm extends React.Component {
     PrisonNetworkService.getOne(id).then((response) => {
       console.log(response);
       this.setState({
-        ...response.data.data.dataValues
+        item: {...response.data.data.dataValues}
       })
     });
   };
@@ -158,7 +173,7 @@ class InputForm extends React.Component {
     RuleNetworkService.getOne(id).then((response) => {
       console.log(response);
       this.setState({
-        ...response.data.data.dataValues
+        item: {...response.data.data.dataValues}
       })
     });
   };
@@ -166,7 +181,7 @@ class InputForm extends React.Component {
   clearFields() {
     var po = this.propertyObject(this.props.subject)
     this.setState({
-      po
+      item: po
     })
   }
 
@@ -187,13 +202,35 @@ class InputForm extends React.Component {
                       id={subKey}
                       name={subKey}
                       disabled={field.disabled}
-                      value={this.state.address ? this.state.address[subKey] : this.state[subKey]}
+                      value={this.state["item"][key] ? this.state["item"][key][subKey] : this.state["item"][subKey]}
                       onChange={this.handleChange}
                       type={field.subFields[subKey].type}
                     />
                   </div>
                 );
               })}
+            </FormGroup>
+          </div>
+        );
+      } else if (key === "prison") {
+        return (
+          <div key={key}>
+            <FormGroup>
+              <Label>{field.title}:</Label>
+              <Input
+                id={key}
+                name={key}
+                value={this.state.item[key]}
+                onChange={this.handleChange}
+                type="select"
+              >
+                <option value="">Select a prison</option>
+                {this.state.prisons.map((prison) => (
+                  <option key={prison.id} value={prison.id}>
+                    {prison.prisonName}
+                  </option>
+                ))}
+              </Input>
             </FormGroup>
           </div>
         );
@@ -206,7 +243,7 @@ class InputForm extends React.Component {
                 id={key}
                 name={key}
                 disabled={field.disabled}
-                value={this.state[key]}
+                value={this.state.item[key]}
                 onChange={this.handleChange}
                 type={field.type}
               />
