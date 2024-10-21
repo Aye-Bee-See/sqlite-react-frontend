@@ -176,41 +176,45 @@ class ListPage extends Component {
     });
   }
 
-
   displayFields(currentPrisoner, currentUser, currentPrison, currentRule) {
+    const renderFields = (subject, currentItem) => {
+      return Object.keys(fields[subject]).map((key) => {
+        const field = fields[subject][key];
+        if (field.meta && field.subFields) {
+          return (
+            <div key={key}>
+              <strong>{field.title}:</strong>
+              {Object.keys(field.subFields).map((subKey) => {
+                return (
+                  <div key={subKey} style={{ marginLeft: '20px' }}>
+                    <strong>{field.subFields[subKey].title}:</strong> {currentItem[key][subKey]}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        } else {
+          return (
+            <div key={key}>
+              <strong>{field.title}:</strong> {currentItem[key]}
+            </div>
+          );
+        }
+      });
+    };
+  
     if (this.props.subject === "Prisoner" && currentPrisoner) {
-      return Object.keys(fields[this.props.subject]).map((key) => {
-        return <div key={key}>
-          <strong>{ fields[this.props.subject][key].title}: </strong> {currentPrisoner[key]}
-        </div>
-      })
+      return renderFields("Prisoner", currentPrisoner);
+    } else if (this.props.subject === "User" && currentUser) {
+      return renderFields("User", currentUser);
+    } else if (this.props.subject === "Prison" && currentPrison) {
+      return renderFields("Prison", currentPrison);
+    } else if (this.props.subject === "Rule" && currentRule) {
+      return renderFields("Rule", currentRule);
+    } else {
+      return null;
     }
-    else if (this.props.subject === "User" && currentUser) {
-      return Object.keys(fields[this.props.subject]).map((key) => {
-        return <div key={key}>
-          <strong>{ fields[this.props.subject][key].title}: </strong> {currentUser[key]}
-        </div>
-      })
-    }
-    else if (this.props.subject === "Prison" && currentPrison) {
-      return Object.keys(fields[this.props.subject]).map((key) => {
-        return <div key={key}>
-          <strong>{ fields[this.props.subject][key].title}: </strong> {currentPrison[key]}
-        </div>
-      })
-    }
-    else if (this.props.subject === "Rule" && currentRule) {
-      return Object.keys(fields[this.props.subject]).map((key) => {
-        return <div key={key}>
-          <strong>{ fields[this.props.subject][key].title}: </strong> {currentRule[key]}
-        </div>
-      })
-    }
-    else {
-      return null
-    }
-
-    }
+  }
 
   render() {
     const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentIndex } = this.state;
