@@ -3,7 +3,7 @@
     id: {
       title: "ID",
       type: 'number',
-      default: -1,
+      default: null,
       disabled: true,
     },
     chosenName: {
@@ -41,7 +41,7 @@
   id: {
     title: "ID",
     type: 'number',
-    default: -1,
+    default: null,
     disabled: true,
   },
   username: {
@@ -73,7 +73,7 @@
  Prison: {
   id: { title: "ID",
         type: "number",
-        default: 0,
+        default: null,
         disabled: true
   },
   prisonName: { title: "Prison Name",
@@ -104,14 +104,13 @@
         type: "text",
         default: ""
       },
-
     }
   }
  },
  Rule: {
   id: { title: "ID",
         type: "number",
-        default: -1,
+        default: null,
         disabled: true
   },
   title: {
