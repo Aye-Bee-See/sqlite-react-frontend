@@ -22,18 +22,34 @@ class InputForm extends React.Component {
     this.getPrison = this.getPrison.bind(this);
     this.getRule = this.getRule.bind(this);
 
-    var po = this.propertyObject()
+    var po = this.propertyObject(this.props.subject)
+    console.log(po)
 
     this.state = {
       po
+      }
     }
-  }
 
-  propertyObject() {
-    return Object.keys(fields[this.props.subject]).reduce((acc, element) => {
-      acc[element] = fields[this.props.subject][element].default;
-      return acc
-    }, {})
+  propertyObject(subject) {
+    const state = {};
+  
+    Object.keys(fields[subject]).forEach(key => {
+      const field = fields[subject][key];
+      if (field.meta && field.subFields) {
+        state[key] = {};
+        Object.keys(field.subFields).forEach(subField => {
+          state.address[subField] = field.subFields[subField].default;
+        });
+      } else if (field.meta && field.subFields) {
+        Object.keys(field.subFields).forEach(subField => {
+          state[subField] = field.subFields[subField].default;
+        });
+      } else {
+        state[key] = field.default;
+      }
+    });
+  
+    return state;
   }
 
   handleChange(e) {
@@ -148,7 +164,7 @@ class InputForm extends React.Component {
   };
 
   clearFields() {
-    var po = this.propertyObject()
+    var po = this.propertyObject(this.props.subject)
     this.setState({
       po
     })
@@ -157,13 +173,46 @@ class InputForm extends React.Component {
   displayFields() {
     console.log(this.props.subject);
     return Object.keys(fields[this.props.subject]).map((key) => {
-      return <div key={key}>
-        <FormGroup>
-          <Label>{ fields[this.props.subject][key].title}: </Label>
-          <Input id={key} key={key} name={key} value={this.state[key]} onChange={this.handleChange} type={fields[this.props.subject][key].type} />
-        </FormGroup>
-        </div>
-    })
+      const field = fields[this.props.subject][key];
+      if (field.meta && field.subFields) {
+        return (
+          <div key={key}>
+            <FormGroup>
+              <Label>{field.title}:</Label>
+              {Object.keys(field.subFields).map((subKey) => {
+                return (
+                  <div key={subKey}>
+                    <Label>{field.subFields[subKey].title}:</Label>
+                    <Input
+                      id={subKey}
+                      name={subKey}
+                      value={this.state.address ? this.state.address[subKey] : this.state[subKey]}
+                      onChange={this.handleChange}
+                      type={field.subFields[subKey].type}
+                    />
+                  </div>
+                );
+              })}
+            </FormGroup>
+          </div>
+        );
+      } else {
+        return (
+          <div key={key}>
+            <FormGroup>
+              <Label>{field.title}:</Label>
+              <Input
+                id={key}
+                name={key}
+                value={this.state[key]}
+                onChange={this.handleChange}
+                type={field.type}
+              />
+            </FormGroup>
+          </div>
+        );
+      }
+    });
   }
 
     render() {
