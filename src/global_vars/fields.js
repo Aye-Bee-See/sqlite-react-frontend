@@ -24,12 +24,12 @@
    prison: {
      title: "Prison",
      type: "select",
-     default: 1
+     default: null
    },
    inmateID: {
      title: "Inmate ID",
      type: "text",
-     default: -1
+     default: ''
    },
    releaseDate: {
      title: "Release Date",
@@ -67,7 +67,7 @@
   name: {
     title: "Name",
     type: "text",
-    default: 'admin'
+    default: ''
   }
  },
  Prison: {
