@@ -78,7 +78,7 @@
   },
   prisonName: { title: "Prison Name",
                 type: "text",
-                default: "Default prison name"
+                default: ""
   },
   address: {
     meta: true,
@@ -87,22 +87,22 @@
       street: {
         title: "Street",
         type: "text",
-        default: "123 Fake St."
+        default: ""
       },
       city: {
         title: "City",
         type: "text",
-        default: "Anytown"
+        default: ""
       },
       state: {
         title: "State",
         type: "text",
-        default: "California"
+        default: ""
       },
       country: {
         title: "Country",
         type: "text",
-        default: "USA"
+        default: ""
       },
 
     }
@@ -111,18 +111,18 @@
  Rule: {
   id: { title: "ID",
         type: "number",
-        default: 0,
+        default: -1,
         disabled: true
   },
   title: {
         title: "Title",
         type: "text",
-        default: "Default rule title"
+        default: ""
   },
   description: {
     title: "Description",
     type: "text",
-    default: "Default rule description"
+    default: ""
   }
  }
 }
