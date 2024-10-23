@@ -6,6 +6,7 @@ import PrisonNetworkService from "../../services/prison-network-service";
 import RuleNetworkService from "../../services/rule-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
+import {states, roles} from "../../global_vars/options";
 
 class InputForm extends React.Component {
 
@@ -58,7 +59,9 @@ class InputForm extends React.Component {
     console.log(e.target.value);
     this.setState({
       ...this.state,
-      [e.target.id]: e.target.value
+      item: {
+        [e.target.id]: e.target.value
+      }
     });
   }
 //TODO: Visible error handling
@@ -195,20 +198,64 @@ class InputForm extends React.Component {
             <FormGroup>
               <Label>{field.title}:</Label>
               {Object.keys(field.subFields).map((subKey) => {
-                return (
-                  <div key={subKey}>
-                    <Label>{field.subFields[subKey].title}:</Label>
-                    <Input
-                      id={subKey}
-                      name={subKey}
-                      disabled={field.disabled}
-                      value={this.state["item"][key] ? this.state["item"][key][subKey] : this.state["item"][subKey]}
-                      onChange={this.handleChange}
-                      type={field.subFields[subKey].type}
-                    />
-                  </div>
-                );
+                if (subKey === "state") {
+                  return (
+                    <div key={subKey}>
+                      <Label>{field.subFields[subKey].title}:</Label>
+                      <Input
+                        id={subKey}
+                        name={subKey}
+                        disabled={field.disabled}
+                        value={this.state["item"][key] ? this.state["item"][key][subKey] : this.state["item"][subKey]}
+                        onChange={this.handleChange}
+                        type="select">
+                        <option value="">Select a state</option>
+                        {states.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </Input>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div key={subKey}>
+                      <Label>{field.subFields[subKey].title}:</Label>
+                      <Input
+                        id={subKey}
+                        name={subKey}
+                        disabled={field.disabled}
+                        value={this.state["item"][key] ? this.state["item"][key][subKey] : this.state["item"][subKey]}
+                        onChange={this.handleChange}
+                        type={field.subFields[subKey].type}
+                      />
+                    </div>
+                  );
+                }
               })}
+            </FormGroup>
+          </div>
+        );
+      } else if (key === "role") {
+        return (
+          <div key={key}>
+            <FormGroup>
+              <Label>{field.title}:</Label>
+              <Input
+                id={key}
+                name={key}
+                value={this.state.item[key]}
+                onChange={this.handleChange}
+                type="select"
+              >
+                <option value="">Select a role</option>
+                {roles.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </Input>
             </FormGroup>
           </div>
         );
@@ -266,9 +313,7 @@ class InputForm extends React.Component {
                   </Button>
                 </Form>  
               </Row>
-
             </Container>
-
             </>
         )
     }
