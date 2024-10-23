@@ -96,7 +96,7 @@
       },
       state: {
         title: "State",
-        type: "text",
+        type: "select",
         default: ""
       },
       country: {
