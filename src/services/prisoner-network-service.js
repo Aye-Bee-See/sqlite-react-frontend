@@ -8,7 +8,12 @@ class PrisonerDataService {
 
   async getOne(pid) {
     const response = await http.get(`/prisoner/prisoner?id=${pid}`, {});
-    return response
+    return response;
+  }
+
+  async updateOne(params){
+    const response = await http.put('/prisoner/prisoner', params);
+    return response;
   }
 
   async addOne(params) {

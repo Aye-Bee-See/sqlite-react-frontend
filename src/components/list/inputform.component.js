@@ -60,6 +60,7 @@ class InputForm extends React.Component {
     this.setState({
       ...this.state,
       item: {
+        ...this.state.item,
         [e.target.id]: e.target.value
       }
     });
@@ -67,38 +68,74 @@ class InputForm extends React.Component {
 //TODO: Visible error handling
   async buttonSubmit(e) {
     e.preventDefault();
+    this.addOrUpdate().then(response => { 
+      if (this.props.handleDataFromChild) {
+        this.props.handleDataFromChild(this.state.item);
+      } else {
+        //TODO: Visible error handling
+        console.log("Fail :-(")
+      }      
+    })
+  }
+
+  async addOrUpdate() {
+
     switch (this.props.subject) {
       case "Prisoner": 
+      if (this.props.solo) {
+        PrisonerNetworkService.updateOne(this.state.item).then(response => {
+
+        })
+      } else {
         PrisonerNetworkService.addOne(this.state.item).then(response => {
           if (response.status === 200) { console.log("Success!")
             this.props.handleDataFromChild(this.state.item);
           }
           else { console.log("Fail :-(") }
-        });
+        })
+      };
         break;
       case "User":
-        UserNetworkService.addOne(this.state.item).then(response => {
-          if (response.status === 200) {
-            this.props.handleDataFromChild(this.state.item);
-          }
-          else { console.log("Fail :-("); }
-        });
+        if (this.props.solo) {
+          console.log(this.state.item);
+          UserNetworkService.updateOne(this.state.item)
+        } else {
+          UserNetworkService.addOne(this.state.item).then(response => {
+            if (response.status === 200) {
+              this.props.handleDataFromChild(this.state.item);
+            }
+            else { console.log("Fail :-("); }
+          });
+        }
         break;
       case "Prison": 
+      if (this.props.solo) {
+        PrisonNetworkService.updateOne(this.state.item).then(response => {
+          this.props.router.navigate('/prisons');
+        })
+      } else {
         PrisonNetworkService.addOne(this.state.item).then(response => {
           if (response.status === 200) {
             this.props.handleDataFromChild(this.state.item);
           }
           else { console.log("Fail :-("); }
         });
+      }
         break;
       case "Rule": 
+        if (this.props.solo) {
+          console.log(this.state.item);
+          RuleNetworkService.updateOne(this.state.item).then(response => {
+            this.props.router.navigate('/rules');
+          });
+        } else {
         RuleNetworkService.addOne(this.state.item).then(response => {
           if (response.status === 200) {
             this.props.handleDataFromChild(this.state.item);
           }
           else { console.log("Fail :-("); }
         });
+      }
         break;
         default:
     }
@@ -127,7 +164,7 @@ class InputForm extends React.Component {
           this.getRule(id);
           break;
         }
-        default : {}
+        default: {}
       }
     }
   }
@@ -149,7 +186,7 @@ class InputForm extends React.Component {
     PrisonerNetworkService.getOne(id).then((response) => {
       console.log(response);
       this.setState({
-        item: {...response.data.data.dataValues}
+        item: {...response.data.data}
       })
     });
   };
@@ -167,7 +204,7 @@ class InputForm extends React.Component {
     PrisonNetworkService.getOne(id).then((response) => {
       console.log(response);
       this.setState({
-        item: {...response.data.data.dataValues}
+        item: {...response.data.data}
       })
     });
   };
@@ -176,7 +213,7 @@ class InputForm extends React.Component {
     RuleNetworkService.getOne(id).then((response) => {
       console.log(response);
       this.setState({
-        item: {...response.data.data.dataValues}
+        item: {...response.data.data}
       })
     });
   };
