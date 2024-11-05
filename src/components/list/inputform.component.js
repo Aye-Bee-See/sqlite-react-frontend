@@ -1,15 +1,23 @@
 import React from "react";
-import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
-import PrisonerNetworkService from '../../services/prisoner-network-service';
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Row,
+} from "reactstrap";
+import PrisonerNetworkService from "../../services/prisoner-network-service";
 import UserNetworkService from "../../services/user-network-service";
 import PrisonNetworkService from "../../services/prison-network-service";
 import RuleNetworkService from "../../services/rule-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
-import {states, roles} from "../../global_vars/options";
+import { states, roles } from "../../global_vars/options";
 
 class InputForm extends React.Component {
-
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
@@ -26,69 +34,80 @@ class InputForm extends React.Component {
 
     this.setMessage = this.setMessage.bind(this);
 
-    var po = this.propertyObject(this.props.subject)
-    console.log(po)
+    var po = this.propertyObject(this.props.subject);
 
     this.state = {
       prisons: [],
       item: po,
-      message: ''
-      }
-    }
+      message: "",
+    };
+  }
 
   propertyObject(subject) {
     const state = {};
-  
-    Object.keys(fields[subject]).forEach(key => {
+
+    Object.keys(fields[subject]).forEach((key) => {
       const field = fields[subject][key];
       if (field.meta && field.subFields) {
         state[key] = {};
-        Object.keys(field.subFields).forEach(subField => {
-          state.address[subField] = field.subFields[subField].default;
-        });
-      } else if (field.meta && field.subFields) {
-        Object.keys(field.subFields).forEach(subField => {
-          state[subField] = field.subFields[subField].default;
+        Object.keys(field.subFields).forEach((subField) => {
+          state[key][subField] = field.subFields[subField].default;
         });
       } else {
         state[key] = field.default;
       }
     });
-  
     return state;
   }
 
   handleChange(e) {
-    console.log(e.target.value);
-    this.setState({
-      ...this.state,
-      item: {
-        ...this.state.item,
-        [e.target.id]: e.target.value
-      }
-    });
+    const { id, value } = e.target;
+    const [parentKey, subKey] = id.split(".");
+
+    if (subKey) {
+      this.setState((prevState) => ({
+        item: {
+          ...prevState.item,
+          [parentKey]: {
+            ...prevState.item[parentKey],
+            [subKey]: value,
+          },
+        },
+      }));
+    } else {
+      this.setState((prevState) => ({
+        item: {
+          ...prevState.item,
+          [id]: value,
+        },
+      }));
+    }
   }
 
   async buttonSubmit(e) {
     e.preventDefault();
-    this.addOrUpdate().then(response => {
-      if (response) { 
+    this.addOrUpdate().then((response) => {
+      if (response) {
         if (this.props.handleDataFromChild) {
-          this.props.handleDataFromChild(this.state.item).then(this.clearFields());
-        } else { this.clearFields() }     
+          this.props
+            .handleDataFromChild(this.state.item)
+            .then(this.clearFields());
+        } else {
+          this.clearFields();
+        }
       }
-    })
+    });
   }
 
   async addOrUpdate() {
     try {
       let response;
       switch (this.props.subject) {
-        case "Prisoner": 
+        case "Prisoner":
           if (this.props.solo) {
             response = await PrisonerNetworkService.updateOne(this.state.item);
             if (response.status === 200) {
-              this.props.router.navigate('/prisoners');
+              this.props.router.navigate("/prisoners");
               return true;
             } else {
               this.setMessage(response.data.info);
@@ -97,7 +116,6 @@ class InputForm extends React.Component {
           } else {
             response = await PrisonerNetworkService.addOne(this.state.item);
             if (response.status === 200) {
-              console.log("Success!");
               return true;
             } else {
               this.setMessage(response.data.info);
@@ -108,7 +126,7 @@ class InputForm extends React.Component {
           if (this.props.solo) {
             response = await UserNetworkService.updateOne(this.state.item);
             if (response.status === 200) {
-              this.props.router.navigate('/users');
+              this.props.router.navigate("/users");
               return true;
             } else {
               this.setMessage(response.data.info);
@@ -117,18 +135,17 @@ class InputForm extends React.Component {
           } else {
             response = await UserNetworkService.addOne(this.state.item);
             if (response.status === 200) {
-              console.log("Success!");
               return true;
             } else {
               this.setMessage(response.data.info);
               return false;
             }
           }
-        case "Prison": 
+        case "Prison":
           if (this.props.solo) {
             response = await PrisonNetworkService.updateOne(this.state.item);
             if (response.status === 200) {
-              this.props.router.navigate('/prisons');
+              this.props.router.navigate("/prisons");
               return true;
             } else {
               this.setMessage(response.data.info);
@@ -137,18 +154,17 @@ class InputForm extends React.Component {
           } else {
             response = await PrisonNetworkService.addOne(this.state.item);
             if (response.status === 200) {
-              console.log("Success!");
               return true;
             } else {
               this.setMessage(response.data.info);
               return false;
             }
           }
-        case "Rule": 
+        case "Rule":
           if (this.props.solo) {
             response = await RuleNetworkService.updateOne(this.state.item);
             if (response.status === 200) {
-              this.props.router.navigate('/rules');
+              this.props.router.navigate("/rules");
               return true;
             } else {
               this.setMessage(response.data.info);
@@ -157,7 +173,6 @@ class InputForm extends React.Component {
           } else {
             response = await RuleNetworkService.addOne(this.state.item);
             if (response.status === 200) {
-              console.log("Success!");
               return true;
             } else {
               this.setMessage(response.data.info);
@@ -168,16 +183,17 @@ class InputForm extends React.Component {
           return false;
       }
     } catch (error) {
-      console.log(error);
       this.setMessage(error.response.data.error);
       return false;
     }
   }
 
   componentDidMount() {
-    const {subject, solo} = this.props;
-    const {id} = this.props.router.params;
-    if (subject === "Prisoner") { this.fetchPrisons() }
+    const { subject, solo } = this.props;
+    const { id } = this.props.router.params;
+    if (subject === "Prisoner") {
+      this.fetchPrisons();
+    }
 
     if (solo) {
       switch (subject) {
@@ -197,7 +213,8 @@ class InputForm extends React.Component {
           this.getRule(id);
           break;
         }
-        default: {}
+        default: {
+        }
       }
     }
   }
@@ -216,76 +233,75 @@ class InputForm extends React.Component {
   }
 
   async setMessage(message) {
-    this.setState({
-      message: message
-    }, () => { console.log(this.state.message) })
+    this.setState(
+      {
+        message: message,
+      }
+    );
   }
 
   getPrisoner(id) {
     PrisonerNetworkService.getOne(id).then((response) => {
-      console.log(response);
       this.setState({
-        item: {...response.data.data}
-      })
+        item: { ...response.data.data },
+      });
     });
-  };
+  }
 
   getUser(id) {
     UserNetworkService.getOne(id).then((response) => {
-    console.log(response)
       this.setState({
-        item: {...response.data.data}
-      })
+        item: { ...response.data.data },
+      });
     });
-  };
+  }
 
   getPrison(id) {
     PrisonNetworkService.getOne(id).then((response) => {
-      console.log(response);
       this.setState({
-        item: {...response.data.data}
-      })
+        item: { ...response.data.data },
+      });
     });
-  };
+  }
 
   getRule(id) {
     RuleNetworkService.getOne(id).then((response) => {
-      console.log(response);
       this.setState({
-        item: {...response.data.data}
-      })
+        item: { ...response.data.data },
+      });
     });
-  };
-
-  async clearFields() {
-    var po = this.propertyObject(this.props.subject)
-    this.setState({
-      item: po
-    })
   }
 
+  async clearFields() {
+    var po = this.propertyObject(this.props.subject);
+    this.setState({
+      item: po,
+    });
+  }
 
   displayFields() {
-    console.log(this.props.subject);
     return Object.keys(fields[this.props.subject]).map((key) => {
       const field = fields[this.props.subject][key];
+      const value = this.state.item[key] === -1 ? '' : this.state.item[key];
+
       if (field.meta && field.subFields) {
         return (
           <div key={key}>
             <FormGroup>
               <Label>{field.title}:</Label>
               {Object.keys(field.subFields).map((subKey) => {
+                const subValue = this.state.item[key] && this.state.item[key][subKey] === -1 ? '' : this.state.item[key][subKey];
                 if (subKey === "state") {
                   return (
                     <div key={subKey}>
                       <Label>{field.subFields[subKey].title}:</Label>
                       <Input
-                        id={subKey}
-                        name={subKey}
-                        disabled={field.disabled}
-                        value={this.state["item"][key] ? this.state["item"][key][subKey] : this.state["item"][subKey]}
+                        id={`${key}.${subKey}`}
+                        name={`${key}.${subKey}`}
+                        value={subValue}
                         onChange={this.handleChange}
-                        type="select">
+                        type="select"
+                      >
                         <option value="">Select a state</option>
                         {states.map((state) => (
                           <option key={state} value={state}>
@@ -300,10 +316,9 @@ class InputForm extends React.Component {
                     <div key={subKey}>
                       <Label>{field.subFields[subKey].title}:</Label>
                       <Input
-                        id={subKey}
-                        name={subKey}
-                        disabled={field.disabled}
-                        value={this.state["item"][key] ? this.state["item"][key][subKey] : this.state["item"][subKey]}
+                        id={`${key}.${subKey}`}
+                        name={`${key}.${subKey}`}
+                        value={subValue}
                         onChange={this.handleChange}
                         type={field.subFields[subKey].type}
                       />
@@ -311,28 +326,6 @@ class InputForm extends React.Component {
                   );
                 }
               })}
-            </FormGroup>
-          </div>
-        );
-      } else if (key === "role") {
-        return (
-          <div key={key}>
-            <FormGroup>
-              <Label>{field.title}:</Label>
-              <Input
-                id={key}
-                name={key}
-                value={this.state.item[key]}
-                onChange={this.handleChange}
-                type="select"
-              >
-                <option value="">Select a role</option>
-                {roles.map((role) => (
-                  <option key={role} value={role}>
-                    {role}
-                  </option>
-                ))}
-              </Input>
             </FormGroup>
           </div>
         );
@@ -344,7 +337,7 @@ class InputForm extends React.Component {
               <Input
                 id={key}
                 name={key}
-                value={this.state.item[key]}
+                value={value}
                 onChange={this.handleChange}
                 type="select"
               >
@@ -358,6 +351,66 @@ class InputForm extends React.Component {
             </FormGroup>
           </div>
         );
+      } else if (key === "state") {
+        return (
+          <div key={key}>
+            <FormGroup>
+              <Label>{field.title}:</Label>
+              <Input
+                id={key}
+                name={key}
+                value={value}
+                onChange={this.handleChange}
+                type="select"
+              >
+                <option value="">Select a state</option>
+                {states.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </Input>
+            </FormGroup>
+          </div>
+        );
+      } else if (key === "role") {
+        return (
+          <div key={key}>
+            <FormGroup>
+              <Label>{field.title}:</Label>
+              <Input
+                id={key}
+                name={key}
+                value={value}
+                onChange={this.handleChange}
+                type="select"
+              >
+                <option value="">Select a role</option>
+                {roles.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </Input>
+            </FormGroup>
+          </div>
+        );
+      } else if (key === "id") {
+        return (
+          <div key={key}>
+            <FormGroup>
+              <Label>{field.title}:</Label>
+              <Input
+                id={key}
+                name={key}
+                value={value}
+                onChange={this.handleChange}
+                type={field.type}
+                disabled
+              />
+            </FormGroup>
+          </div>
+        );
       } else {
         return (
           <div key={key}>
@@ -366,8 +419,7 @@ class InputForm extends React.Component {
               <Input
                 id={key}
                 name={key}
-                disabled={field.disabled}
-                value={this.state.item[key]}
+                value={value}
                 onChange={this.handleChange}
                 type={field.type}
               />
@@ -378,28 +430,30 @@ class InputForm extends React.Component {
     });
   }
 
-    render() {
-        return (
-            <>
-            <Container>
-                <Form>
-                <Row>
-                  {this.displayFields()}
-                  </Row>
-                  <Row>
-                  <Col>
-                  <Button color="primary" onClick={this.buttonSubmit}>
-                  {this.props.solo ? `Update ${this.props.subject}` : `Add ${this.props.subject}`}
-                  </Button>
-                  </Col>
-                  <Col> <p className="text-danger">{this.state.message}</p> </Col>
-                  </Row>
-                </Form>  
-
-            </Container>
-            </>
-        )
-    }
+  render() {
+    return (
+      <>
+        <Container>
+          <Form>
+            <Row>{this.displayFields()}</Row>
+            <Row>
+              <Col>
+                <Button color="primary" onClick={this.buttonSubmit}>
+                  {this.props.solo
+                    ? `Update ${this.props.subject}`
+                    : `Add ${this.props.subject}`}
+                </Button>
+              </Col>
+              <Col>
+                {" "}
+                <p className="text-danger">{this.state.message}</p>{" "}
+              </Col>
+            </Row>
+          </Form>
+        </Container>
+      </>
+    );
+  }
 }
 
 export default withRouter(InputForm);
