@@ -130,10 +130,36 @@ class ListPage extends Component {
       } }
 
       //TODO: Make this work for all routes
-  handleDataFromChild(prisoner) {
-    this.setState(prevState => ({
-      prisoners: [...prevState.prisoners, prisoner]
-    }));
+  async handleDataFromChild(item) {
+    switch (this.props.subject) {
+      case "Prisoner": {
+        this.setState(prevState => ({
+          prisoners: [...prevState.prisoners, item]
+        }));
+        break;
+      }
+      case "User": {
+        this.setState(prevState => ({
+          users: [...prevState.users, item]
+        }));
+        break;
+      }
+      case "Prison": {
+        this.setState(prevState => ({
+          prisons: [...prevState.prisons, item]
+        }));
+        break;
+      }
+      case "Rule": {
+        this.setState(prevState => ({
+          rules: [...prevState.rules, item]
+        }));
+        break;
+      }
+      default: {
+        console.error("Unknown subject:", this.props.subject);
+      }
+    }
   }
 
   addPrisoner() {
@@ -215,7 +241,7 @@ class ListPage extends Component {
       return null;
     }
   }
-
+// TODO: Fix key on the input form
   render() {
     const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentIndex } = this.state;
     var editLink = this.editButton();

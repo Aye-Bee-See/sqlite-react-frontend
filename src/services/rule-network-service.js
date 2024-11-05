@@ -5,6 +5,13 @@ class RuleNetworkService {
       return http.get('/rule/rules', {})
   }
 
+  async addOne(params) {
+    const response = await http.post('/rule/rule', params);
+    console.log(response)
+    return response;
+    
+  }
+
   async updateOne(params){
     const response = await http.put('/rule/rule', params);
     return response;
