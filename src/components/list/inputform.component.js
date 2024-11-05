@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import PrisonerNetworkService from '../../services/prisoner-network-service';
 import UserNetworkService from "../../services/user-network-service";
 import PrisonNetworkService from "../../services/prison-network-service";
@@ -24,12 +24,15 @@ class InputForm extends React.Component {
     this.getRule = this.getRule.bind(this);
     this.fetchPrisons = this.fetchPrisons.bind(this);
 
+    this.setMessage = this.setMessage.bind(this);
+
     var po = this.propertyObject(this.props.subject)
     console.log(po)
 
     this.state = {
       prisons: [],
-      item: po
+      item: po,
+      message: ''
       }
     }
 
@@ -65,79 +68,109 @@ class InputForm extends React.Component {
       }
     });
   }
-//TODO: Visible error handling
+
   async buttonSubmit(e) {
     e.preventDefault();
-    this.addOrUpdate().then(response => { 
-      if (this.props.handleDataFromChild) {
-        this.props.handleDataFromChild(this.state.item);
-      } else {
-        //TODO: Visible error handling
-        console.log("Fail :-(")
-      }      
+    this.addOrUpdate().then(response => {
+      if (response) { 
+        if (this.props.handleDataFromChild) {
+          this.props.handleDataFromChild(this.state.item).then(this.clearFields());
+        } else { this.clearFields() }     
+      }
     })
   }
 
   async addOrUpdate() {
-
-    switch (this.props.subject) {
-      case "Prisoner": 
-      if (this.props.solo) {
-        PrisonerNetworkService.updateOne(this.state.item).then(response => {
-
-        })
-      } else {
-        PrisonerNetworkService.addOne(this.state.item).then(response => {
-          if (response.status === 200) { console.log("Success!")
-            this.props.handleDataFromChild(this.state.item);
-          }
-          else { console.log("Fail :-(") }
-        })
-      };
-        break;
-      case "User":
-        if (this.props.solo) {
-          console.log(this.state.item);
-          UserNetworkService.updateOne(this.state.item)
-        } else {
-          UserNetworkService.addOne(this.state.item).then(response => {
+    try {
+      let response;
+      switch (this.props.subject) {
+        case "Prisoner": 
+          if (this.props.solo) {
+            response = await PrisonerNetworkService.updateOne(this.state.item);
             if (response.status === 200) {
-              this.props.handleDataFromChild(this.state.item);
+              this.props.router.navigate('/prisoners');
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
             }
-            else { console.log("Fail :-("); }
-          });
-        }
-        break;
-      case "Prison": 
-      if (this.props.solo) {
-        PrisonNetworkService.updateOne(this.state.item).then(response => {
-          this.props.router.navigate('/prisons');
-        })
-      } else {
-        PrisonNetworkService.addOne(this.state.item).then(response => {
-          if (response.status === 200) {
-            this.props.handleDataFromChild(this.state.item);
+          } else {
+            response = await PrisonerNetworkService.addOne(this.state.item);
+            if (response.status === 200) {
+              console.log("Success!");
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
+            }
           }
-          else { console.log("Fail :-("); }
-        });
-      }
-        break;
-      case "Rule": 
-        if (this.props.solo) {
-          console.log(this.state.item);
-          RuleNetworkService.updateOne(this.state.item).then(response => {
-            this.props.router.navigate('/rules');
-          });
-        } else {
-        RuleNetworkService.addOne(this.state.item).then(response => {
-          if (response.status === 200) {
-            this.props.handleDataFromChild(this.state.item);
+        case "User":
+          if (this.props.solo) {
+            response = await UserNetworkService.updateOne(this.state.item);
+            if (response.status === 200) {
+              this.props.router.navigate('/users');
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
+            }
+          } else {
+            response = await UserNetworkService.addOne(this.state.item);
+            if (response.status === 200) {
+              console.log("Success!");
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
+            }
           }
-          else { console.log("Fail :-("); }
-        });
-      }
-        break;
+        case "Prison": 
+          if (this.props.solo) {
+            response = await PrisonNetworkService.updateOne(this.state.item);
+            if (response.status === 200) {
+              this.props.router.navigate('/prisons');
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
+            }
+          } else {
+            response = await PrisonNetworkService.addOne(this.state.item);
+            if (response.status === 200) {
+              console.log("Success!");
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
+            }
+          }
+        case "Rule": 
+          if (this.props.solo) {
+            response = await RuleNetworkService.updateOne(this.state.item);
+            if (response.status === 200) {
+              this.props.router.navigate('/rules');
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
+            }
+          } else {
+            response = await RuleNetworkService.addOne(this.state.item);
+            if (response.status === 200) {
+              console.log("Success!");
+              return true;
+            } else {
+              this.setMessage(response.data.info);
+              return false;
+            }
+          }
         default:
+          return false;
+      }
+    } catch (error) {
+      console.log(error);
+      this.setMessage(error.response.data.error);
+      return false;
     }
   }
 
@@ -182,6 +215,12 @@ class InputForm extends React.Component {
     }
   }
 
+  async setMessage(message) {
+    this.setState({
+      message: message
+    }, () => { console.log(this.state.message) })
+  }
+
   getPrisoner(id) {
     PrisonerNetworkService.getOne(id).then((response) => {
       console.log(response);
@@ -218,12 +257,13 @@ class InputForm extends React.Component {
     });
   };
 
-  clearFields() {
+  async clearFields() {
     var po = this.propertyObject(this.props.subject)
     this.setState({
       item: po
     })
   }
+
 
   displayFields() {
     console.log(this.props.subject);
@@ -342,14 +382,20 @@ class InputForm extends React.Component {
         return (
             <>
             <Container>
-              <Row>
                 <Form>
+                <Row>
                   {this.displayFields()}
+                  </Row>
+                  <Row>
+                  <Col>
                   <Button color="primary" onClick={this.buttonSubmit}>
                   {this.props.solo ? `Update ${this.props.subject}` : `Add ${this.props.subject}`}
                   </Button>
+                  </Col>
+                  <Col> <p className="text-danger">{this.state.message}</p> </Col>
+                  </Row>
                 </Form>  
-              </Row>
+
             </Container>
             </>
         )
