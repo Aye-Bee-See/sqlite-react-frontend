@@ -41,7 +41,7 @@
   id: {
     title: "ID",
     type: 'number',
-    default: null,
+    default: '',
     disabled: true,
   },
   username: {
@@ -110,7 +110,7 @@
  Rule: {
   id: { title: "ID",
         type: "number",
-        default: null,
+        default: -1,
         disabled: true
   },
   title: {
