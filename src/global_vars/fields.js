@@ -1,4 +1,6 @@
- var fields = {
+// TODO: Add validation for subjects beyond Prisoner
+
+var fields = {
   Prisoner: {
     id: {
       title: "ID",
@@ -9,27 +11,30 @@
     chosenName: {
      title: "Chosen Name",
      type: "text",
-     default: ''
+     default: '',
     },
     birthName: {
      title: "Birth Name",
      type: "text",
-     default: ''
+     default: '',
+     rules: 'required|string|between:3,50'
    },
    bio: {
      title: "Bio",
      type: "textarea",
-     default: ''
+     default: '',
+     rules: 'required|string|between:3,1500'
    },
    prison: {
      title: "Prison",
      type: "select",
-     default: null
+     default: null,
+     rules: 'required'
    },
    inmateID: {
      title: "Inmate ID",
      type: "text",
-     default: ''
+     default: '',
    },
    releaseDate: {
      title: "Release Date",

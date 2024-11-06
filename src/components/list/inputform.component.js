@@ -16,6 +16,7 @@ import RuleNetworkService from "../../services/rule-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
 import { states, roles } from "../../global_vars/options";
+import ReactFormInputValidation from "react-form-input-validation";
 
 class InputForm extends React.Component {
   constructor(props) {
@@ -24,7 +25,9 @@ class InputForm extends React.Component {
     this.buttonSubmit = this.buttonSubmit.bind(this);
     this.clearFields = this.clearFields.bind(this);
     this.displayFields = this.displayFields.bind(this);
+
     this.propertyObject = this.propertyObject.bind(this);
+    this.ruleObject = this.ruleObject.bind(this);
 
     this.getPrisoner = this.getPrisoner.bind(this);
     this.getUser = this.getUser.bind(this);
@@ -40,7 +43,14 @@ class InputForm extends React.Component {
       prisons: [],
       item: po,
       message: "",
+      fields:{
+        // This has to be here for the validator to work and for no other reason.
+      },
+      errors: {}
     };
+
+    this.form = new ReactFormInputValidation(this);
+    this.form.useRules(this.ruleObject(this.props.subject));
   }
 
   propertyObject(subject) {
@@ -60,30 +70,56 @@ class InputForm extends React.Component {
     return state;
   }
 
+  ruleObject(subject) {
+    const ruleObject = {};
+
+    Object.keys(fields[subject]).forEach((key) => {
+      const field = fields[subject][key];
+      if (field.meta && field.subFields) {
+        ruleObject[key] = {};
+        Object.keys(field.subFields).forEach((subField) => {
+          if (field.subFields[subField].rules !== undefined) {
+            ruleObject[key][subField] = field.subFields[subField].rules;
+          }
+        });
+        if (Object.keys(ruleObject[key]).length === 0) {
+          delete ruleObject[key];
+        }
+      } else {
+        if (field.rules !== undefined) {
+          ruleObject[key] = field.rules;
+        }
+      }
+    });
+    return ruleObject;
+  }
+
   handleChange(e) {
+    this.form.handleChangeEvent(e);
     const { id, value } = e.target;
     const [parentKey, subKey] = id.split(".");
 
     if (subKey) {
-      this.setState((prevState) => ({
+      this.setState(prevState => ({
         item: {
           ...prevState.item,
           [parentKey]: {
             ...prevState.item[parentKey],
-            [subKey]: value,
-          },
-        },
+            [subKey]: value
+          }
+        }
       }));
     } else {
-      this.setState((prevState) => ({
+      this.setState(prevState => ({
         item: {
           ...prevState.item,
-          [id]: value,
-        },
+          [id]: value
+        }
       }));
     }
   }
 
+  // TODO: Validate before submit
   async buttonSubmit(e) {
     e.preventDefault();
     this.addOrUpdate().then((response) => {
@@ -300,6 +336,7 @@ class InputForm extends React.Component {
                         name={`${key}.${subKey}`}
                         value={subValue}
                         onChange={this.handleChange}
+                        onBlur={this.form.handleBlurEvent}
                         type="select"
                       >
                         <option value="">Select a state</option>
@@ -321,6 +358,7 @@ class InputForm extends React.Component {
                         value={subValue}
                         onChange={this.handleChange}
                         type={field.subFields[subKey].type}
+                        onBlur={this.form.handleBlurEvent}
                       />
                     </div>
                   );
@@ -339,6 +377,7 @@ class InputForm extends React.Component {
                 name={key}
                 value={value}
                 onChange={this.handleChange}
+                onBlur={this.form.handleBlurEvent}
                 type="select"
               >
                 <option value="">Select a prison</option>
@@ -361,6 +400,7 @@ class InputForm extends React.Component {
                 name={key}
                 value={value}
                 onChange={this.handleChange}
+                onBlur={this.form.handleBlurEvent}
                 type="select"
               >
                 <option value="">Select a state</option>
@@ -383,6 +423,7 @@ class InputForm extends React.Component {
                 name={key}
                 value={value}
                 onChange={this.handleChange}
+                onBlur={this.form.handleBlurEvent}
                 type="select"
               >
                 <option value="">Select a role</option>
@@ -405,6 +446,7 @@ class InputForm extends React.Component {
                 name={key}
                 value={value}
                 onChange={this.handleChange}
+                onBlur={this.form.handleBlurEvent}
                 type={field.type}
                 disabled
               />
@@ -421,8 +463,11 @@ class InputForm extends React.Component {
                 name={key}
                 value={value}
                 onChange={this.handleChange}
+                onBlur={this.form.handleBlurEvent}
                 type={field.type}
               />
+              {console.log(key)}
+              <Label className="error">{this.state.errors[key]}</Label>
             </FormGroup>
           </div>
         );
