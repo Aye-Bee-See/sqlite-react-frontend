@@ -45,6 +45,7 @@ class InputForm extends React.Component {
       message: "",
       fields:{
         // This has to be here for the validator to work and for no other reason.
+        // TODO: Change validation to not require superflous things like this.
       },
       errors: {}
     };

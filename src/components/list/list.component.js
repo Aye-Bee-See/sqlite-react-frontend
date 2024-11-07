@@ -11,8 +11,6 @@ import Item from '../individual/item.component';
 
 class ListPage extends Component {
 
-  //TODO: Get rid of all of these switch statements
-
   constructor(props) {
     super(props);
     
@@ -129,7 +127,6 @@ class ListPage extends Component {
         return this.state.currentRule && `/rule/${this.state.currentRule.id}`}
       } }
 
-      //TODO: Make this work for all routes
   async handleDataFromChild(item) {
     switch (this.props.subject) {
       case "Prisoner": {
