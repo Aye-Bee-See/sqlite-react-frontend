@@ -35,11 +35,13 @@ var fields = {
      title: "Inmate ID",
      type: "text",
      default: '',
+     rules: 'string'
    },
    releaseDate: {
      title: "Release Date",
      type: "date",
-     default: '1999-09-09' 
+     default: '1999-09-09',
+     rules: 'date' 
    }
  },
  User: {
@@ -52,38 +54,46 @@ var fields = {
   username: {
     title: "Username",
     type: "text",
-    default: ''
+    default: '',
+    rules: 'required|string|between:3,20'
   },
   password: {
     title: "Password",
     type: "password",
-    default: ''
+    default: '',
+    rules: 'required|string|between:8,60'
   },
   email: {
     title: "Email",
     type: "email",
-    default: ''
+    default: '',
+    rules:'email|between:5,30'
   },
   role: {
     title: "Role",
     type: "select",
     default: 'admin',
+    rules:'required|string|in:admin,user,banned'
   },
   name: {
     title: "Name",
     type: "text",
-    default: ''
+    default: '',
+    rules: 'string'
   }
  },
  Prison: {
-  id: { title: "ID",
-        type: "number",
-        default: null,
-        disabled: true
+  id: { 
+    title: "ID",
+    type: "number",
+    default: null,
+    disabled: true
   },
-  prisonName: { title: "Prison Name",
-                type: "text",
-                default: ""
+  prisonName: { 
+    title: "Prison Name",
+    type: "text",
+    default: "",
+    rules: 'required|string'
   },
   address: {
     meta: true,
@@ -92,41 +102,48 @@ var fields = {
       street: {
         title: "Street",
         type: "text",
-        default: ""
+        default: "",
+        rules: 'string'
       },
       city: {
         title: "City",
         type: "text",
-        default: ""
+        default: "",
+        rules: 'string'
       },
       state: {
         title: "State",
         type: "select",
-        default: ""
+        default: "",
+        rules: 'string'
       },
       country: {
         title: "Country",
         type: "text",
-        default: ""
+        default: "",
+        rules: 'string'
       },
     }
   }
  },
  Rule: {
-  id: { title: "ID",
-        type: "number",
-        default: -1,
-        disabled: true
+  id: { 
+    title: "ID",
+    type: "number",
+    default: -1,
+    disabled: true
   },
   title: {
         title: "Title",
         type: "text",
-        default: ""
+        default: "",
+        rules: 'required|string'
   },
   description: {
     title: "Description",
     type: "text",
-    default: ""
+    default: "",
+    rules: 'string'
   }
  }
 }
