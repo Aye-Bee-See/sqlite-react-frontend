@@ -41,12 +41,8 @@ class InputForm extends React.Component {
 
     this.state = {
       prisons: [],
-      item: po,
       message: "",
-      fields:{
-        // This has to be here for the validator to work and for no other reason.
-        // TODO: Change validation to not require superflous things like this.
-      },
+      fields: po,
       errors: {}
     };
 
@@ -102,18 +98,18 @@ class InputForm extends React.Component {
 
     if (subKey) {
       this.setState(prevState => ({
-        item: {
-          ...prevState.item,
+        fields: {
+          ...prevState.fields,
           [parentKey]: {
-            ...prevState.item[parentKey],
+            ...prevState.fields[parentKey],
             [subKey]: value
           }
         }
       }));
     } else {
       this.setState(prevState => ({
-        item: {
-          ...prevState.item,
+        fields: {
+          ...prevState.fields,
           [id]: value
         }
       }));
@@ -127,7 +123,7 @@ class InputForm extends React.Component {
       if (response) {
         if (this.props.handleDataFromChild) {
           this.props
-            .handleDataFromChild(this.state.item)
+            .handleDataFromChild(this.state.fields)
             .then(this.clearFields());
         } else {
           this.clearFields();
@@ -142,7 +138,7 @@ class InputForm extends React.Component {
       switch (this.props.subject) {
         case "Prisoner":
           if (this.props.solo) {
-            response = await PrisonerNetworkService.updateOne(this.state.item);
+            response = await PrisonerNetworkService.updateOne(this.state.fields);
             if (response.status === 200) {
               this.props.router.navigate("/prisoners");
               return true;
@@ -151,7 +147,7 @@ class InputForm extends React.Component {
               return false;
             }
           } else {
-            response = await PrisonerNetworkService.addOne(this.state.item);
+            response = await PrisonerNetworkService.addOne(this.state.fields);
             if (response.status === 200) {
               return true;
             } else {
@@ -161,7 +157,7 @@ class InputForm extends React.Component {
           }
         case "User":
           if (this.props.solo) {
-            response = await UserNetworkService.updateOne(this.state.item);
+            response = await UserNetworkService.updateOne(this.state.fields);
             if (response.status === 200) {
               this.props.router.navigate("/users");
               return true;
@@ -170,7 +166,7 @@ class InputForm extends React.Component {
               return false;
             }
           } else {
-            response = await UserNetworkService.addOne(this.state.item);
+            response = await UserNetworkService.addOne(this.state.fields);
             if (response.status === 200) {
               return true;
             } else {
@@ -180,7 +176,7 @@ class InputForm extends React.Component {
           }
         case "Prison":
           if (this.props.solo) {
-            response = await PrisonNetworkService.updateOne(this.state.item);
+            response = await PrisonNetworkService.updateOne(this.state.fields);
             if (response.status === 200) {
               this.props.router.navigate("/prisons");
               return true;
@@ -189,7 +185,7 @@ class InputForm extends React.Component {
               return false;
             }
           } else {
-            response = await PrisonNetworkService.addOne(this.state.item);
+            response = await PrisonNetworkService.addOne(this.state.fields);
             if (response.status === 200) {
               return true;
             } else {
@@ -199,7 +195,7 @@ class InputForm extends React.Component {
           }
         case "Rule":
           if (this.props.solo) {
-            response = await RuleNetworkService.updateOne(this.state.item);
+            response = await RuleNetworkService.updateOne(this.state.fields);
             if (response.status === 200) {
               this.props.router.navigate("/rules");
               return true;
@@ -208,7 +204,7 @@ class InputForm extends React.Component {
               return false;
             }
           } else {
-            response = await RuleNetworkService.addOne(this.state.item);
+            response = await RuleNetworkService.addOne(this.state.fields);
             if (response.status === 200) {
               return true;
             } else {
@@ -280,7 +276,7 @@ class InputForm extends React.Component {
   getPrisoner(id) {
     PrisonerNetworkService.getOne(id).then((response) => {
       this.setState({
-        item: { ...response.data.data },
+        fields: { ...response.data.data },
       });
     });
   }
@@ -288,7 +284,7 @@ class InputForm extends React.Component {
   getUser(id) {
     UserNetworkService.getOne(id).then((response) => {
       this.setState({
-        item: { ...response.data.data },
+        fields: { ...response.data.data },
       });
     });
   }
@@ -296,7 +292,7 @@ class InputForm extends React.Component {
   getPrison(id) {
     PrisonNetworkService.getOne(id).then((response) => {
       this.setState({
-        item: { ...response.data.data },
+        fields: { ...response.data.data },
       });
     });
   }
@@ -304,7 +300,7 @@ class InputForm extends React.Component {
   getRule(id) {
     RuleNetworkService.getOne(id).then((response) => {
       this.setState({
-        item: { ...response.data.data },
+        fields: { ...response.data.data },
       });
     });
   }
@@ -312,14 +308,14 @@ class InputForm extends React.Component {
   async clearFields() {
     var po = this.propertyObject(this.props.subject);
     this.setState({
-      item: po,
+      fields: po,
     });
   }
 
   displayFields() {
     return Object.keys(fields[this.props.subject]).map((key) => {
       const field = fields[this.props.subject][key];
-      const value = this.state.item[key] === -1 ? '' : this.state.item[key];
+      const value = this.state.fields[key] === -1 ? '' : this.state.fields[key];
 
       if (field.meta && field.subFields) {
         return (
@@ -327,7 +323,7 @@ class InputForm extends React.Component {
             <FormGroup>
               <Label>{field.title}:</Label>
               {Object.keys(field.subFields).map((subKey) => {
-                const subValue = this.state.item[key] && this.state.item[key][subKey] === -1 ? '' : this.state.item[key][subKey];
+                const subValue = this.state.fields[key] && this.state.fields[key][subKey] === -1 ? '' : this.state.fields[key][subKey];
                 if (subKey === "state") {
                   return (
                     <div key={subKey}>
