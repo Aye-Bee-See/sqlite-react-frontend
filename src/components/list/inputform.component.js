@@ -116,20 +116,22 @@ class InputForm extends React.Component {
     }
   }
 
-  // TODO: Validate before submit
+  // TODO: Display validation errors when failing to submit
   async buttonSubmit(e) {
     e.preventDefault();
-    this.addOrUpdate().then((response) => {
-      if (response) {
-        if (this.props.handleDataFromChild) {
-          this.props
-            .handleDataFromChild(this.state.fields)
-            .then(this.clearFields());
-        } else {
-          this.clearFields();
+    this.form.onformsubmit = (fields) => {
+      this.addOrUpdate().then((response) => {
+        if (response) {
+          if (this.props.handleDataFromChild) {
+            this.props
+              .handleDataFromChild(this.state.fields)
+              .then(this.clearFields());
+          } else {
+            this.clearFields();
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   async addOrUpdate() {
@@ -480,7 +482,7 @@ class InputForm extends React.Component {
             <Row>{this.displayFields()}</Row>
             <Row>
               <Col>
-                <Button color="primary" onClick={this.buttonSubmit}>
+                <Button color={this.state.errors ? "primary" : ""} onClick={this.buttonSubmit}>
                   {this.props.solo
                     ? `Update ${this.props.subject}`
                     : `Add ${this.props.subject}`}
