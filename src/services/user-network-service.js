@@ -12,7 +12,7 @@ class UserDataService {
   }
   async updateOne(params) {
     const response = await http.put('/auth/user', params);
-    return response; 
+    return response;
   }
   async addOne(params) {
     const response = await http.post('/auth/user', params);

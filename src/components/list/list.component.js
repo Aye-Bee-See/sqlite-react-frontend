@@ -11,6 +11,8 @@ import Item from '../individual/item.component';
 
 class ListPage extends Component {
 
+  //TODO: Get rid of all of these switch statements
+
   constructor(props) {
     super(props);
     
