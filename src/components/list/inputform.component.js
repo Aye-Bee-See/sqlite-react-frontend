@@ -1,10 +1,11 @@
 import React from "react";
 import {
-  Alert,
   Button,
   Col,
   Container,
   Form,
+  FormGroup,
+  Label,
   Row,
 } from "reactstrap";
 import PrisonerNetworkService from "../../services/prisoner-network-service";
@@ -117,7 +118,7 @@ class InputForm extends React.Component {
     }
   }
 
-  // TODO: Display validation errors when failing to submit
+  // TODO: Display validation before blurring the field
   async buttonSubmit(e) {
     e.preventDefault();
     this.form.onformsubmit = (fields) => {
