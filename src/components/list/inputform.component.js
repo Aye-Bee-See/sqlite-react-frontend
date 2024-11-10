@@ -5,7 +5,6 @@ import {
   Col,
   Container,
   Form,
-  FormFeedback,
   FormGroup,
   Input,
   Label,
@@ -140,89 +139,43 @@ class InputForm extends React.Component {
   async addOrUpdate() {
     try {
       let response;
-      switch (this.props.subject) {
-        case "Prisoner":
-          if (this.props.solo) {
-            response = await PrisonerNetworkService.updateOne(this.state.fields);
-            if (response.status === 200) {
-              this.props.router.navigate("/prisoners");
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          } else {
-            response = await PrisonerNetworkService.addOne(this.state.fields);
-            if (response.status === 200) {
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          }
-        case "User":
-          if (this.props.solo) {
-            response = await UserNetworkService.updateOne(this.state.fields);
-            if (response.status === 200) {
-              this.props.router.navigate("/users");
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          } else {
-            response = await UserNetworkService.addOne(this.state.fields);
-            if (response.status === 200) {
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          }
-        case "Prison":
-          if (this.props.solo) {
-            response = await PrisonNetworkService.updateOne(this.state.fields);
-            if (response.status === 200) {
-              this.props.router.navigate("/prisons");
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          } else {
-            response = await PrisonNetworkService.addOne(this.state.fields);
-            if (response.status === 200) {
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          }
-        case "Rule":
-          if (this.props.solo) {
-            response = await RuleNetworkService.updateOne(this.state.fields);
-            if (response.status === 200) {
-              this.props.router.navigate("/rules");
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          } else {
-            response = await RuleNetworkService.addOne(this.state.fields);
-            if (response.status === 200) {
-              return true;
-            } else {
-              this.setMessage(response.data.info);
-              return false;
-            }
-          }
-        default:
+      const networkService = this.getNetworkService(this.props.subject);
+      if (this.props.solo) {
+        response = await networkService.updateOne(this.state.fields);
+        if (response.status === 200) {
+          this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
+          return true;
+        } else {
+          this.setMessage(response.data.info);
           return false;
+        }
+      } else {
+        response = await networkService.addOne(this.state.fields);
+        if (response.status === 200) {
+          return true;
+        } else {
+          this.setMessage(response.data.info);
+          return false;
+        }
       }
     } catch (error) {
       this.setMessage(error.response.data.error);
       return false;
+    }
+  }
+
+  getNetworkService(subject) {
+    switch (subject) {
+      case "Prisoner":
+        return PrisonerNetworkService;
+      case "User":
+        return UserNetworkService;
+      case "Prison":
+        return PrisonNetworkService;
+      case "Rule":
+        return RuleNetworkService;
+      default:
+        throw new Error("Invalid subject");
     }
   }
 
@@ -323,165 +276,84 @@ class InputForm extends React.Component {
       const value = this.state.fields[key] === -1 ? '' : this.state.fields[key];
 
       if (field.meta && field.subFields) {
-        return (
-          <div key={key}>
-            <FormGroup>
-              <Label>{field.title}:</Label>
-              {Object.keys(field.subFields).map((subKey) => {
-                const subValue = this.state.fields[key] && this.state.fields[key][subKey] === -1 ? '' : this.state.fields[key][subKey];
-                if (subKey === "state") {
-                  return (
-                    <div key={subKey}>
-                      <Label>{field.subFields[subKey].title}:</Label>
-                      <Input
-                        id={`${key}.${subKey}`}
-                        name={`${key}.${subKey}`}
-                        value={subValue}
-                        onChange={this.handleChange}
-                        onBlur={this.form.handleBlurEvent}
-                        type="select"
-                      >
-                        <option value="">Select a state</option>
-                        {states.map((state) => (
-                          <option key={state} value={state}>
-                            {state}
-                          </option>
-                        ))}
-                      </Input>
-                      {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div key={subKey}>
-                      <Label>{field.subFields[subKey].title}:</Label>
-                      <Input
-                        id={`${key}.${subKey}`}
-                        name={`${key}.${subKey}`}
-                        value={subValue}
-                        onChange={this.handleChange}
-                        type={field.subFields[subKey].type}
-                        onBlur={this.form.handleBlurEvent}
-                      />
-                        {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
-                    </div>
-                  );
-                }
-              })}
-            </FormGroup>
-          </div>
-        );
+        return this.renderSubFields(key, field);
       } else if (key === "prison") {
-        return (
-          <div key={key}>
-            <FormGroup>
-              <Label>{field.title}:</Label>
-              <Input
-                id={key}
-                name={key}
-                value={value}
-                onChange={this.handleChange}
-                onBlur={this.form.handleBlurEvent}
-                type="select"
-              >
-                <option value="">Select a prison</option>
-                {this.state.prisons.map((prison) => (
-                  <option key={prison.id} value={prison.id}>
-                    {prison.prisonName}
-                  </option>
-                ))}
-              </Input>
-              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
-            </FormGroup>
-          </div>
-        );
+        return this.renderSelectField(key, field, this.state.prisons, "prisonName");
       } else if (key === "state") {
-        return (
-          <div key={key}>
-            <FormGroup>
-              <Label>{field.title}:</Label>
-              <Input
-                id={key}
-                name={key}
-                value={value}
-                onChange={this.handleChange}
-                onBlur={this.form.handleBlurEvent}
-                type="select"
-              >
-                <option value="">Select a state</option>
-                {states.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </Input>
-              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
-            </FormGroup>
-          </div>
-        );
+        return this.renderSelectField(key, field, states);
       } else if (key === "role") {
-        return (
-          <div key={key}>
-            <FormGroup>
-              <Label>{field.title}:</Label>
-              <Input
-                id={key}
-                name={key}
-                value={value}
-                onChange={this.handleChange}
-                onBlur={this.form.handleBlurEvent}
-                type="select"
-              >
-                <option value="">Select a role</option>
-                {roles.map((role) => (
-                  <option key={role} value={role}>
-                    {role}
-                  </option>
-                ))}
-              </Input>
-              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
-            </FormGroup>
-          </div>
-        );
+        return this.renderSelectField(key, field, roles);
       } else if (key === "id") {
-        return (
-          <div key={key}>
-            <FormGroup>
-              <Label>{field.title}:</Label>
-              <Input
-                id={key}
-                name={key}
-                value={value}
-                onChange={this.handleChange}
-                onBlur={this.form.handleBlurEvent}
-                type={field.type}
-                disabled
-              />
-                {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
-            </FormGroup>
-          </div>
-        );
+        return this.renderInputField(key, field, value, true);
       } else {
-        return (
-          <div key={key}>
-            <FormGroup>
-              <Label>{field.title}:</Label>
-              <Input
-                id={key}
-                name={key}
-                value={value}
-                onChange={this.handleChange}
-                onBlur={this.form.handleBlurEvent}
-                type={field.type}
-                data-attribute-name={field.title}
-              />
-              {console.log(key)}
-              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
-            </FormGroup>
-          </div>
-        );
+        return this.renderInputField(key, field, value);
       }
     });
+  }
+
+  renderSubFields(key, field) {
+    return (
+      <div key={key}>
+        <FormGroup>
+          <Label>{field.title}:</Label>
+          {Object.keys(field.subFields).map((subKey) => {
+            const subValue = this.state.fields[key] && this.state.fields[key][subKey] === -1 ? '' : this.state.fields[key][subKey];
+            if (subKey === "state") {
+              return this.renderSelectField(`${key}.${subKey}`, field.subFields[subKey], states, null, subValue);
+            } else {
+              return this.renderInputField(`${key}.${subKey}`, field.subFields[subKey], subValue);
+            }
+          })}
+        </FormGroup>
+      </div>
+    );
+  }
+
+  renderSelectField(id, field, options, optionLabel = null, value = this.state.fields[id]) {
+    return (
+      <div key={id}>
+        <FormGroup>
+          <Label>{field.title}:</Label>
+          <Input
+            id={id}
+            name={id}
+            value={value}
+            onChange={this.handleChange}
+            onBlur={this.form.handleBlurEvent}
+            type="select"
+          >
+            <option value="">Select an option</option>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {optionLabel ? option[optionLabel] : option}
+              </option>
+            ))}
+          </Input>
+          {this.state.errors[id] ? <Alert color="danger" className="error">{this.state.errors[id]}</Alert> : "" }
+        </FormGroup>
+      </div>
+    );
+  }
+
+  renderInputField(id, field, value, disabled = false) {
+    return (
+      <div key={id}>
+        <FormGroup>
+          <Label>{field.title}:</Label>
+          <Input
+            id={id}
+            name={id}
+            value={value}
+            onChange={this.handleChange}
+            onBlur={this.form.handleBlurEvent}
+            type={field.type}
+            disabled={disabled}
+            data-attribute-name={field.title}
+          />
+          {this.state.errors[id] ? <Alert color="danger" className="error">{this.state.errors[id]}</Alert> : "" }
+        </FormGroup>
+      </div>
+    );
   }
 
   render() {
