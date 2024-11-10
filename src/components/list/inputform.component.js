@@ -5,9 +5,6 @@ import {
   Col,
   Container,
   Form,
-  FormGroup,
-  Input,
-  Label,
   Row,
 } from "reactstrap";
 import PrisonerNetworkService from "../../services/prisoner-network-service";
@@ -18,6 +15,8 @@ import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
 import { states, roles } from "../../global_vars/options";
 import ReactFormInputValidation from "react-form-input-validation";
+import InputField from "./InputField";
+import SelectField from "./SelectField";
 
 class InputForm extends React.Component {
   constructor(props) {
@@ -278,15 +277,65 @@ class InputForm extends React.Component {
       if (field.meta && field.subFields) {
         return this.renderSubFields(key, field);
       } else if (key === "prison") {
-        return this.renderSelectField(key, field, this.state.prisons, "prisonName");
+        return (
+          <SelectField
+            id={key}
+            field={field}
+            options={this.state.prisons}
+            optionLabel="prisonName"
+            value={value}
+            handleChange={this.handleChange}
+            handleBlurEvent={this.form.handleBlurEvent}
+            errors={this.state.errors}
+          />
+        );
       } else if (key === "state") {
-        return this.renderSelectField(key, field, states);
+        return (
+          <SelectField
+            id={key}
+            field={field}
+            options={states}
+            value={value}
+            handleChange={this.handleChange}
+            handleBlurEvent={this.form.handleBlurEvent}
+            errors={this.state.errors}
+          />
+        );
       } else if (key === "role") {
-        return this.renderSelectField(key, field, roles);
+        return (
+          <SelectField
+            id={key}
+            field={field}
+            options={roles}
+            value={value}
+            handleChange={this.handleChange}
+            handleBlurEvent={this.form.handleBlurEvent}
+            errors={this.state.errors}
+          />
+        );
       } else if (key === "id") {
-        return this.renderInputField(key, field, value, true);
+        return (
+          <InputField
+            id={key}
+            field={field}
+            value={value}
+            handleChange={this.handleChange}
+            handleBlurEvent={this.form.handleBlurEvent}
+            errors={this.state.errors}
+            disabled={true}
+          />
+        );
       } else {
-        return this.renderInputField(key, field, value);
+        return (
+          <InputField
+            id={key}
+            field={field}
+            value={value}
+            handleChange={this.handleChange}
+            handleBlurEvent={this.form.handleBlurEvent}
+            errors={this.state.errors}
+          />
+        );
       }
     });
   }
@@ -299,58 +348,30 @@ class InputForm extends React.Component {
           {Object.keys(field.subFields).map((subKey) => {
             const subValue = this.state.fields[key] && this.state.fields[key][subKey] === -1 ? '' : this.state.fields[key][subKey];
             if (subKey === "state") {
-              return this.renderSelectField(`${key}.${subKey}`, field.subFields[subKey], states, null, subValue);
+              return (
+                <SelectField
+                  id={`${key}.${subKey}`}
+                  field={field.subFields[subKey]}
+                  options={states}
+                  value={subValue}
+                  handleChange={this.handleChange}
+                  handleBlurEvent={this.form.handleBlurEvent}
+                  errors={this.state.errors}
+                />
+              );
             } else {
-              return this.renderInputField(`${key}.${subKey}`, field.subFields[subKey], subValue);
+              return (
+                <InputField
+                  id={`${key}.${subKey}`}
+                  field={field.subFields[subKey]}
+                  value={subValue}
+                  handleChange={this.handleChange}
+                  handleBlurEvent={this.form.handleBlurEvent}
+                  errors={this.state.errors}
+                />
+              );
             }
           })}
-        </FormGroup>
-      </div>
-    );
-  }
-
-  renderSelectField(id, field, options, optionLabel = null, value = this.state.fields[id]) {
-    return (
-      <div key={id}>
-        <FormGroup>
-          <Label>{field.title}:</Label>
-          <Input
-            id={id}
-            name={id}
-            value={value}
-            onChange={this.handleChange}
-            onBlur={this.form.handleBlurEvent}
-            type="select"
-          >
-            <option value="">Select an option</option>
-            {options.map((option) => (
-              <option key={option} value={option}>
-                {optionLabel ? option[optionLabel] : option}
-              </option>
-            ))}
-          </Input>
-          {this.state.errors[id] ? <Alert color="danger" className="error">{this.state.errors[id]}</Alert> : "" }
-        </FormGroup>
-      </div>
-    );
-  }
-
-  renderInputField(id, field, value, disabled = false) {
-    return (
-      <div key={id}>
-        <FormGroup>
-          <Label>{field.title}:</Label>
-          <Input
-            id={id}
-            name={id}
-            value={value}
-            onChange={this.handleChange}
-            onBlur={this.form.handleBlurEvent}
-            type={field.type}
-            disabled={disabled}
-            data-attribute-name={field.title}
-          />
-          {this.state.errors[id] ? <Alert color="danger" className="error">{this.state.errors[id]}</Alert> : "" }
         </FormGroup>
       </div>
     );
