@@ -1,9 +1,11 @@
 import React from "react";
 import {
+  Alert,
   Button,
   Col,
   Container,
   Form,
+  FormFeedback,
   FormGroup,
   Input,
   Label,
@@ -93,6 +95,7 @@ class InputForm extends React.Component {
 
   handleChange(e) {
     this.form.handleChangeEvent(e);
+    console.log(this.state.errors);
     const { id, value } = e.target;
     const [parentKey, subKey] = id.split(".");
 
@@ -345,6 +348,7 @@ class InputForm extends React.Component {
                           </option>
                         ))}
                       </Input>
+                      {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
                     </div>
                   );
                 } else {
@@ -359,6 +363,7 @@ class InputForm extends React.Component {
                         type={field.subFields[subKey].type}
                         onBlur={this.form.handleBlurEvent}
                       />
+                        {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
                     </div>
                   );
                 }
@@ -386,6 +391,7 @@ class InputForm extends React.Component {
                   </option>
                 ))}
               </Input>
+              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
             </FormGroup>
           </div>
         );
@@ -409,6 +415,7 @@ class InputForm extends React.Component {
                   </option>
                 ))}
               </Input>
+              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
             </FormGroup>
           </div>
         );
@@ -432,6 +439,7 @@ class InputForm extends React.Component {
                   </option>
                 ))}
               </Input>
+              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
             </FormGroup>
           </div>
         );
@@ -449,6 +457,7 @@ class InputForm extends React.Component {
                 type={field.type}
                 disabled
               />
+                {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
             </FormGroup>
           </div>
         );
@@ -464,9 +473,10 @@ class InputForm extends React.Component {
                 onChange={this.handleChange}
                 onBlur={this.form.handleBlurEvent}
                 type={field.type}
+                data-attribute-name={field.title}
               />
               {console.log(key)}
-              <Label className="error">{this.state.errors[key]}</Label>
+              {this.state.errors[key] ? <Alert color="danger" className="error">{this.state.errors[key]}</Alert> : "" }
             </FormGroup>
           </div>
         );
@@ -482,11 +492,16 @@ class InputForm extends React.Component {
             <Row>{this.displayFields()}</Row>
             <Row>
               <Col>
-                <Button color={this.state.errors ? "primary" : ""} onClick={this.buttonSubmit}>
+              <Button 
+                color={Object.keys(this.state.errors).length === 0 ? "primary" : ""}
+                onClick={this.buttonSubmit}
+                disabled={Object.keys(this.state.errors).length !== 0}
+              >
                   {this.props.solo
                     ? `Update ${this.props.subject}`
                     : `Add ${this.props.subject}`}
                 </Button>
+                <p>{Object.values(this.state.errors)}</p>
               </Col>
               <Col>
                 {" "}
