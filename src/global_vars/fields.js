@@ -1,5 +1,3 @@
-// TODO: Add validation for subjects beyond Prisoner
-
 var fields = {
   Prisoner: {
     id: {
