@@ -1,0 +1,52 @@
+/* ...existing code... */
+
+.form-signin,
+.form-signup {
+    display: block; /* Ensure forms are displayed */
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 300;
+    transition: opacity .5s ease, transform .5s ease;
+}
+
+.form-signin-left {
+    transform: translateX(-400px);
+    opacity: 0;
+}
+
+.form-signup-left {
+    transform: translateX(-400px);
+    opacity: 1;
+}
+
+.form-signup-down {
+    top: 0px;
+    opacity: 0;
+}
+
+/* Ensure inputs are visible */
+.form-signin input,
+.form-signup input {
+    color: #000; /* Change to black for better visibility */
+    font-size: 13px;
+    background: rgba(255, 255, 255, .8); /* Ensure background is visible */
+    border: 1px solid #ccc; /* Add border for better visibility */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.form-styling {
+    width: 100%;
+    height: 35px;
+    padding-left: 15px;
+    border: 1px solid #ccc; /* Add border for better visibility */
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, .8); /* Ensure background is visible */
+}
+
+/* ...existing code... */

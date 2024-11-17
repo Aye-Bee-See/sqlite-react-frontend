@@ -1,5 +1,5 @@
 import React from "react"
-import Login from "./login.component"
+import Login from "../home/login.component.old"
 
 export default class Home extends React.Component {
   render(){
