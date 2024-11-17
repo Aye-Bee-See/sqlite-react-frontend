@@ -112,7 +112,7 @@ class InputForm extends React.Component {
       this.setState(prevState => ({
         fields: {
           ...prevState.fields,
-          [id]: value
+          [id]: id === 'prison' ? parseInt(value) : value // Ensure prison field is set to the id
         }
       }));
     }
@@ -121,12 +121,15 @@ class InputForm extends React.Component {
   // TODO: Display validation before blurring the field
   async buttonSubmit(e) {
     e.preventDefault();
-    this.addOrUpdate().then((response) => {
-      if (response) {
+    this.addOrUpdate(this.state.token).then((response) => {
+      if (response && response.data) {
         if (this.props.handleDataFromChild) {
-          this.props
-            .handleDataFromChild(this.state.fields)
+          const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
+          if (response) {
+            this.props
+            .handleDataFromChild(updatedFields)
             .then(this.clearFields());
+          }
         } else {
           this.clearFields();
         }
@@ -137,20 +140,33 @@ class InputForm extends React.Component {
   async addOrUpdate(token) {
     try {
       let response;
+      const fields = { ...this.state.fields };
+
+      // Strip the id field when adding an item
+      if (!this.props.solo) {
+        delete fields.id;
+      }
+
+      // Ensure the prison field contains only the id
+      if (fields.prison && typeof fields.prison === 'object') {
+        fields.prison = fields.prison.id;
+      }
+
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
-        response = await networkService.updateOne(this.state.fields, token);
+        response = await networkService.updateOne(fields, token);
+
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
-          return true;
+          return false;
         } else {
           this.setMessage(response.data.info);
           return false;
         }
       } else {
-        response = await networkService.addOne(this.state.fields, token);
+        response = await networkService.addOne(fields, token);
         if (response.status === 200) {
-          return true;
+          return response.data;
         } else {
           this.setMessage(response.data.info);
           return false;
@@ -239,7 +255,6 @@ class InputForm extends React.Component {
   }
 
   getPrisoner(id) {
-    console.log(this.state.token);
     PrisonerNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },
