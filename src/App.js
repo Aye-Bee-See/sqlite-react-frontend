@@ -1,3 +1,6 @@
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'jquery/dist/jquery.min.js'
+import 'bootstrap/dist/js/bootstrap.min.js'
 import './App.css';
 import NavBar from './components/navbar.component';
 import {
@@ -8,8 +11,8 @@ import {
 import List from './components/list/list.component'
 import Home from './components/home/home.component';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import InputForm from './components/list/inputform.component';
+import Login from './components/login/login.component.js';
 
 export default function App() {
   return (
@@ -27,6 +30,7 @@ export default function App() {
         <Route path="messaging" element={<List subject="Message" key="Message" />} />
         <Route path="rules" element={<List subject="Rule" key="Rule"/>} />
         <Route path="rule/:id" element={<InputForm subject="Rule" key="Rule" solo />} />
+        <Route path="login" element={<Login/>}/>
       </Routes>
     </BrowserRouter>
     </>
