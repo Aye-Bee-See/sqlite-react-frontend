@@ -1,7 +1,8 @@
 import { MDBInput } from 'mdb-react-ui-kit';
 import React, { Component } from 'react';
-import { Button, Container, Row } from 'reactstrap';
+import { Button, Col, Container, Row } from 'reactstrap';
 import {initMDB, Input} from 'mdb-ui-kit';
+import loginNetworkService from '../../services/login-network-service';
 
 
 class Login extends Component {
@@ -27,8 +28,28 @@ class Login extends Component {
         this.setState({ activeTab: tab });
     }
 
+    clearFormFields = () => {
+        this.setState({
+            loginUsername: '',
+            loginPassword: '',
+            registerUsername: '',
+            registerName: '',
+            registerEmail: '',
+            registerPassword: '',
+            registerConfirmPassword: ''
+        });
+    }
+
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
+    }
+
+    login = (e) => {
+        e.preventDefault();
+        loginNetworkService.login(this.state.loginUsername, this.state.loginPassword).then((response) => {
+            console.log(response.data.data);
+            this.clearFormFields();
+        })
     }
 
     render() {
@@ -37,8 +58,12 @@ class Login extends Component {
         return (
             <div className="login-component">
                 <div className="tabs">
-                    <Button onClick={() => this.switchTab('login')} className={activeTab === 'login' ? 'active' : ''}>Login</Button>
-                    <Button onClick={() => this.switchTab('register')} className={activeTab === 'register' ? 'active' : ''}>Register</Button>
+                    <Container>
+                        <Row>
+                    <Col><Button onClick={() => this.switchTab('login')} className={activeTab === 'login' ? 'active' : ''}>Login</Button></Col>
+                    <Col><Button onClick={() => this.switchTab('register')} className={activeTab === 'register' ? 'active' : ''}>Register</Button></Col>
+                        </Row>
+                    </Container>
                 </div>
                 {activeTab === 'login' && (
                     <div className="login-form">
@@ -66,7 +91,7 @@ class Login extends Component {
                             value={this.state.loginPassword}
                             onChange={this.handleChange}
                         />
-                        <Button>Login</Button>
+                        <Button onClick={this.login}>Login</Button>
                         </Row>
 
                         </Container>
