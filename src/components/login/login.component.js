@@ -48,6 +48,8 @@ class Login extends Component {
         e.preventDefault();
         loginNetworkService.login(this.state.loginUsername, this.state.loginPassword).then((response) => {
             console.log(response.data.data);
+            localStorage.setItem('token', JSON.stringify(response.data.data.token));
+            localStorage.setItem('user', JSON.stringify(response.data.data.user));
             this.clearFormFields();
         })
     }
