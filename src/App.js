@@ -13,12 +13,20 @@ import Home from './components/home/home.component';
 import InputForm from './components/list/inputform.component';
 import Login from './components/login/login.component.js';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useEffect, useState } from 'react';
 
 export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('token'));
+
+  const handleSetToken = (newToken) => {
+    setToken(newToken);
+    localStorage.setItem('token', JSON.stringify(newToken));
+  };
+
   return (
     <>
       <BrowserRouter>
-        <NavBar />
+        <NavBar token={token} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="prisoners" element={<List subject="Prisoner" key="Prisoner" />} />
@@ -30,7 +38,7 @@ export default function App() {
           <Route path="messaging" element={<List subject="Message" key="Message" />} />
           <Route path="rules" element={<ProtectedRoute element={<List subject="Rule" key="Rule" />} />} />
           <Route path="rule/:id" element={<InputForm subject="Rule" key="Rule" solo />} />
-          <Route path="login" element={<Login />} />
+          <Route path="login" element={<Login setToken={handleSetToken} />} />
         </Routes>
       </BrowserRouter>
     </>

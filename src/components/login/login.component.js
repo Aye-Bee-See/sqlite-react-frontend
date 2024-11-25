@@ -47,9 +47,10 @@ class Login extends Component {
     login = (e) => {
         e.preventDefault();
         loginNetworkService.login(this.state.loginUsername, this.state.loginPassword).then((response) => {
-            console.log(response.data.data);
-            localStorage.setItem('token', JSON.stringify(response.data.data.token));
-            localStorage.setItem('user', JSON.stringify(response.data.data.user));
+            const token = response.data.data.token;
+            const user = response.data.data.user;
+            this.props.setToken(token);
+            localStorage.setItem('user', JSON.stringify(user));
             this.clearFormFields();
         })
     }
