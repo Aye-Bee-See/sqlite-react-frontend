@@ -6,7 +6,6 @@ export default class Home extends React.Component {
     return (
       <>
         <h1>Home</h1>
-        <Login/>
       </>
 
     )
