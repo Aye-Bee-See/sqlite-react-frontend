@@ -44,10 +44,15 @@ class ListPage extends Component {
       prisons: [],
       rules: [],
       searchName: ' ',
+      token: ''
       }
   }
 
   componentDidMount() {
+    this.setState({
+      token: this.props.token.token
+    });
+    
     this.getAllPrisoners();
     this.getAllUsers();
     this.getAllPrisons();
@@ -55,7 +60,7 @@ class ListPage extends Component {
   }
 
   getAllPrisoners() {
-    PrisonerNetworkService.getAll().then((response) => {
+    PrisonerNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         prisoners: Object.values(response.data.data)
       }, () => { }
@@ -64,7 +69,7 @@ class ListPage extends Component {
   };
 
   getAllUsers() {
-    UserNetworkService.getAll().then((response) => {
+    UserNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         users: Object.values(response.data.data)
       }, () => {  })
@@ -72,7 +77,7 @@ class ListPage extends Component {
   };
 
   getAllPrisons() {
-    PrisonNetworkService.getAll().then((response) => {
+    PrisonNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         prisons: Object.values(response.data.data)
       }, () => { })
@@ -80,7 +85,7 @@ class ListPage extends Component {
   }
 
   getAllRules() {
-    RuleNetworkService.getAll().then((response) => {
+    RuleNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         rules: Object.values(response.data.data)
       }, () => { })
@@ -300,7 +305,7 @@ class ListPage extends Component {
           )}
         </Col>
         </List>
-        <InputForm key={this.props} subject={this.props.subject} handleDataFromChild={this.handleDataFromChild}/>
+        <InputForm key={this.props} subject={this.props.subject} token={this.state.token} handleDataFromChild={this.handleDataFromChild}/>
       </Container>
     )
   }
