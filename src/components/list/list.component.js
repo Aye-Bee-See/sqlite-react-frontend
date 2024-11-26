@@ -50,46 +50,45 @@ class ListPage extends Component {
 
   componentDidMount() {
     this.setState({
-      token: this.props.token.token
+      token: JSON.parse(this.props.token)['token']
+    }, () => {
+      this.getAllPrisoners();
+      this.getAllUsers();
+      this.getAllPrisons();
+      this.getAllRules();
     });
-    
-    this.getAllPrisoners();
-    this.getAllUsers();
-    this.getAllPrisons();
-    this.getAllRules();
   }
 
   getAllPrisoners() {
     PrisonerNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         prisoners: Object.values(response.data.data)
-      }, () => { }
-    )
-    })
+      });
+    });
   };
 
   getAllUsers() {
     UserNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         users: Object.values(response.data.data)
-      }, () => {  })
-    })
+      });
+    });
   };
 
   getAllPrisons() {
     PrisonNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         prisons: Object.values(response.data.data)
-      }, () => { })
-    })
+      });
+    });
   }
 
   getAllRules() {
     RuleNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         rules: Object.values(response.data.data)
-      }, () => { })
-    })
+      });
+    });
   }
 
   listData() {
@@ -305,7 +304,7 @@ class ListPage extends Component {
           )}
         </Col>
         </List>
-        <InputForm key={this.props} subject={this.props.subject} token={this.state.token} handleDataFromChild={this.handleDataFromChild}/>
+        <InputForm key={this.props} subject={this.props.subject} token={this.props.token} handleDataFromChild={this.handleDataFromChild}/>
       </Container>
     )
   }
