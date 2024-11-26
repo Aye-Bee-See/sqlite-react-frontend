@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Navbar, Nav, NavItem } from 'reactstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { Navbar, Nav, NavItem, Button } from 'reactstrap';
 
-const NavBar = ({ token }) => {
+const NavBar = ({ token, logOut }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsAuthenticated(token !== null);
   }, [token]);
+
+  const handleLogOut = () => {
+    logOut();
+    navigate('/');
+  };
 
   return (
     <Navbar color="light" light expand="md">
@@ -29,6 +35,9 @@ const NavBar = ({ token }) => {
             </NavItem>
             <NavItem>
               <Link to="/rules" className="nav-link">Rules</Link>
+            </NavItem>
+            <NavItem>
+              <Button onClick={handleLogOut} className='nav-link'>Log Out</Button>
             </NavItem>
           </>
         ) : (
