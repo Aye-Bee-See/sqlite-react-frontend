@@ -44,7 +44,8 @@ class InputForm extends React.Component {
       prisons: [],
       message: "",
       fields: po,
-      errors: {}
+      errors: {},
+      token: ''
     };
 
     this.form = new ReactFormInputValidation(this);
@@ -136,12 +137,12 @@ class InputForm extends React.Component {
     }
   }
 
-  async addOrUpdate() {
+  async addOrUpdate(token) {
     try {
       let response;
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
-        response = await networkService.updateOne(this.state.fields);
+        response = await networkService.updateOne(this.state.fields, token);
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
           return true;
@@ -150,7 +151,7 @@ class InputForm extends React.Component {
           return false;
         }
       } else {
-        response = await networkService.addOne(this.state.fields);
+        response = await networkService.addOne(this.state.fields, token);
         if (response.status === 200) {
           return true;
         } else {
@@ -182,6 +183,9 @@ class InputForm extends React.Component {
   componentDidMount() {
     const { subject, solo } = this.props;
     const { id } = this.props.router.params;
+    this.setState({
+      token: this.props.token.token
+    })
     if (subject === "Prisoner") {
       this.fetchPrisons();
     }
@@ -232,7 +236,7 @@ class InputForm extends React.Component {
   }
 
   getPrisoner(id) {
-    PrisonerNetworkService.getOne(id).then((response) => {
+    PrisonerNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },
       });
@@ -240,7 +244,7 @@ class InputForm extends React.Component {
   }
 
   getUser(id) {
-    UserNetworkService.getOne(id).then((response) => {
+    UserNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },
       });
@@ -248,7 +252,7 @@ class InputForm extends React.Component {
   }
 
   getPrison(id) {
-    PrisonNetworkService.getOne(id).then((response) => {
+    PrisonNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },
       });
@@ -256,7 +260,7 @@ class InputForm extends React.Component {
   }
 
   getRule(id) {
-    RuleNetworkService.getOne(id).then((response) => {
+    RuleNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },
       });

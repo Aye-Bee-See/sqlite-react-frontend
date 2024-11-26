@@ -26,7 +26,7 @@ class Login extends React.Component {
 
   async testStatus(e) {
     e.preventDefault();
-    const token = localStorage.getItem('token')
+    const token = JSON.parse(localStorage.getItem('token'))['token'];
     console.log(token);
     LoginNetworkService.protected(token).then((response) => {
       console.log(response);
