@@ -184,7 +184,7 @@ class InputForm extends React.Component {
     const { subject, solo } = this.props;
     const { id } = this.props.router.params;
     this.setState({
-      token: this.props.token.token
+      token: JSON.parse(this.props.token)['token']
     })
     if (subject === "Prisoner") {
       this.fetchPrisons();
