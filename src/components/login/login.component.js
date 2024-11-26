@@ -49,8 +49,7 @@ class Login extends Component {
         loginNetworkService.login(this.state.loginUsername, this.state.loginPassword).then((response) => {
             const token = response.data.data.token;
             const user = response.data.data.user;
-            this.props.setToken(token);
-            localStorage.setItem('user', JSON.stringify(user));
+            this.props.setToken(token, user);
             this.clearFormFields();
         })
     }

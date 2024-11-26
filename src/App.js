@@ -17,16 +17,26 @@ import { useEffect, useState } from 'react';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [userDetails, setUserDetails] = useState(localStorage.getItem('userDetails'))
 
-  const handleSetToken = (newToken) => {
+  const handleSetToken = (newToken, userDetails) => {
     setToken(newToken);
+    setUserDetails(userDetails);
     localStorage.setItem('token', JSON.stringify(newToken));
+    localStorage.setItem('user', JSON.stringify(userDetails));
+  };
+
+  const logOut = () => {
+    setToken(null);
+    setUserDetails(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   return (
     <>
       <BrowserRouter>
-        <NavBar token={token} />
+        <NavBar token={token} logOut={logOut} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="prisoners" element={<List subject="Prisoner" key="Prisoner" token={token} />} />
@@ -39,6 +49,7 @@ export default function App() {
           <Route path="rules" element={<ProtectedRoute element={<List subject="Rule" key="Rule" token={token} />} />} />
           <Route path="rule/:id" element={<InputForm subject="Rule" key="Rule" token={token} solo />} />
           <Route path="login" element={<Login setToken={handleSetToken} />} />
+          <Route path="logout" element={<Home />} />
         </Routes>
       </BrowserRouter>
     </>
