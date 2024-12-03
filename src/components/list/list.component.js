@@ -49,14 +49,19 @@ class ListPage extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      token: JSON.parse(this.props.token)['token']
-    }, () => {
-      this.getAllPrisoners();
-      this.getAllUsers();
-      this.getAllPrisons();
-      this.getAllRules();
-    });
+    try {
+      const token = typeof this.props.token === 'string' && this.props.token.startsWith('{') ? JSON.parse(this.props.token) : this.props.token;
+      this.setState({
+        token: token['token'] || token
+      }, () => {
+        this.getAllPrisoners();
+        this.getAllUsers();
+        this.getAllPrisons();
+        this.getAllRules();
+      });
+    } catch (error) {
+      console.error("Invalid token format:", error);
+    }
   }
 
   getAllPrisoners() {
