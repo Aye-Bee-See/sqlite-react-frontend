@@ -183,9 +183,14 @@ class InputForm extends React.Component {
   componentDidMount() {
     const { subject, solo } = this.props;
     const { id } = this.props.router.params;
-    this.setState({
-      token: JSON.parse(this.props.token)['token']
-    })
+    try {
+      const token = typeof this.props.token === 'string' && this.props.token.startsWith('{') ? JSON.parse(this.props.token) : this.props.token;
+      this.setState({
+        token: token['token'] || token
+      });
+    } catch (error) {
+      console.error("Invalid token format:", error);
+    }
     if (subject === "Prisoner") {
       this.fetchPrisons();
     }

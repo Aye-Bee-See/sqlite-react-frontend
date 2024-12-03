@@ -2,11 +2,14 @@ import http from "../http-common";
 
 class LoginNetworkService {
   login(username, password) {
-    console.log(`Username: ${username}, Password: ${password}`);
     return http.post('/auth/login', {
       'username': username,
       'password': password
-    })
+    });
+  }
+
+  async register(params) {
+    return http.post('/auth/user', params);
   }
 
   protected(token) {
@@ -14,7 +17,7 @@ class LoginNetworkService {
       headers: {
         "Authorization": `Bearer ${token}`
       }
-    })
+    });
   }
 }
 

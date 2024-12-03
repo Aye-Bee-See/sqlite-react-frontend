@@ -22,7 +22,7 @@ export default function App() {
   const handleSetToken = (newToken, userDetails) => {
     setToken(newToken);
     setUserDetails(userDetails);
-    localStorage.setItem('token', JSON.stringify(newToken));
+    localStorage.setItem('token', JSON.stringify(newToken)); // Store token as a JSON string
     localStorage.setItem('user', JSON.stringify(userDetails));
   };
 

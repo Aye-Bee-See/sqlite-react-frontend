@@ -4,6 +4,8 @@ import { Button, Col, Container, Row } from 'reactstrap';
 import {initMDB, Input} from 'mdb-ui-kit';
 import loginNetworkService from '../../services/login-network-service';
 
+//TODO check for errors on login/register
+//TODO validate fields
 
 class Login extends Component {
     constructor(props) {
@@ -44,6 +46,7 @@ class Login extends Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
+    //TODO: Redirect after login
     login = (e) => {
         e.preventDefault();
         loginNetworkService.login(this.state.loginUsername, this.state.loginPassword).then((response) => {
@@ -51,6 +54,14 @@ class Login extends Component {
             const user = response.data.data.user;
             this.props.setToken(token, user);
             this.clearFormFields();
+        })
+    }
+
+    register = (e) => {
+        e.preventDefault();
+        const params = {username: this.state.registerUsername, name: this.state.registerName, email: this.state.registerEmail , password: this.state.registerPassword, role: 'user'};
+        loginNetworkService.register(params).then(() => {
+            this.switchTab('login');
         })
     }
 
@@ -155,7 +166,7 @@ class Login extends Component {
                         />
                             </Row>
                             <Row>
-                            <Button>Register</Button>
+                            <Button onClick={this.register}>Register</Button>
                             </Row>
                         </Container>
                     </div>
