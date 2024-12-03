@@ -78,6 +78,7 @@ class Login extends Component {
         }));
     }
 
+    //TODO: Redirect after login
     login = (e) => {
         e.preventDefault();
         loginNetworkService.login(this.state.fields.loginUsername, this.state.fields.loginPassword).then((response) => {
