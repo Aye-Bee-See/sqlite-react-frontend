@@ -4,9 +4,10 @@ import { Button, Col, Container, Row } from 'reactstrap';
 import {initMDB, Input} from 'mdb-ui-kit';
 import loginNetworkService from '../../services/login-network-service';
 import ReactFormInputValidation from "react-form-input-validation";
+import { Navigate } from 'react-router-dom';
+import withRouter from '../withRouter';
 
 //TODO check for errors on login/register
-//TODO validate fields
 
 class Login extends Component {
     constructor(props) {
@@ -78,17 +79,15 @@ class Login extends Component {
         }));
     }
 
-    //TODO: Redirect after login
     login = (e) => {
         e.preventDefault();
-        this.form.onformsubmit = (fields) => {
-            loginNetworkService.login(fields.loginUsername, fields.loginPassword).then((response) => {
-                const token = response.data.data.token;
-                const user = response.data.data.user;
-                this.props.setToken(token, user);
-                this.clearFormFields();
-            })
-        }
+        loginNetworkService.login(this.state.fields.loginUsername, this.state.fields.loginPassword).then((response) => {
+          const token = response.data.data.token;
+          const user = response.data.data.user;
+          this.props.setToken(token, user);
+          this.clearFormFields();
+          this.props.router.navigate('/');
+      })
     }
 
     register = (e) => {
@@ -99,8 +98,6 @@ class Login extends Component {
                 this.switchTab('login');
             });
         }
-        // const params = {username: this.state.registerUsername, name: this.state.registerName, email: this.state.registerEmail , password: this.state.registerPassword, role: 'user'};
-
     }
 
     render() {
@@ -245,4 +242,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);
