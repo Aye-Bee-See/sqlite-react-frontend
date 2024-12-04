@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Button, Col, Container, Row } from 'reactstrap';
 import {initMDB, Input} from 'mdb-ui-kit';
 import loginNetworkService from '../../services/login-network-service';
+import ReactFormInputValidation from "react-form-input-validation";
 
 //TODO check for errors on login/register
 //TODO validate fields
@@ -12,14 +13,39 @@ class Login extends Component {
         super(props);
         this.state = {
             activeTab: 'login',
+            fields: {
             loginUsername: '',
             loginPassword: '',
             registerUsername: '',
             registerName: '',
             registerEmail: '',
             registerPassword: '',
-            registerConfirmPassword: ''
+            registerPassword_confirmation: '' },
+            errors: {}
         };
+
+        this.form = new ReactFormInputValidation(this);
+        this.form.useRules({
+            loginUsername: 'required|string|between:3,20',
+            loginPassword: 'required|string|between:8,60',
+            registerUsername: 'required|string|between:3,20',
+            registerName: 'string',
+            registerEmail: 'email|between:5,30',
+            registerPassword: 'required|string|between:8,60|confirmed',
+            registerPassword_confirmation: 'required',
+        });
+
+    }
+    filterErrors = (type) => {
+      const { errors } = this.state;
+      const loginFields = ['loginUsername', 'loginPassword'];
+      const registerFields = ['registerUsername', 'registerName', 'registerEmail', 'registerPassword', 'registerPassword_confirmation'];
+
+      const fieldsToFilter = type === 'login' ? loginFields : registerFields;
+
+      return Object.keys(errors)
+      .filter(key => fieldsToFilter.includes(key))
+      .map(key => [errors[key]]);
     }
 
     componentDidMount(){
@@ -32,41 +58,55 @@ class Login extends Component {
 
     clearFormFields = () => {
         this.setState({
+            fields: {
             loginUsername: '',
             loginPassword: '',
             registerUsername: '',
             registerName: '',
             registerEmail: '',
             registerPassword: '',
-            registerConfirmPassword: ''
+            registerPassword_confirmation: '' }
         });
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+      console.log(this.state.errors);
+        this.setState(prevState => ({ 
+            fields: {
+            ...prevState.fields,
+            [e.target.name]: e.target.value }
+        }));
     }
 
     //TODO: Redirect after login
     login = (e) => {
         e.preventDefault();
-        loginNetworkService.login(this.state.loginUsername, this.state.loginPassword).then((response) => {
-            const token = response.data.data.token;
-            const user = response.data.data.user;
-            this.props.setToken(token, user);
-            this.clearFormFields();
-        })
+        this.form.onformsubmit = (fields) => {
+            loginNetworkService.login(fields.loginUsername, fields.loginPassword).then((response) => {
+                const token = response.data.data.token;
+                const user = response.data.data.user;
+                this.props.setToken(token, user);
+                this.clearFormFields();
+            })
+        }
     }
 
     register = (e) => {
         e.preventDefault();
-        const params = {username: this.state.registerUsername, name: this.state.registerName, email: this.state.registerEmail , password: this.state.registerPassword, role: 'user'};
-        loginNetworkService.register(params).then(() => {
-            this.switchTab('login');
-        })
+        this.form.onformsubmit = (fields) => {
+            const params = {username: fields.registerUsername, name: fields.registerName, email: fields.registerEmail , password: fields.registerPassword, role: 'user'};
+            loginNetworkService.register(params).then(() => {
+                this.switchTab('login');
+            });
+        }
+        // const params = {username: this.state.registerUsername, name: this.state.registerName, email: this.state.registerEmail , password: this.state.registerPassword, role: 'user'};
+
     }
 
     render() {
         const { activeTab } = this.state;
+        const hasLoginErrors = this.filterErrors('login').length > 0;
+        const hasRegisterErrors = this.filterErrors('register').length > 0;
 
         return (
             <div className="login-component">
@@ -91,20 +131,32 @@ class Login extends Component {
                             id='username'
                             className='form-control'
                             aria-describedby='username'
-                            value={this.state.loginUsername}
+                            data-attribute-name='username'
+                            onBlur={this.form.handleBlurEvent}
+                            value={this.state.fields.loginUsername}
                             onChange={this.handleChange}
+                            errors={this.state.errors}
                         />
                         </Row>
                         <Row>
                         <MDBInput
                             type="password"
                             wrapperClass='mb-4'
-                            name="loginPassword"
                             label="Password"
-                            value={this.state.loginPassword}
+                            name="loginPassword"
+                            id='password'
+                            className='form-control'
+                            aria-describedby='password'
+                            data-attribute-name='password'
+                            onBlur={this.form.handleBlurEvent}
+                            value={this.state.fields.loginPassword}
                             onChange={this.handleChange}
+                            errors={this.state.errors}
                         />
-                        <Button onClick={this.login}>Login</Button>
+                        <Button onClick={this.login} disabled={hasLoginErrors}>Login</Button>
+                        </Row>
+                        <Row>
+                        <p>{this.filterErrors('login')}</p>
                         </Row>
 
                         </Container>
@@ -120,9 +172,11 @@ class Login extends Component {
                             name="registerUsername"
                             label="Username"
                             wrapperClass='mb-4'
-
-                            value={this.state.registerUsername}
+                            data-attribute-name='username'
+                            value={this.state.fields.registerUsername}
+                            onBlur={this.form.handleBlurEvent}
                             onChange={this.handleChange}
+                            errors={this.state.errors}
                         />
                         </Row>
                         <Row>
@@ -131,8 +185,11 @@ class Login extends Component {
                             name="registerName"
                             label="Name"
                             wrapperClass='mb-4'
-                            value={this.state.registerName}
+                            data-attribute-name='name'
+                            onBlur={this.form.handleBlurEvent}
+                            value={this.state.fields.registerName}
                             onChange={this.handleChange}
+                            errors={this.state.errors}
                         />
                         </Row>
                         <Row>
@@ -141,8 +198,11 @@ class Login extends Component {
                             name="registerEmail"
                             label="Email"
                             wrapperClass='mb-4'
-                            value={this.state.registerEmail}
+                            data-attribute-name='email'
+                            onBlur={this.form.handleBlurEvent}
+                            value={this.state.fields.registerEmail}
                             onChange={this.handleChange}
+                            errors={this.state.errors}
                         />
                         </Row>
                         <Row>
@@ -151,22 +211,31 @@ class Login extends Component {
                             name="registerPassword"
                             label="Password"
                             wrapperClass='mb-4'
-                            value={this.state.registerPassword}
+                            data-attribute-name='password'
+                            onBlur={this.form.handleBlurEvent}
+                            value={this.state.fields.registerPassword}
                             onChange={this.handleChange}
+                            errors={this.state.errors}
                         />    
                             </Row>
                             <Row>
                             <MDBInput
                             type="password"
-                            name="registerConfirmPassword"
+                            name="registerPassword_confirmation"
                             label="Confirm Password"
                             wrapperClass='mb-4'
-                            value={this.state.registerConfirmPassword}
+                            data-attribute-name='verify password'
+                            onBlur={this.form.handleBlurEvent}
+                            value={this.state.fields.registerPassword_confirmation}
                             onChange={this.handleChange}
+                            errors={this.state.errors}
                         />
                             </Row>
                             <Row>
-                            <Button onClick={this.register}>Register</Button>
+                            <Button onClick={this.register} disabled={hasRegisterErrors}>Register</Button>
+                            </Row>
+                            <Row>
+                            <p>{this.filterErrors('register')}</p>
                             </Row>
                         </Container>
                     </div>
