@@ -95,7 +95,6 @@ class InputForm extends React.Component {
 
   handleChange(e) {
     this.form.handleChangeEvent(e);
-    console.log(this.state.errors);
     const { id, value } = e.target;
     const [parentKey, subKey] = id.split(".");
 
