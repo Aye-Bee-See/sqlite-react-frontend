@@ -121,19 +121,17 @@ class InputForm extends React.Component {
   // TODO: Display validation before blurring the field
   async buttonSubmit(e) {
     e.preventDefault();
-    this.form.onformsubmit = (fields) => {
-      this.addOrUpdate().then((response) => {
-        if (response) {
-          if (this.props.handleDataFromChild) {
-            this.props
-              .handleDataFromChild(this.state.fields)
-              .then(this.clearFields());
-          } else {
-            this.clearFields();
-          }
+    this.addOrUpdate().then((response) => {
+      if (response) {
+        if (this.props.handleDataFromChild) {
+          this.props
+            .handleDataFromChild(this.state.fields)
+            .then(this.clearFields());
+        } else {
+          this.clearFields();
         }
-      });
-    }
+      }
+    });
   }
 
   async addOrUpdate(token) {
