@@ -184,35 +184,36 @@ class InputForm extends React.Component {
       const token = typeof this.props.token === 'string' && this.props.token.startsWith('{') ? JSON.parse(this.props.token) : this.props.token;
       this.setState({
         token: token['token'] || token
+      },() => {
+        if (subject === "Prisoner") {
+          this.fetchPrisons();
+        }
+    
+        if (solo) {
+          switch (subject) {
+            case "Prisoner": {
+              this.getPrisoner(id);
+              break;
+            }
+            case "User": {
+              this.getUser(id);
+              break;
+            }
+            case "Prison": {
+              this.getPrison(id);
+              break;
+            }
+            case "Rule": {
+              this.getRule(id);
+              break;
+            }
+            default: {
+            }
+          }
+        }
       });
     } catch (error) {
       console.error("Invalid token format:", error);
-    }
-    if (subject === "Prisoner") {
-      this.fetchPrisons();
-    }
-
-    if (solo) {
-      switch (subject) {
-        case "Prisoner": {
-          this.getPrisoner(id);
-          break;
-        }
-        case "User": {
-          this.getUser(id);
-          break;
-        }
-        case "Prison": {
-          this.getPrison(id);
-          break;
-        }
-        case "Rule": {
-          this.getRule(id);
-          break;
-        }
-        default: {
-        }
-      }
     }
   }
 
@@ -238,6 +239,7 @@ class InputForm extends React.Component {
   }
 
   getPrisoner(id) {
+    console.log(this.state.token);
     PrisonerNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },
