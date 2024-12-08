@@ -24,7 +24,6 @@ class ListPage extends Component {
     this.setActiveUser = this.setActiveUser.bind(this);
     this.setActiveRule = this.setActiveRule.bind(this);
 
-    this.addPrisoner = this.addPrisoner.bind(this);
     this.onChangeSearchName = this.onChangeSearchName.bind(this);
     this.handleDataFromChild = this.handleDataFromChild.bind(this);
     this.displayFields = this.displayFields.bind(this);
@@ -186,11 +185,6 @@ class ListPage extends Component {
         console.error("Unknown subject:", this.props.subject);
       }
     }
-  }
-
-  addPrisoner() {
-    PrisonerNetworkService.addOne(this.state.token).then((response) => {
-    })
   }
 
   setActivePrisoner(prisoner, index) {
