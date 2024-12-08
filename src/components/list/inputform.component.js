@@ -155,6 +155,7 @@ class InputForm extends React.Component {
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
         response = await networkService.updateOne(fields, token);
+
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
           return false;
@@ -164,6 +165,7 @@ class InputForm extends React.Component {
         }
       } else {
         response = await networkService.addOne(fields, token);
+
         if (response.status === 200) {
           return response.data;
         } else {
