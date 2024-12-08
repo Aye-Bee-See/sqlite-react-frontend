@@ -255,6 +255,7 @@ class InputForm extends React.Component {
   }
 
   getPrisoner(id) {
+    console.log(this.state.token);
     PrisonerNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },
