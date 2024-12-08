@@ -289,11 +289,6 @@ class ListPage extends Component {
             value={searchName}
             onChange={this.onChangeSearchName}
           />
-          <div className='input-group-append'>
-          <Button color='secondary'>
-          Search
-        </Button>
-          </div>
           </InputGroup>
         </Col>
         </Row>
