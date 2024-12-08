@@ -3,7 +3,9 @@ import http from "../http-common";
 class RuleNetworkService {
   getAll(token) {
       return http.get('/rule/rules', {
+        headers: {
         "Authorization": `Bearer ${token}`
+        }
       })
   }
   async addOne(params, token) {
