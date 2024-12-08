@@ -247,7 +247,7 @@ class ListPage extends Component {
       return null;
     }
   }
-// TODO: Fix key on the input form
+
   render() {
     const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentIndex } = this.state;
     var editLink = this.editButton();

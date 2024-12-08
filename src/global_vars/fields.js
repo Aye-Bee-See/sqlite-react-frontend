@@ -3,7 +3,7 @@ var fields = {
     id: {
       title: 'ID',
       type: 'number',
-      default: null,
+      default: -1,
       disabled: true,
     },
     chosenName: {
@@ -26,7 +26,7 @@ var fields = {
     prison: {
       title: 'Prison',
       type: 'select',
-      default: null,
+      default: -1,
       rules: 'required',
     },
     inmateID: {

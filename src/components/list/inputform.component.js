@@ -186,7 +186,7 @@ class InputForm extends React.Component {
         token: token['token'] || token
       },() => {
         if (subject === "Prisoner") {
-          this.fetchPrisons();
+          this.fetchPrisons(this.state.token);
         }
     
         if (solo) {
@@ -217,9 +217,9 @@ class InputForm extends React.Component {
     }
   }
 
-  async fetchPrisons() {
+  async fetchPrisons(token) {
     try {
-      const response = await PrisonNetworkService.getAll();
+      const response = await PrisonNetworkService.getAll(token);
       if (response.status === 200) {
         this.setState({ prisons: Object.values(response.data.data) });
       } else {
@@ -288,6 +288,7 @@ class InputForm extends React.Component {
       } else if (key === "prison") {
         return (
           <SelectField
+            key={key} // Add key prop here
             id={key}
             field={field}
             options={this.state.prisons}
@@ -301,6 +302,7 @@ class InputForm extends React.Component {
       } else if (key === "state") {
         return (
           <SelectField
+            key={key} // Add key prop here
             id={key}
             field={field}
             options={states}
@@ -313,6 +315,7 @@ class InputForm extends React.Component {
       } else if (key === "role") {
         return (
           <SelectField
+            key={key} // Add key prop here
             id={key}
             field={field}
             options={roles}
@@ -325,6 +328,7 @@ class InputForm extends React.Component {
       } else if (key === "id") {
         return (
           <InputField
+            key={key} // Add key prop here
             id={key}
             field={field}
             value={value}
@@ -337,6 +341,7 @@ class InputForm extends React.Component {
       } else {
         return (
           <InputField
+            key={key} // Add key prop here
             id={key}
             field={field}
             value={value}
@@ -359,6 +364,7 @@ class InputForm extends React.Component {
             if (subKey === "state") {
               return (
                 <SelectField
+                  key={subKey} // Add key prop here
                   id={`${key}.${subKey}`}
                   field={field.subFields[subKey]}
                   options={states}
@@ -371,6 +377,7 @@ class InputForm extends React.Component {
             } else {
               return (
                 <InputField
+                  key={subKey} // Add key prop here
                   id={`${key}.${subKey}`}
                   field={field.subFields[subKey]}
                   value={subValue}
