@@ -19,12 +19,11 @@ const SelectField = ({ id, field, options, optionLabel = null, value, handleChan
         <option value="">Select an option</option>
         {options.map((option) => (
           <option key={option.id} value={option.id}>
-          <option key={option.id} value={option.id}>
             {optionLabel ? option[optionLabel] : option}
           </option>
         ))}
       </Input>
-      {errors[id] ? <Alert color="danger" className="error">{errors[id]}</Alert> : "" }
+      {errors && errors[id] ? <Alert color="danger" className="error">{errors[id]}</Alert> : "" }
     </FormGroup>
   </div>
 );

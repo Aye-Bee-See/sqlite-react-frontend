@@ -44,12 +44,13 @@ class InputForm extends React.Component {
       prisons: [],
       message: "",
       fields: po,
-      errors: {},
+      errors: {}, // Initialize errors state
       token: ''
     };
 
     this.form = new ReactFormInputValidation(this);
     this.form.useRules(this.ruleObject(this.props.subject));
+    this.form.onformsubmit = this.buttonSubmit;
   }
 
   propertyObject(subject) {
@@ -123,13 +124,7 @@ class InputForm extends React.Component {
     e.preventDefault();
     this.addOrUpdate(this.state.token).then((response) => {
       if (response && response.data) {
-    this.addOrUpdate(this.state.token).then((response) => {
-      if (response && response.data) {
         if (this.props.handleDataFromChild) {
-          const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
-          if (response) {
-            this.props
-            .handleDataFromChild(updatedFields)
           const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
           if (response) {
             this.props
@@ -139,7 +134,6 @@ class InputForm extends React.Component {
           }
         } else {
           this.clearFields();
-        }
       }
     });
   }
@@ -158,8 +152,6 @@ class InputForm extends React.Component {
       if (fields.prison && typeof fields.prison === 'object') {
         fields.prison = fields.prison.id;
       }
-
-      const fields = { ...this.state.fields };
 
       // Strip the id field when adding an item
       if (!this.props.solo) {
