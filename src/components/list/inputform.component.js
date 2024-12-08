@@ -123,12 +123,19 @@ class InputForm extends React.Component {
     e.preventDefault();
     this.addOrUpdate(this.state.token).then((response) => {
       if (response && response.data) {
+    this.addOrUpdate(this.state.token).then((response) => {
+      if (response && response.data) {
         if (this.props.handleDataFromChild) {
           const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
           if (response) {
             this.props
             .handleDataFromChild(updatedFields)
+          const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
+          if (response) {
+            this.props
+            .handleDataFromChild(updatedFields)
             .then(this.clearFields());
+          }
           }
         } else {
           this.clearFields();
@@ -152,12 +159,27 @@ class InputForm extends React.Component {
         fields.prison = fields.prison.id;
       }
 
+      const fields = { ...this.state.fields };
+
+      // Strip the id field when adding an item
+      if (!this.props.solo) {
+        delete fields.id;
+      }
+
+      // Ensure the prison field contains only the id
+      if (fields.prison && typeof fields.prison === 'object') {
+        fields.prison = fields.prison.id;
+      }
+
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
         response = await networkService.updateOne(fields, token);
 
+        response = await networkService.updateOne(fields, token);
+
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
+          return false;
           return false;
         } else {
           this.setMessage(response.data.info);
@@ -166,6 +188,7 @@ class InputForm extends React.Component {
       } else {
         response = await networkService.addOne(fields, token);
         if (response.status === 200) {
+          return response.data;
           return response.data;
         } else {
           this.setMessage(response.data.info);
