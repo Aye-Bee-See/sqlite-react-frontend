@@ -112,7 +112,7 @@ class InputForm extends React.Component {
       this.setState(prevState => ({
         fields: {
           ...prevState.fields,
-          [id]: value
+          [id]: id === 'prison' ? value : value // Ensure prison field is set to the id
         }
       }));
     }
@@ -121,7 +121,7 @@ class InputForm extends React.Component {
   // TODO: Display validation before blurring the field
   async buttonSubmit(e) {
     e.preventDefault();
-    this.addOrUpdate().then((response) => {
+    this.addOrUpdate(this.state.token).then((response) => {
       if (response) {
         if (this.props.handleDataFromChild) {
           this.props
@@ -137,9 +137,21 @@ class InputForm extends React.Component {
   async addOrUpdate(token) {
     try {
       let response;
+      const fields = { ...this.state.fields };
+
+      // Strip the id field when adding an item
+      if (!this.props.solo) {
+        delete fields.id;
+      }
+
+      // Ensure the prison field contains only the id
+      if (fields.prison && typeof fields.prison === 'object') {
+        fields.prison = fields.prison.id;
+      }
+
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
-        response = await networkService.updateOne(this.state.fields, token);
+        response = await networkService.updateOne(fields, token);
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
           return true;
@@ -148,7 +160,7 @@ class InputForm extends React.Component {
           return false;
         }
       } else {
-        response = await networkService.addOne(this.state.fields, token);
+        response = await networkService.addOne(fields, token);
         if (response.status === 200) {
           return true;
         } else {
