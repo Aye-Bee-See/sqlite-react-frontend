@@ -1,4 +1,3 @@
-
 import React from "react";
 import { FormGroup, Label, Input, Alert } from "reactstrap";
 
@@ -10,13 +9,16 @@ const SelectField = ({ id, field, options, optionLabel = null, value, handleChan
         id={id}
         name={id}
         value={value}
-        onChange={handleChange}
+        onChange={(e) => {
+          const selectedOption = options.find(option => option.id === e.target.value);
+          handleChange({ target: { id, value: selectedOption ? selectedOption.id : e.target.value } });
+        }}
         onBlur={handleBlurEvent}
         type="select"
       >
         <option value="">Select an option</option>
         {options.map((option) => (
-          <option key={option} value={option}>
+          <option key={option.id} value={option.id}>
             {optionLabel ? option[optionLabel] : option}
           </option>
         ))}
