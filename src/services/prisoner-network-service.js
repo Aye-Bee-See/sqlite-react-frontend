@@ -3,7 +3,9 @@ import http from "../http-common";
 class PrisonerDataService {
   getAll(token) {
     return http.get('/prisoner/prisoners', {
+      headers: {
       "Authorization": `Bearer ${token}`
+      }
     });
   }
   async getOne(pid, token) {
@@ -30,7 +32,6 @@ class PrisonerDataService {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log(response);
     return response;
   }
 }

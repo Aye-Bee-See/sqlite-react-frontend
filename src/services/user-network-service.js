@@ -3,7 +3,9 @@ import http from "../http-common";
 class UserDataService {
   getAll(token) {
     return http.get('/auth/users', {
+      headers: {
       "Authorization": `Bearer ${token}`
+      }
     });
   }
 

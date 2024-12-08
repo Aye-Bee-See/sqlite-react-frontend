@@ -3,7 +3,9 @@ import http from "../http-common";
 class PrisonNetworkService {
   getAll(token) {
     return http.get('/prison/prisons', {
+      headers: {
       "Authorization": `Bearer ${token}`
+      }
     })
 }
 
