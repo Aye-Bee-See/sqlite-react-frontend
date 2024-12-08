@@ -11,8 +11,6 @@ import Item from '../individual/item.component';
 
 class ListPage extends Component {
 
-  //TODO: Get rid of all of these switch statements
-
   constructor(props) {
     super(props);
     
@@ -297,6 +295,7 @@ class ListPage extends Component {
                 <CardText className='p-3' tag="span">
                   {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
+                  //TODO: Make the delete button work
                   <Button size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
               </Card>
