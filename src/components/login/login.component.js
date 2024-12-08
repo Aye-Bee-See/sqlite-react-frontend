@@ -7,8 +7,6 @@ import ReactFormInputValidation from "react-form-input-validation";
 import { Navigate } from 'react-router-dom';
 import withRouter from '../withRouter';
 
-//TODO check for errors on login/register
-
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -91,7 +89,7 @@ class Login extends Component {
       }).catch((error) => {
         if (error.response && (error.response.status === 400 || error.response.status === 401)) {
           console.log(error.response);
-          this.setState({ errorMessage: error.response.data });
+          this.setState({ errorMessage: "Incorrect username or password" });
         }
       });
     }
@@ -104,7 +102,7 @@ class Login extends Component {
                 this.switchTab('login');
             }).catch((error) => {
               if (error.response && (error.response.status === 400 || error.response.status === 401)) {
-                this.setState({ errorMessage: error.response.data });
+                this.setState({ errorMessage: "Incorrect username or password" });
               }
             });
         }
