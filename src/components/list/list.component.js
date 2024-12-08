@@ -295,7 +295,7 @@ class ListPage extends Component {
                 <CardText className='p-3' tag="span">
                   {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
-                  //TODO: Make the delete button work
+                  {/* TODO: Make delete button work */}
                   <Button size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
               </Card>
