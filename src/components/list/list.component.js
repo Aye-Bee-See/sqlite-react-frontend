@@ -41,7 +41,7 @@ class ListPage extends Component {
       users: [],
       prisons: [],
       rules: [],
-      searchName: ' ',
+      searchName: '',
       token: ''
       }
   }
@@ -59,6 +59,12 @@ class ListPage extends Component {
       });
     } catch (error) {
       console.error("Invalid token format:", error);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.searchName !== this.state.searchName) {
+      this.listData();
     }
   }
 
@@ -96,7 +102,7 @@ class ListPage extends Component {
 
   listData() {
     const { searchName } = this.state;
-    const filterItems = (items) => {
+    const filterItems = (items, displayField) => {
       return items.filter(item => {
         if (searchName.length >= 3) {
           return Object.values(item).some(value => 
@@ -109,25 +115,25 @@ class ListPage extends Component {
   
     switch (this.props.subject) {
       case "Prisoner": {
-        const filteredPrisoners = this.state.prisoners ? filterItems(this.state.prisoners) : [];
+        const filteredPrisoners = filterItems(this.state.prisoners, 'chosenName');
         return filteredPrisoners.map((prisoner, index) => (
           <Item key={prisoner.id} settingFunction={this.setActivePrisoner} individual={prisoner} index={index} toDisplay='chosenName' currentIndex={this.state.currentIndex} />
         ));
       }
       case "User": {
-        const filteredUsers = this.state.users ? filterItems(this.state.users) : [];
+        const filteredUsers = filterItems(this.state.users, 'username');
         return filteredUsers.map((user, index) => (
           <Item key={user.id} settingFunction={this.setActiveUser} individual={user} index={index} toDisplay='username' currentIndex={this.state.currentIndex} />
         ));
       }
       case "Prison": {
-        const filteredPrisons = this.state.prisons ? filterItems(this.state.prisons) : [];
+        const filteredPrisons = filterItems(this.state.prisons, 'prisonName');
         return filteredPrisons.map((prison, index) => (
           <Item key={prison.id} settingFunction={this.setActivePrison} individual={prison} index={index} toDisplay='prisonName' currentIndex={this.state.currentIndex} />
         ));
       }
       case "Rule": {
-        const filteredRules = this.state.rules ? filterItems(this.state.rules) : [];
+        const filteredRules = filterItems(this.state.rules, 'title');
         return filteredRules.map((rule, index) => (
           <Item key={rule.id} settingFunction={this.setActiveRule} individual={rule} index={index} toDisplay='title' currentIndex={this.state.currentIndex} />
         ));
@@ -183,7 +189,7 @@ class ListPage extends Component {
   }
 
   addPrisoner() {
-    PrisonerNetworkService.addOne().then((response) => {
+    PrisonerNetworkService.addOne(this.state.token).then((response) => {
     })
   }
 
@@ -275,6 +281,8 @@ class ListPage extends Component {
         <Col md="8">
           <InputGroup className='pb-3'>
           <Input
+            id='searchName'
+            name='searchName'
             type='text'
             className='form-control'
             placeholder='Search by name'
