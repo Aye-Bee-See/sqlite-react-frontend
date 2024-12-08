@@ -152,8 +152,6 @@ class InputForm extends React.Component {
         fields.prison = fields.prison.id;
       }
 
-      console.log(fields);
-
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
         response = await networkService.updateOne(fields, token);
@@ -257,7 +255,6 @@ class InputForm extends React.Component {
   }
 
   getPrisoner(id) {
-    console.log(this.state.token);
     PrisonerNetworkService.getOne(id, this.state.token).then((response) => {
       this.setState({
         fields: { ...response.data.data },

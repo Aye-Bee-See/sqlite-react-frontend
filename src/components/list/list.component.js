@@ -95,32 +95,46 @@ class ListPage extends Component {
   }
 
   listData() {
+    const { searchName } = this.state;
+    const filterItems = (items) => {
+      return items.filter(item => {
+        if (searchName.length >= 3) {
+          return Object.values(item).some(value => 
+            value && value.toString().toLowerCase().includes(searchName.toLowerCase())
+          );
+        }
+        return true;
+      });
+    };
+  
     switch (this.props.subject) {
       case "Prisoner": {
-        return this.state.prisoners &&
-        this.state.prisoners.map((prisoner, index) => (
-                <Item key={prisoner.id} settingFunction={this.setActivePrisoner} individual={prisoner} index={index} toDisplay='chosenName' currentIndex={this.state.currentIndex} />
-              ))
+        const filteredPrisoners = this.state.prisoners ? filterItems(this.state.prisoners) : [];
+        return filteredPrisoners.map((prisoner, index) => (
+          <Item key={prisoner.id} settingFunction={this.setActivePrisoner} individual={prisoner} index={index} toDisplay='chosenName' currentIndex={this.state.currentIndex} />
+        ));
       }
       case "User": {
-        return this.state.users &&
-        this.state.users.map((user, index) => (
-                <Item key={user.id} settingFunction={this.setActiveUser} individual={user} index={index} toDisplay='username' currentIndex={this.state.currentIndex} />
-              ))
+        const filteredUsers = this.state.users ? filterItems(this.state.users) : [];
+        return filteredUsers.map((user, index) => (
+          <Item key={user.id} settingFunction={this.setActiveUser} individual={user} index={index} toDisplay='username' currentIndex={this.state.currentIndex} />
+        ));
       }
       case "Prison": {
-        return this.state.prisons &&
-        this.state.prisons.map((prison, index) => (
-                <Item key={prison.id} settingFunction={this.setActivePrison} individual={prison} index={index} toDisplay='prisonName' currentIndex={this.state.currentIndex} />
-              ))
+        const filteredPrisons = this.state.prisons ? filterItems(this.state.prisons) : [];
+        return filteredPrisons.map((prison, index) => (
+          <Item key={prison.id} settingFunction={this.setActivePrison} individual={prison} index={index} toDisplay='prisonName' currentIndex={this.state.currentIndex} />
+        ));
       }
       case "Rule": {
-        return this.state.rules &&
-        this.state.rules.map((rule, index) => (
-                <Item key={rule.id} settingFunction={this.setActiveRule} individual={rule} index={index} toDisplay='title' currentIndex={this.state.currentIndex} />
-              ))
+        const filteredRules = this.state.rules ? filterItems(this.state.rules) : [];
+        return filteredRules.map((rule, index) => (
+          <Item key={rule.id} settingFunction={this.setActiveRule} individual={rule} index={index} toDisplay='title' currentIndex={this.state.currentIndex} />
+        ));
       }
-      default: {}
+      default: {
+        return null;
+      }
     }
   }
 
