@@ -22,7 +22,8 @@ class Login extends Component {
             registerEmail: '',
             registerPassword: '',
             registerPassword_confirmation: '' },
-            errors: {}
+            errors: {},
+            errorMessage: ''
         };
 
         this.form = new ReactFormInputValidation(this);
@@ -87,7 +88,12 @@ class Login extends Component {
           this.props.setToken(token, user);
           this.clearFormFields();
           this.props.router.navigate('/');
-      })
+      }).catch((error) => {
+        if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+          console.log(error.response);
+          this.setState({ errorMessage: error.response.data });
+        }
+      });
     }
 
     register = (e) => {
@@ -96,12 +102,16 @@ class Login extends Component {
             const params = {username: fields.registerUsername, name: fields.registerName, email: fields.registerEmail , password: fields.registerPassword, role: 'user'};
             loginNetworkService.register(params).then(() => {
                 this.switchTab('login');
+            }).catch((error) => {
+              if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+                this.setState({ errorMessage: error.response.data });
+              }
             });
         }
     }
 
     render() {
-        const { activeTab } = this.state;
+        const { activeTab, errorMessage } = this.state;
         const hasLoginErrors = this.filterErrors('login').length > 0;
         const hasRegisterErrors = this.filterErrors('register').length > 0;
 
@@ -155,7 +165,11 @@ class Login extends Component {
                         <Row>
                         <p>{this.filterErrors('login')}</p>
                         </Row>
-
+                        {errorMessage && (
+                          <Row>
+                            <p className="text-danger">{errorMessage}</p>
+                          </Row>
+                        )}
                         </Container>
                     </div>
                 )}
@@ -234,6 +248,11 @@ class Login extends Component {
                             <Row>
                             <p>{this.filterErrors('register')}</p>
                             </Row>
+                            {errorMessage && (
+                              <Row>
+                                <p className="text-danger">{errorMessage}</p>
+                              </Row>
+                            )}
                         </Container>
                     </div>
                 )}
