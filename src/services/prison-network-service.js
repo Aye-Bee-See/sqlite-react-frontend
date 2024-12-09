@@ -37,6 +37,15 @@ async getOne(pid, token) {
   return response;
 }
 
+async deleteOne(id, token) {
+  const response = await http.delete('/prison/prison', {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    data: { id }
+  });
+  return response;
+}
 }
 
 export default new PrisonNetworkService();

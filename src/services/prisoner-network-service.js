@@ -34,6 +34,15 @@ class PrisonerDataService {
     });
     return response;
   }
+  async deleteOne(id, token) {
+    const response = await http.delete('/prisoner/prisoner', {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      data: { id }
+    });
+    return response;
+  }
 }
 
 export default new PrisonerDataService();
