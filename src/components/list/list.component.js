@@ -29,6 +29,7 @@ class ListPage extends Component {
     this.displayFields = this.displayFields.bind(this);
     this.listData = this.listData.bind(this);
     this.editButton = this.editButton.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
 
     this.state = {
       currentPrisoner: null,
@@ -97,6 +98,41 @@ class ListPage extends Component {
         rules: Object.values(response.data.data)
       });
     });
+  }
+
+  deleteItem() {
+    switch (this.props.subject) {
+      case "Prisoner": {
+        const { id } = this.state.currentPrisoner;
+        PrisonerNetworkService.deleteOne(id, this.state.token).then((response) => {
+          if (response.data.data === 1) {
+            this.setState(prevState => ({
+              prisoners: prevState.prisoners.filter(prisoner => prisoner.id !== id),
+              currentPrisoner: null,
+              currentIndex: -1
+            }));
+          }
+        }).catch(error => {
+          console.error("Error deleting prisoner:", error);
+        });
+        break;
+      }
+      case "Prison": {
+        const { id } = this.state.currentPrison;
+        PrisonNetworkService.deleteOne(id, this.state.token).then((response) => {
+          if (response.data.data === 1) {
+            this.setState(prevState => ({
+              prisons: prevState.prisons.filter(prison => prison.id !== id),
+              currentPrison: null,
+              currentIndex: -1
+            }))
+          }
+        }).catch(error => {
+          console.error("Error deleting prison:", error);
+        })
+      }
+      default: {}
+    }
   }
 
   listData() {
@@ -188,6 +224,7 @@ class ListPage extends Component {
   }
 
   setActivePrisoner(prisoner, index) {
+    console.log(prisoner);
     this.setState({
       currentPrisoner: prisoner,
       currentIndex: index
@@ -307,7 +344,7 @@ class ListPage extends Component {
                   {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   {/* TODO: Make delete button work */}
-                  <Button size='sm' color='danger' className='mx-2'>Delete</Button>
+                  <Button onClick={this.deleteItem} size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
               </Card>
             </>
