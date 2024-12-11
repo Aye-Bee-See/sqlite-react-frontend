@@ -99,7 +99,7 @@ class ListPage extends Component {
       });
     });
   }
-
+//TODO: Error when response.data.data returns 0 or other response
   deleteItem() {
     switch (this.props.subject) {
       case "Prisoner": {
@@ -130,6 +130,22 @@ class ListPage extends Component {
         }).catch(error => {
           console.error("Error deleting prison:", error);
         })
+        break;
+      }
+      case "Rule": {
+        const { id } = this.state.currentRule;
+        RuleNetworkService.deleteOne(id, this.state.token).then((response) => {
+          if (response.data.data === 1) {
+            this.setState(prevState => ({
+              rules: prevState.rules.filter(rule => rule.id !== id),
+              currentRule: null,
+              currentIndex: -1
+            }))
+          }
+        }).catch(error => {
+          console.error("Error deleting prison:", error)
+        })
+        break;
       }
       default: {}
     }
