@@ -42,7 +42,8 @@ class ListPage extends Component {
       prisons: [],
       rules: [],
       searchName: '',
-      token: ''
+      token: '',
+      errorText: ''
       }
   }
 
@@ -99,7 +100,7 @@ class ListPage extends Component {
       });
     });
   }
-//TODO: Error when response.data.data returns 0 or other response
+
   deleteItem() {
     switch (this.props.subject) {
       case "Prisoner": {
@@ -111,9 +112,16 @@ class ListPage extends Component {
               currentPrisoner: null,
               currentIndex: -1
             }));
+          } else {
+            this.setState({
+              errorText: `Unable to delete ${this.props.subject}`
+            });
           }
         }).catch(error => {
-          console.error("Error deleting prisoner:", error);
+          console.error(`Error deleting ${this.props.subject}:`, error.message);
+          this.setState({
+            errorText: error.message
+          });
         });
         break;
       }
@@ -126,10 +134,17 @@ class ListPage extends Component {
               currentPrison: null,
               currentIndex: -1
             }))
+          }else {
+            this.setState({
+              errorText: `Unable to delete ${this.props.subject}`
+            });
           }
         }).catch(error => {
-          console.error("Error deleting prison:", error);
-        })
+          console.error(`Error deleting ${this.props.subject}:`, error.message);
+          this.setState({
+            errorText: error.message
+          });
+        });
         break;
       }
       case "Rule": {
@@ -141,10 +156,17 @@ class ListPage extends Component {
               currentRule: null,
               currentIndex: -1
             }))
+          }else {
+            this.setState({
+              errorText: `Unable to delete ${this.props.subject}`
+            });
           }
         }).catch(error => {
-          console.error("Error deleting prison:", error)
-        })
+          console.error(`Error deleting ${this.props.subject}:`, error.message);
+          this.setState({
+            errorText: error.message
+          });
+        });
         break;
       }
       default: {}
@@ -359,19 +381,26 @@ class ListPage extends Component {
                 <CardText className='p-3' tag="span">
                   {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
-                  {/* TODO: Make delete button work */}
                   <Button onClick={this.deleteItem} size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
-              </Card>
+              </Card>              
+              <p className='text-danger'>{this.state.errorText}</p>
+
             </>
           ) : (
             <div>
               <br />
-              <p>Please click on a {this.props.subject}.</p>
+              <p>Please click on a {this.props.subject}.</p>        
+
             </div>
           )}
         </Col>
         </List>
+        <Row>
+          <Col>
+
+          </Col>
+        </Row>
         <InputForm key={this.props} subject={this.props.subject} token={this.props.token} handleDataFromChild={this.handleDataFromChild}/>
       </Container>
     )
