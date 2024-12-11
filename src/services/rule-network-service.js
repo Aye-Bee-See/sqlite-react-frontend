@@ -35,6 +35,16 @@ class RuleNetworkService {
     });
     return response;
   }
+
+  async deleteOne(id, token) {
+    const response = await http.delete('/rule/rule', {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      data: { id }
+    });
+    return response;
+  }
 }
 
 export default new RuleNetworkService();
