@@ -39,15 +39,15 @@ export default function App() {
         <NavBar token={token} logOut={logOut} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="prisoners" element={<List subject="Prisoner" key="Prisoner" token={token} />} />
-          <Route path="prisoner/:id" element={<InputForm subject="Prisoner" key="Prisoner" token={token} solo />} />
-          <Route path="users" element={<List subject="User" key="User" token={token} />} />
-          <Route path="user/:id" element={<InputForm subject="User" key="User" token={token} solo />} />
-          <Route path="prisons" element={<List subject="Prison" key="Prison" token={token} />} />
-          <Route path="prison/:id" element={<InputForm subject="Prison" key="Prison" token={token} solo />} />
-          <Route path="messaging" element={<List subject="Message" key="Message" token={token} />} />
+          <Route path="prisoners" element={<ProtectedRoute element={<List subject="Prisoner" key="Prisoner" token={token}/>}/> } />
+          <Route path="prisoner/:id" element={<ProtectedRoute element={<InputForm subject="Prisoner" key="Prisoner" token={token} solo />} />} />
+          <Route path="users" element={<ProtectedRoute element={<List subject="User" key="User" token={token} />} />} />
+          <Route path="user/:id" element={<ProtectedRoute element={<InputForm subject="User" key="User" token={token} solo />} />} />
+          <Route path="prisons" element={<ProtectedRoute element={<List subject="Prison" key="Prison" token={token} />} />} />
+          <Route path="prison/:id" element={<ProtectedRoute element={<InputForm subject="Prison" key="Prison" token={token} solo />} />} />
+          <Route path="messaging" element={<ProtectedRoute element={<List subject="Message" key="Message" token={token} />} />} />
           <Route path="rules" element={<ProtectedRoute element={<List subject="Rule" key="Rule" token={token} />} />} />
-          <Route path="rule/:id" element={<InputForm subject="Rule" key="Rule" token={token} solo />} />
+          <Route path="rule/:id" element={<ProtectedRoute element={<InputForm subject="Rule" key="Rule" token={token} solo />} />} />
           <Route path="login" element={<Login setToken={handleSetToken} />} />
           <Route path="logout" element={<Home />} />
         </Routes>
