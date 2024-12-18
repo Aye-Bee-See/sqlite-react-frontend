@@ -169,6 +169,26 @@ class ListPage extends Component {
         });
         break;
       }
+      case "User": {
+        const { id } = this.state.currentUser;
+        UserNetworkService.deleteOne(id, this.state.token).then((response) => {
+          if (response.data.data === 1) {
+            this.setState(prevState => ({
+              users: prevState.users.filter(user => user.id !== id),
+              currentUser: null,
+              currentIndex: -1
+            }))
+          } else {
+            this.setState({
+              errorText: `Unable to delete ${this.props.subject}`
+            });
+          }
+        }).catch (error => {
+          this.setState({
+            errorText: error.message
+          });
+        })
+      }
       default: {}
     }
   }
