@@ -35,6 +35,16 @@ class UserDataService {
     });
     return response;
   }
+
+  async deleteOne(id, token) {
+    const response = await http.delete('/auth/user', {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      data: { id }
+    });
+    return response;
+  }
 }
 
 export default new UserDataService();

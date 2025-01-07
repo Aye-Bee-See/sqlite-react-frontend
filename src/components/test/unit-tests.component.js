@@ -9,6 +9,10 @@ class UnitTests extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      user: null,
+      rule: null,
+      prison: null,
+      prisoner: null,
       results: {
         createUser: null,
         getToken: null,
@@ -36,77 +40,78 @@ class UnitTests extends React.Component {
     try {
       // Create user
       const userParams = {username: "testuser", name: "test user", email: "testuser@testuser.biz" , password: "password", role: 'user'};
-      await loginNetworkService.register(userParams);
-      this.setState(prevState => ({ results: { ...prevState.results, createUser: true } }));
+      const newUser = await loginNetworkService.register(userParams);
+      this.setState(prevState => ({ ...prevState, user: newUser.data.data, results: { ...prevState.results, createUser: true } }));
 
       // Get token
       const loginResponse = await loginNetworkService.login(userParams.username, userParams.password);
-      const userToken = loginResponse.data.token;
+      const userToken = loginResponse.data.data.token.token;
+      console.log(userToken)
       this.setState(prevState => ({ results: { ...prevState.results, getToken: true } }));
 
       // Create prison
       const prisonParams = { prisonName: "Test Prison", address: {street: "Test Prison Street"}};
-      await prisonNetworkService.addOne(prisonParams, userToken);
-      this.setState(prevState => ({ results: { ...prevState.results, createPrison: true } }));
+      const newPrison = await prisonNetworkService.addOne(prisonParams, userToken);
+      this.setState(prevState => ({ ...prevState, prison: newPrison.data.data, results: { ...prevState.results, createPrison: true } }));
 
       // Create prisoner
       const prisonerParams = { birthName: "Test Prisoner", chosenName: "Test Prisoner Chosen Name", inmateID: "123", prison: 1, releaseDate: "2029-04-05T23:24:24.819Z", bio: "Test Bio" };
-      await prisonerNetworkService.addOne(prisonerParams, userToken);
-      this.setState(prevState => ({ results: { ...prevState.results, createPrisoner: true } }));
+      const newPrisoner = await prisonerNetworkService.addOne(prisonerParams, userToken);
+      this.setState(prevState => ({ ...prevState, prisoner: newPrisoner.data.data, results: { ...prevState.results, createPrisoner: true } }));
 
       // Create rule
       const ruleParams = { title: "Test rule", description: "Test Rule description" };
-      await ruleNetworkService.addOne(ruleParams, userToken);
-      this.setState(prevState => ({ results: { ...prevState.results, createRule: true } }));
+      const newRule = await ruleNetworkService.addOne(ruleParams, userToken);
+      this.setState(prevState => ({ ...prevState, rule: newRule.data.data, results: { ...prevState.results, createRule: true } }));
 
       // Get prisons
       const prisons = await prisonNetworkService.getAll(userToken);
-      this.setState(prevState => ({ results: { ...prevState.results, getPrisons: prisons.data.some(p => p.name === "Test Prison") } }));
+      this.setState(prevState => ({ results: { ...prevState.results, getPrisons: prisons.data.data.some(p => p.prisonName === "Test Prison") } }));
 
       // Get prisoners
       const prisoners = await prisonerNetworkService.getAll(userToken);
-      this.setState(prevState => ({ results: { ...prevState.results, getPrisoners: prisoners.data.some(p => p.name === "Test Prisoner") } }));
+      this.setState(prevState => ({ results: { ...prevState.results, getPrisoners: prisoners.data.data.some(p => p.birthName === "Test Prisoner") } }));
 
       // Get rules
       const rules = await ruleNetworkService.getAll(userToken);
-      this.setState(prevState => ({ results: { ...prevState.results, getRules: rules.data.some(r => r.description === "Test Rule") } }));
+      console.log(rules);
+      this.setState(prevState => ({ results: { ...prevState.results, getRules: rules.data.data.some(r => r.title === "Test rule") } }));
 
       // Update prison
-      const updatedPrisonParams = { name: "Updated Test Prison" };
+      const updatedPrisonParams = { id: this.state.prison.id, name: "Updated Test Prison" };
       await prisonNetworkService.updateOne(updatedPrisonParams, userToken);
       this.setState(prevState => ({ results: { ...prevState.results, updatePrison: true } }));
 
       // Update prisoner
-      const updatedPrisonerParams = { name: "Updated Test Prisoner" };
+      const updatedPrisonerParams = { id: this.state.prisoner.id, name: "Updated Test Prisoner" };
       await prisonerNetworkService.updateOne(updatedPrisonerParams, userToken);
       this.setState(prevState => ({ results: { ...prevState.results, updatePrisoner: true } }));
 
       // Update user
-      const updatedUserParams = { username: "updatedtestuser", password: "newpassword" };
+      const updatedUserParams = { id: this.state.user.id, username: "updatedtestuser", password: "newpassword" };
       await userNetworkService.updateOne(updatedUserParams, userToken);
       this.setState(prevState => ({ results: { ...prevState.results, updateUser: true } }));
 
       // Update rule
-      const updatedRuleParams = { description: "Updated Test Rule" };
+      const updatedRuleParams = { id: this.state.rule.id, description: "Updated Test Rule" };
       await ruleNetworkService.updateOne(updatedRuleParams, userToken);
       this.setState(prevState => ({ results: { ...prevState.results, updateRule: true } }));
 
       // Delete prison
-      await prisonNetworkService.deleteOne(prisons.data.find(p => p.name === "Updated Test Prison").id, userToken);
+      await prisonNetworkService.deleteOne(this.state.prison.id, userToken);
       this.setState(prevState => ({ results: { ...prevState.results, deletePrison: true } }));
 
       // Delete prisoner
-      await prisonerNetworkService.deleteOne(prisoners.data.find(p => p.name === "Updated Test Prisoner").id, userToken);
+      await prisonerNetworkService.deleteOne(this.state.prisoner.id, userToken);
       this.setState(prevState => ({ results: { ...prevState.results, deletePrisoner: true } }));
 
-      // Delete user
-      await userNetworkService.deleteOne(updatedUserParams.username, userToken);
-      this.setState(prevState => ({ results: { ...prevState.results, deleteUser: true } }));
-
       // Delete rule
-      await ruleNetworkService.deleteOne(rules.data.find(r => r.description === "Updated Test Rule").id, userToken);
+      await ruleNetworkService.deleteOne(this.state.rule.id, userToken);
       this.setState(prevState => ({ results: { ...prevState.results, deleteRule: true } }));
 
+      // Delete user
+      await userNetworkService.deleteOne(this.state.user.id, userToken);
+      this.setState(prevState => ({ results: { ...prevState.results, deleteUser: true } }));
     } catch (error) {
       console.error(error);
       // Update results with failure
