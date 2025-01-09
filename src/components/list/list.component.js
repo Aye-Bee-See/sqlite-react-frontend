@@ -315,11 +315,19 @@ class ListPage extends Component {
             </div>
           );
         } else {
+          if (field.title === "Prison") {
+            return (
+              <div key={key}>
+              <strong>{field.title}:</strong> <Link to={`/prison/${currentItem[key]}`}>{currentItem[key]}</Link>
+            </div>
+            )
+          } else {
           return (
             <div key={key}>
               <strong>{field.title}:</strong> {currentItem[key]}
             </div>
           );
+        }
         }
       });
     };
