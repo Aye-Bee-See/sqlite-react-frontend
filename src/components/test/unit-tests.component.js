@@ -19,6 +19,7 @@ class UnitTests extends React.Component {
         createPrison: null,
         createPrisoner: null,
         createRule: null,
+        getUsers: null,
         getPrisons: null,
         getPrisoners: null,
         getRules: null,
@@ -28,8 +29,8 @@ class UnitTests extends React.Component {
         updateRule: null,
         deletePrison: null,
         deletePrisoner: null,
-        deleteUser: null,
         deleteRule: null,
+        deleteUser: null,
       }
     };
     this.runTests = this.runTests.bind(this);
@@ -63,6 +64,11 @@ class UnitTests extends React.Component {
       const ruleParams = { title: "Test rule", description: "Test Rule description" };
       const newRule = await ruleNetworkService.addOne(ruleParams, userToken);
       this.setState(prevState => ({ ...prevState, rule: newRule.data.data, results: { ...prevState.results, createRule: true } }));
+
+      // Get users
+      const users = await userNetworkService.getAll(userToken);
+      console.log(users);
+      this.setState(prevState => ({ results: { ...prevState.results, getUsers: users.data.data.some(p => p.username === "testuser")}}))
 
       // Get prisons
       const prisons = await prisonNetworkService.getAll(userToken);
