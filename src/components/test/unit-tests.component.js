@@ -5,6 +5,7 @@ import ruleNetworkService from "../../services/rule-network-service";
 import userNetworkService from "../../services/user-network-service";
 import loginNetworkService from "../../services/login-network-service";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Row } from "reactstrap";
 
 class UnitTests extends React.Component {
   constructor(props) {
@@ -155,69 +156,69 @@ class UnitTests extends React.Component {
 
     return (
       <>
-        <button onClick={this.runTests}>Start Tests</button>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6">
-              <div className="card">
-                <div className="card-header">Create Results</div>
-                <div className="card-body">
-                  <ul>
+        <Button onClick={this.runTests}>Start Tests</Button>
+        <Container>
+          <Row>
+            <Col className="md-6">
+              <Card>
+                <CardHeader>Create Results</CardHeader>
+                <CardBody>
+                  <ListGroup>
                     {createResults.map(task => (
-                      <li key={task}>
+                      <ListGroupItem key={task}>
                         {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
-                      </li>
+                      </ListGroupItem>
                     ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="card">
-                <div className="card-header">Get Results</div>
-                <div className="card-body">
-                  <ul>
+                  </ListGroup>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col className="md-6">
+              <Card>
+                <CardHeader>Get Results</CardHeader>
+                <CardBody>
+                  <ListGroup>
                     {getResults.map(task => (
-                      <li key={task}>
+                      <ListGroupItem key={task}>
                         {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
-                      </li>
+                      </ListGroupItem>
                     ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-6">
-              <div className="card">
-                <div className="card-header">Update Results</div>
-                <div className="card-body">
-                  <ul>
+                  </ListGroup>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="md-6">
+              <Card>
+                <CardHeader>Update Results</CardHeader>
+                <CardBody>
+                  <ListGroup>
                     {updateResults.map(task => (
-                      <li key={task}>
+                      <ListGroupItem key={task}>
                         {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
-                      </li>
+                      </ListGroupItem>
                     ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="card">
-                <div className="card-header">Delete Results</div>
-                <div className="card-body">
-                  <ul>
+                  </ListGroup>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col className="md-6">
+              <Card>
+                <CardHeader>Delete Results</CardHeader>
+                <CardBody>
+                  <ListGroup>
                     {deleteResults.map(task => (
-                      <li key={task}>
+                      <ListGroupItem key={task}>
                         {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
-                      </li>
+                      </ListGroupItem>
                     ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                  </ListGroup>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
       </>
     );
   }
