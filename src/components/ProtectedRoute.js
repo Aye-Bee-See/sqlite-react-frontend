@@ -1,6 +1,8 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
+// TODO: When call fails unauthorized, redirect to login
+
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   const isAuthenticated = () => {
     const token = JSON.parse(localStorage.getItem('token'));

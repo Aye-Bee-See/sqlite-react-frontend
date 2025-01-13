@@ -14,6 +14,7 @@ import InputForm from './components/list/inputform.component';
 import Login from './components/login/login.component.js';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useEffect, useState } from 'react';
+import UnitTests from './components/test/unit-tests.component.js';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -48,6 +49,9 @@ export default function App() {
           <Route path="messaging" element={<ProtectedRoute element={<List subject="Message" key="Message" token={token} />} />} />
           <Route path="rules" element={<ProtectedRoute element={<List subject="Rule" key="Rule" token={token} />} />} />
           <Route path="rule/:id" element={<ProtectedRoute element={<InputForm subject="Rule" key="Rule" token={token} solo />} />} />
+          <Route path="tests" element={<ProtectedRoute element={<UnitTests subject="Test" key="Test" token={token} />} />} />
+
+
           <Route path="login" element={<Login setToken={handleSetToken} />} />
           <Route path="logout" element={<Home />} />
         </Routes>
