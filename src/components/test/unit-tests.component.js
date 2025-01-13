@@ -23,6 +23,10 @@ class UnitTests extends React.Component {
         getPrisons: null,
         getPrisoners: null,
         getRules: null,
+        getUser: null,
+        getPrison: null,
+        getPrisoner: null,
+        getRule: null,
         updatePrison: null,
         updatePrisoner: null,
         updateUser: null,
@@ -82,6 +86,22 @@ class UnitTests extends React.Component {
       const rules = await ruleNetworkService.getAll(userToken);
       console.log(rules);
       this.setState(prevState => ({ results: { ...prevState.results, getRules: rules.data.data.some(r => r.title === "Test rule") } }));
+
+      // Get user
+      const user = await userNetworkService.getOne(this.state.user.id, userToken);
+      this.setState(prevState => ({ results: { ...prevState.results, getUser: user.data.data.name === this.state.user.name} }))
+
+      // Get prison
+      const prison = await prisonNetworkService.getOne(this.state.prison.id, userToken);
+      this.setState(prevState => ({ results: { ...prevState.results, getPrison: prison.data.data.prisonName === this.state.prison.prisonName } }));
+
+      // Get prisoner
+      const prisoner = await prisonerNetworkService.getOne(this.state.prisoner.id, userToken);
+      this.setState(prevState => ({ results: { ...prevState.results, getPrisoner: prisoner.data.data.birthName === this.state.prisoner.birthName } }));
+
+      // Get rule
+      const rule = await ruleNetworkService.getOne(this.state.rule.id, userToken);
+      this.setState(prevState => ({ results: { ...prevState.results, getRule: rule.data.data.title === this.state.rule.title } }));
 
       // Update prison
       const updatedPrisonParams = { id: this.state.prison.id, name: "Updated Test Prison" };
