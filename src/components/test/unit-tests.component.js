@@ -4,6 +4,7 @@ import prisonerNetworkService from "../../services/prisoner-network-service";
 import ruleNetworkService from "../../services/rule-network-service";
 import userNetworkService from "../../services/user-network-service";
 import loginNetworkService from "../../services/login-network-service";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class UnitTests extends React.Component {
   constructor(props) {
@@ -147,16 +148,76 @@ class UnitTests extends React.Component {
   }
 
   render() {
+    const createResults = ["createUser", "getToken", "createPrison", "createPrisoner", "createRule"];
+    const getResults = ["getUsers", "getPrisons", "getPrisoners", "getRules", "getUser", "getPrison", "getPrisoner", "getRule"];
+    const updateResults = ["updatePrison", "updatePrisoner", "updateUser", "updateRule"];
+    const deleteResults = ["deletePrison", "deletePrisoner", "deleteRule", "deleteUser"];
+
     return (
       <>
         <button onClick={this.runTests}>Start Tests</button>
-        <ul>
-          {Object.keys(this.state.results).map(task => (
-            <li key={task}>
-              {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
-            </li>
-          ))}
-        </ul>
+        <div className="container">
+          <div className="row">
+            <div className="col-md-6">
+              <div className="card">
+                <div className="card-header">Create Results</div>
+                <div className="card-body">
+                  <ul>
+                    {createResults.map(task => (
+                      <li key={task}>
+                        {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card">
+                <div className="card-header">Get Results</div>
+                <div className="card-body">
+                  <ul>
+                    {getResults.map(task => (
+                      <li key={task}>
+                        {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-6">
+              <div className="card">
+                <div className="card-header">Update Results</div>
+                <div className="card-body">
+                  <ul>
+                    {updateResults.map(task => (
+                      <li key={task}>
+                        {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card">
+                <div className="card-header">Delete Results</div>
+                <div className="card-body">
+                  <ul>
+                    {deleteResults.map(task => (
+                      <li key={task}>
+                        {task}: {this.state.results[task] === null ? "Pending" : this.state.results[task] ? "✔️" : "❌"}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </>
     );
   }
