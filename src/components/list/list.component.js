@@ -318,7 +318,7 @@ class ListPage extends Component {
           if (field.title === "Prison") {
             return (
               <div key={key}>
-              <strong>{field.title}:</strong> <Link to={`/prison/${currentItem[key]}`}>{currentItem[key]}</Link>
+              <strong>{field.title}:</strong> <Link to={`/prison/${currentItem[key]}`}>{this.state.prisons.filter(prison => {return prison.id === currentItem[key]})[0].prisonName}</Link>
             </div>
             )
           } else {
