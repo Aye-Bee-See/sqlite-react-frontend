@@ -412,7 +412,7 @@ class ListPage extends Component {
                   <CardText className='p-3' tag="span">
                     <ListGroup>
                       {prisonersByPrison.map(prisoner => (
-                        <ListGroupItem key={prisoner.id}>{prisoner.chosenName}</ListGroupItem>
+                        <Link to={`/prisoner/${prisoner.id}`}><ListGroupItem key={prisoner.id}>{prisoner.chosenName}</ListGroupItem></Link>
                       ))}
                     </ListGroup>
                   </CardText>
