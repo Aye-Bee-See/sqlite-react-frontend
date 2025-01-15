@@ -8,6 +8,15 @@ class PrisonerDataService {
       }
     });
   }
+
+  async getByPrison(pid, token) {
+    return http.get(`/prisoner/prisoners?prison=${pid}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  }
+
   async getOne(pid, token) {
     const response = await http.get(`/prisoner/prisoner?id=${pid}`, {
       headers: {

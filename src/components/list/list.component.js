@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PrisonerNetworkService from '../../services/prisoner-network-service';
 import {Link } from 'react-router-dom';
 import InputForm from './inputform.component';
-import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, Row } from 'reactstrap';
+import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import fields from '../../global_vars/fields';
 import UserNetworkService from '../../services/user-network-service';
 import PrisonNetworkService from '../../services/prison-network-service';
@@ -18,6 +18,7 @@ class ListPage extends Component {
     this.getAllUsers = this.getAllUsers.bind(this);
     this.getAllPrisons = this.getAllPrisons.bind(this);
     this.getAllRules = this.getAllRules.bind(this)
+    this.getPrisonersByPrison = this.getPrisonersByPrison.bind(this);
 
     this.setActivePrisoner = this.setActivePrisoner.bind(this);
     this.setActivePrison = this.setActivePrison.bind(this);
@@ -43,7 +44,8 @@ class ListPage extends Component {
       rules: [],
       searchName: '',
       token: '',
-      errorText: ''
+      errorText: '',
+      prisonersByPrison: []
       }
   }
 
@@ -98,6 +100,16 @@ class ListPage extends Component {
       this.setState({
         rules: Object.values(response.data.data)
       });
+    });
+  }
+
+  getPrisonersByPrison(prison_id, token) {
+    PrisonerNetworkService.getByPrison(prison_id, token).then((response) => {
+      this.setState({
+        prisonersByPrison: Object.values(response.data.data)
+      }, () => {console.log(this.state.prisonersByPrison)});
+    }).catch(error => {
+      console.error(`Error fetching prisoners by prison:`, error.message);
     });
   }
 
@@ -280,7 +292,9 @@ class ListPage extends Component {
     this.setState({
       currentPrison: prison,
       currentIndex: index
-    })
+    }, () => {
+      this.getPrisonersByPrison(prison.id, this.state.token);
+    });
   }
 
   setActiveRule(rule, index) {
@@ -315,11 +329,19 @@ class ListPage extends Component {
             </div>
           );
         } else {
+          if (field.title === "Prison") {
+            return (
+              <div key={key}>
+              <strong>{field.title}:</strong> <Link to={`/prison/${currentItem[key]}`}>{this.state.prisons.filter(prison => {return prison.id === currentItem[key]})[0].prisonName}</Link>
+            </div>
+            )
+          } else {
           return (
             <div key={key}>
               <strong>{field.title}:</strong> {currentItem[key]}
             </div>
           );
+        }
         }
       });
     };
@@ -338,7 +360,7 @@ class ListPage extends Component {
   }
 
   render() {
-    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentIndex } = this.state;
+    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentIndex, prisonersByPrison } = this.state;
     var editLink = this.editButton();
 
     return (
@@ -384,6 +406,18 @@ class ListPage extends Component {
                   <Button onClick={this.deleteItem} size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
               </Card>              
+              {currentPrison && prisonersByPrison.length > 0 && (
+                <Card className="mt-3">
+                  <CardHeader>Prisoners in {currentPrison.prisonName}</CardHeader>
+                  <CardText className='p-3' tag="span">
+                    <ListGroup>
+                      {prisonersByPrison.map(prisoner => (
+                        <Link to={`/prisoner/${prisoner.id}`}><ListGroupItem key={prisoner.id}>{prisoner.chosenName}</ListGroupItem></Link>
+                      ))}
+                    </ListGroup>
+                  </CardText>
+                </Card>
+              )}
               <p className='text-danger'>{this.state.errorText}</p>
 
             </>
