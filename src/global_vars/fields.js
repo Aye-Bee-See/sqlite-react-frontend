@@ -144,6 +144,22 @@ var fields = {
       rules: 'string',
     },
   },
+  Chat: {
+    id: {
+      title: 'ID',
+      type: 'number',
+      default: -1,
+      disabled: true,
+    },
+    user: {
+      title: 'User',
+      type: 'number',
+      default: -1,
+    }
+  },
+  Message: {
+
+  }
 };
 
 export default fields;
