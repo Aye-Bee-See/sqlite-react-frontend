@@ -155,10 +155,48 @@ var fields = {
       title: 'User',
       type: 'number',
       default: -1,
+    },
+    prisoner: {
+      title: 'Prisoner',
+      type: 'number',
+      default: -1
     }
   },
+  // Todo: Add rules to these
   Message: {
-
+    id: {
+      title: 'ID',
+      type: 'number',
+      default: -1,
+      disabled: true
+    },
+    chat: {
+      title: 'Chat ID',
+      type: 'number',
+      default: -1,
+    },
+    messageText: {
+      title: "Message Text",
+      type: 'text',
+      default: ''
+    },
+    sender: {
+      title: 'Sender',
+      type: 'number',
+      default: -1
+    },
+    prisoner: {
+      title: 'Prisoner',
+      type: 'number',
+      default: -1
+    },
+    user: {
+      title: 'User',
+      type: 'number',
+      default: -1
+    },
+    createdAt: {},
+    updatedAt: {}
   }
 };
 
