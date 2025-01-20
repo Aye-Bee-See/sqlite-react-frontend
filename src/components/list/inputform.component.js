@@ -55,9 +55,15 @@ class InputForm extends React.Component {
 
   propertyObject(subject) {
     const state = {};
+    const subjectFields = fields[subject];
 
-    Object.keys(fields[subject]).forEach((key) => {
-      const field = fields[subject][key];
+    if (!subjectFields) {
+      console.error(`No fields defined for subject: ${subject}`);
+      return state;
+    }
+
+    Object.keys(subjectFields).forEach((key) => {
+      const field = subjectFields[key];
       if (field.meta && field.subFields) {
         state[key] = {};
         Object.keys(field.subFields).forEach((subField) => {
@@ -172,7 +178,6 @@ class InputForm extends React.Component {
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
           return false;
-          return false;
         } else {
           this.setMessage(response.data.info);
           return false;
@@ -180,7 +185,6 @@ class InputForm extends React.Component {
       } else {
         response = await networkService.addOne(fields, token);
         if (response.status === 200) {
-          return response.data;
           return response.data;
         } else {
           this.setMessage(response.data.info);
@@ -309,8 +313,15 @@ class InputForm extends React.Component {
   }
 
   displayFields() {
-    return Object.keys(fields[this.props.subject]).map((key) => {
-      const field = fields[this.props.subject][key];
+    const subjectFields = fields[this.props.subject];
+
+    if (!subjectFields) {
+      console.error(`No fields defined for subject: ${this.props.subject}`);
+      return null;
+    }
+
+    return Object.keys(subjectFields).map((key) => {
+      const field = subjectFields[key];
       const value = this.state.fields[key] === -1 ? '' : this.state.fields[key];
 
       if (field.meta && field.subFields) {
