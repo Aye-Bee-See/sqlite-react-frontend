@@ -14,7 +14,7 @@ import PrisonNetworkService from "../../services/prison-network-service";
 import RuleNetworkService from "../../services/rule-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
-import { states, roles } from "../../global_vars/options";
+import { states, roles, senders } from "../../global_vars/options";
 import ReactFormInputValidation from "react-form-input-validation";
 import InputField from "./InputField";
 import SelectField from "./SelectField";
@@ -366,7 +366,20 @@ class InputForm extends React.Component {
             errors={this.state.errors}
           />
         );
-      } else if (key === "id") {
+      } else if (key === "sender") {
+        return (<SelectField
+        key={key} // Add key prop here
+        id={key}
+        field={field}
+        options={senders}
+        value={value}
+        handleChange={this.handleChange}
+        handleBlurEvent={this.form.handleBlurEvent}
+        errors={this.state.errors}
+      />)
+      } 
+      
+      else if (key === "id") {
         return (
           <InputField
             key={key} // Add key prop here

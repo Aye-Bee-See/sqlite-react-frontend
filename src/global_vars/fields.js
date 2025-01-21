@@ -182,8 +182,8 @@ var fields = {
     },
     sender: {
       title: 'Sender',
-      type: 'number',
-      default: -1
+      type: 'select',
+      default: 'prisoner'
     },
     prisoner: {
       title: 'Prisoner',
@@ -195,8 +195,18 @@ var fields = {
       type: 'number',
       default: -1
     },
-    createdAt: {},
-    updatedAt: {}
+    createdAt: {
+      title: 'Created At',
+      type: 'date',
+      rules: 'date',
+      default: '1999-09-09'
+    },
+    updatedAt: {
+      title: 'Update At',
+      type: 'date',
+      rules: 'date',
+      default: '1999-09-09'
+    }
   }
 };
 
