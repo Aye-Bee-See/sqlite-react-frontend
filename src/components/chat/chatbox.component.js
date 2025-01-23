@@ -14,9 +14,9 @@ class ChatBox extends React.Component {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`d-flex mb-3 ${message.sender === message.prisoner ? 'justify-content-start' : 'justify-content-end'}`}
+            className={`d-flex mb-3 ${message.sender === 'prisoner' ? 'justify-content-start' : 'justify-content-end'}`}
           >
-            <div className={`p-2 rounded ${message.sender === message.prisoner ? 'bg-light' : 'bg-primary text-white'}`}>
+            <div className={`p-2 rounded ${message.sender === 'prisoner' ? 'bg-light' : 'bg-primary text-white'}`}>
               <div>{message.messageText}</div>
               <div className="small text-muted">{message.createdAt}</div>
             </div>

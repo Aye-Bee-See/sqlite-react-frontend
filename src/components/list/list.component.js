@@ -9,6 +9,7 @@ import PrisonNetworkService from '../../services/prison-network-service';
 import RuleNetworkService from '../../services/rule-network-service';
 import Item from '../individual/item.component';
 import MessagingNetworkService from '../../services/messaging-network-service';
+import ChatBox from '../chat/chatbox.component';
 
 class ListPage extends Component {
 
@@ -334,6 +335,11 @@ class ListPage extends Component {
         }));
         break;
       }
+      case "Message": {
+        this.setState(prevState => ({
+          messages: [...prevState.messages, item]
+        }));
+      }
       default: {
         console.error("Unknown subject:", this.props.subject);
       }
@@ -429,7 +435,7 @@ class ListPage extends Component {
   }
 
   render() {
-    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentChat, currentIndex, prisonersByPrison, messageType, chats, currentMessageUserOrPrisoner } = this.state;
+    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentChat, currentIndex, prisonersByPrison, messageType, chats, currentMessageUserOrPrisoner, messages } = this.state;
     var editLink = this.editButton();
 
     return (
@@ -500,7 +506,10 @@ class ListPage extends Component {
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   <Button onClick={this.deleteItem} size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
-              </Card>           
+              </Card>
+              {this.props.subject === "Message" && messages.length > 0 && (
+                <ChatBox messages={messages} />
+              )}
               {currentPrison && prisonersByPrison.length > 0 && (
                 <Card className="mt-3">
                   <CardHeader>Prisoners in {currentPrison.prisonName}</CardHeader>
