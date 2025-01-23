@@ -178,7 +178,8 @@ var fields = {
     messageText: {
       title: "Message Text",
       type: 'text',
-      default: ''
+      default: '',
+      disabled: true
     },
     sender: {
       title: 'Sender',
@@ -197,15 +198,17 @@ var fields = {
     },
     createdAt: {
       title: 'Created At',
-      type: 'date',
+      type: 'datetime-local',
       rules: 'date',
-      default: '1999-09-09'
+      default: new Date().toISOString().slice(0, 16), // Current date and time
+      disabled: true
     },
     updatedAt: {
       title: 'Update At',
-      type: 'date',
+      type: 'datetime-local',
       rules: 'date',
-      default: '1999-09-09'
+      default: new Date().toISOString().slice(0, 16), // Current date and time
+      disabled: true
     }
   }
 };
