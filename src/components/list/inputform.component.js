@@ -12,6 +12,7 @@ import PrisonerNetworkService from "../../services/prisoner-network-service";
 import UserNetworkService from "../../services/user-network-service";
 import PrisonNetworkService from "../../services/prison-network-service";
 import RuleNetworkService from "../../services/rule-network-service";
+import MessagingNetworkService from "../../services/messaging-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
 import { states, roles, senders } from "../../global_vars/options";
@@ -129,6 +130,7 @@ class InputForm extends React.Component {
   async buttonSubmit(e) {
     e.preventDefault();
     this.addOrUpdate(this.state.token).then((response) => {
+      console.log(response)
       if (response && response.data) {
         if (this.props.handleDataFromChild) {
           const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
@@ -172,9 +174,6 @@ class InputForm extends React.Component {
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
         response = await networkService.updateOne(fields, token);
-
-        response = await networkService.updateOne(fields, token);
-
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
           return false;
@@ -184,6 +183,7 @@ class InputForm extends React.Component {
         }
       } else {
         response = await networkService.addOne(fields, token);
+        console.log(response);
         if (response.status === 200) {
           return response.data;
         } else {
@@ -207,6 +207,8 @@ class InputForm extends React.Component {
         return PrisonNetworkService;
       case "Rule":
         return RuleNetworkService;
+      case "Message":
+        return MessagingNetworkService;
       default:
         throw new Error("Invalid subject");
     }
@@ -241,6 +243,9 @@ class InputForm extends React.Component {
             case "Rule": {
               this.getRule(id);
               break;
+            }
+            case "Message": {
+              
             }
             default: {
             }
@@ -311,7 +316,7 @@ class InputForm extends React.Component {
       fields: po,
     });
   }
-
+// TODO: Disable datepicker for message times
   displayFields() {
     const subjectFields = fields[this.props.subject];
 
@@ -376,10 +381,8 @@ class InputForm extends React.Component {
         handleChange={this.handleChange}
         handleBlurEvent={this.form.handleBlurEvent}
         errors={this.state.errors}
-      />)
-      } 
-      
-      else if (key === "id") {
+      />) 
+    } else if (key === "id") {
         return (
           <InputField
             key={key} // Add key prop here
@@ -402,6 +405,7 @@ class InputForm extends React.Component {
             handleChange={this.handleChange}
             handleBlurEvent={this.form.handleBlurEvent}
             errors={this.state.errors}
+            disabled={field.type === 'date' || field.type === 'datetime-local' ? true : value.disabled}
           />
         );
       }
@@ -438,6 +442,7 @@ class InputForm extends React.Component {
                   handleChange={this.handleChange}
                   handleBlurEvent={this.form.handleBlurEvent}
                   errors={this.state.errors}
+                  disabled={field.subFields[subKey].type === 'date' || field.subFields[subKey].type === 'datetime-local' ? true : subValue.disabled}
                 />
               );
             }
