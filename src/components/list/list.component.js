@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import PrisonerNetworkService from '../../services/prisoner-network-service';
-import {Link } from 'react-router-dom';
-import InputForm from './inputform.component';
-import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, ListGroupItem, Row } from 'reactstrap';
-import fields from '../../global_vars/fields';
 import UserNetworkService from '../../services/user-network-service';
 import PrisonNetworkService from '../../services/prison-network-service';
 import RuleNetworkService from '../../services/rule-network-service';
+import MessageNetworkService from '../../services/messaging-network-service';
+import ChatNetworkService from '../../services/chat-network-service';
+import { Link } from 'react-router-dom';
+import InputForm from './inputform.component';
+import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, ListGroupItem, Row } from 'reactstrap';
+import fields from '../../global_vars/fields';
 import Item from '../individual/item.component';
-import MessagingNetworkService from '../../services/messaging-network-service';
 import ChatBox from '../chat/chatbox.component';
 
 class ListPage extends Component {
@@ -126,7 +127,7 @@ class ListPage extends Component {
   }
 
   getChatsByUserOrPrisoner(user, prisoner) {
-    MessagingNetworkService.getChatsByUserOrPrisoner(user, prisoner, this.state.token).then((response) => {
+    ChatNetworkService.getChatsByUserOrPrisoner(user, prisoner, this.state.token).then((response) => {
       this.setState({
         chats: Object.values(response.data.data)
       }, () => { console.log(this.state.chats) });
@@ -136,7 +137,7 @@ class ListPage extends Component {
   };
 
   getMessagesByChat(chatId) {
-    MessagingNetworkService.getMessagesByChat(chatId, this.state.token).then((response) => {
+    MessageNetworkService.getMessagesByChat(chatId, this.state.token).then((response) => {
       this.setState({
         messages: response.data.data
       }, () => { console.log(this.state.messages) })
@@ -431,6 +432,25 @@ class ListPage extends Component {
       return renderFields("Chat", currentChat);
     } else {
       return null;
+    }
+  }
+
+  getNetworkService(subject) {
+    switch (subject) {
+      case "Prisoner":
+        return PrisonerNetworkService;
+      case "User":
+        return UserNetworkService;
+      case "Prison":
+        return PrisonNetworkService;
+      case "Rule":
+        return RuleNetworkService;
+      case "Message":
+        return MessageNetworkService;
+      case "Chat":
+        return ChatNetworkService;
+      default:
+        throw new Error("Invalid subject");
     }
   }
 

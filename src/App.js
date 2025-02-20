@@ -50,8 +50,6 @@ export default function App() {
           <Route path="rules" element={<ProtectedRoute element={<List subject="Rule" key="Rule" token={token} />} />} />
           <Route path="rule/:id" element={<ProtectedRoute element={<InputForm subject="Rule" key="Rule" token={token} solo />} />} />
           <Route path="tests" element={<ProtectedRoute element={<UnitTests subject="Test" key="Test" token={token} />} />} />
-
-
           <Route path="login" element={<Login setToken={handleSetToken} />} />
           <Route path="logout" element={<Home />} />
         </Routes>

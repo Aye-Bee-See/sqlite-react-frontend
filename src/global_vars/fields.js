@@ -95,6 +95,7 @@ var fields = {
     },
     address: {
       meta: true,
+      disabled: false,
       title: 'Address',
       subFields: {
         street: {
@@ -102,24 +103,28 @@ var fields = {
           type: 'text',
           default: '',
           rules: 'string',
+          disabled: false,
         },
         city: {
           title: 'City',
           type: 'text',
           default: '',
           rules: 'string',
+          disabled: false
         },
         state: {
           title: 'State',
           type: 'select',
           default: '',
           rules: 'string',
+          disabled: false
         },
         country: {
           title: 'Country',
           type: 'text',
           default: '',
           rules: 'string',
+          disabled: false,
         },
       },
     },

@@ -12,7 +12,8 @@ import PrisonerNetworkService from "../../services/prisoner-network-service";
 import UserNetworkService from "../../services/user-network-service";
 import PrisonNetworkService from "../../services/prison-network-service";
 import RuleNetworkService from "../../services/rule-network-service";
-import MessagingNetworkService from "../../services/messaging-network-service";
+import MessageNetworkService from "../../services/messaging-network-service";
+import ChatNetworkService from "../../services/chat-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
 import { states, roles, senders } from "../../global_vars/options";
@@ -208,7 +209,9 @@ class InputForm extends React.Component {
       case "Rule":
         return RuleNetworkService;
       case "Message":
-        return MessagingNetworkService;
+        return MessageNetworkService;
+      case "Chat":
+        return ChatNetworkService;
       default:
         throw new Error("Invalid subject");
     }
@@ -433,6 +436,7 @@ class InputForm extends React.Component {
                 />
               );
             } else {
+              console.log(subKey)
               return (
                 <InputField
                   key={subKey} // Add key prop here
@@ -442,7 +446,6 @@ class InputForm extends React.Component {
                   handleChange={this.handleChange}
                   handleBlurEvent={this.form.handleBlurEvent}
                   errors={this.state.errors}
-                  disabled={field.subFields[subKey].type === 'date' || field.subFields[subKey].type === 'datetime-local' ? true : subValue.disabled}
                 />
               );
             }
