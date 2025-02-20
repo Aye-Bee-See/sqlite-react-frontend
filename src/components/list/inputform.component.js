@@ -12,9 +12,11 @@ import PrisonerNetworkService from "../../services/prisoner-network-service";
 import UserNetworkService from "../../services/user-network-service";
 import PrisonNetworkService from "../../services/prison-network-service";
 import RuleNetworkService from "../../services/rule-network-service";
+import MessageNetworkService from "../../services/messaging-network-service";
+import ChatNetworkService from "../../services/chat-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
-import { states, roles } from "../../global_vars/options";
+import { states, roles, senders } from "../../global_vars/options";
 import ReactFormInputValidation from "react-form-input-validation";
 import InputField from "./InputField";
 import SelectField from "./SelectField";
@@ -55,9 +57,15 @@ class InputForm extends React.Component {
 
   propertyObject(subject) {
     const state = {};
+    const subjectFields = fields[subject];
 
-    Object.keys(fields[subject]).forEach((key) => {
-      const field = fields[subject][key];
+    if (!subjectFields) {
+      console.error(`No fields defined for subject: ${subject}`);
+      return state;
+    }
+
+    Object.keys(subjectFields).forEach((key) => {
+      const field = subjectFields[key];
       if (field.meta && field.subFields) {
         state[key] = {};
         Object.keys(field.subFields).forEach((subField) => {
@@ -123,6 +131,7 @@ class InputForm extends React.Component {
   async buttonSubmit(e) {
     e.preventDefault();
     this.addOrUpdate(this.state.token).then((response) => {
+      console.log(response)
       if (response && response.data) {
         if (this.props.handleDataFromChild) {
           const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
@@ -166,12 +175,8 @@ class InputForm extends React.Component {
       const networkService = this.getNetworkService(this.props.subject);
       if (this.props.solo) {
         response = await networkService.updateOne(fields, token);
-
-        response = await networkService.updateOne(fields, token);
-
         if (response.status === 200) {
           this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
-          return false;
           return false;
         } else {
           this.setMessage(response.data.info);
@@ -179,8 +184,8 @@ class InputForm extends React.Component {
         }
       } else {
         response = await networkService.addOne(fields, token);
+        console.log(response);
         if (response.status === 200) {
-          return response.data;
           return response.data;
         } else {
           this.setMessage(response.data.info);
@@ -203,6 +208,10 @@ class InputForm extends React.Component {
         return PrisonNetworkService;
       case "Rule":
         return RuleNetworkService;
+      case "Message":
+        return MessageNetworkService;
+      case "Chat":
+        return ChatNetworkService;
       default:
         throw new Error("Invalid subject");
     }
@@ -237,6 +246,9 @@ class InputForm extends React.Component {
             case "Rule": {
               this.getRule(id);
               break;
+            }
+            case "Message": {
+              
             }
             default: {
             }
@@ -307,10 +319,17 @@ class InputForm extends React.Component {
       fields: po,
     });
   }
-
+// TODO: Disable datepicker for message times
   displayFields() {
-    return Object.keys(fields[this.props.subject]).map((key) => {
-      const field = fields[this.props.subject][key];
+    const subjectFields = fields[this.props.subject];
+
+    if (!subjectFields) {
+      console.error(`No fields defined for subject: ${this.props.subject}`);
+      return null;
+    }
+
+    return Object.keys(subjectFields).map((key) => {
+      const field = subjectFields[key];
       const value = this.state.fields[key] === -1 ? '' : this.state.fields[key];
 
       if (field.meta && field.subFields) {
@@ -355,7 +374,18 @@ class InputForm extends React.Component {
             errors={this.state.errors}
           />
         );
-      } else if (key === "id") {
+      } else if (key === "sender") {
+        return (<SelectField
+        key={key} // Add key prop here
+        id={key}
+        field={field}
+        options={senders}
+        value={value}
+        handleChange={this.handleChange}
+        handleBlurEvent={this.form.handleBlurEvent}
+        errors={this.state.errors}
+      />) 
+    } else if (key === "id") {
         return (
           <InputField
             key={key} // Add key prop here
@@ -378,6 +408,7 @@ class InputForm extends React.Component {
             handleChange={this.handleChange}
             handleBlurEvent={this.form.handleBlurEvent}
             errors={this.state.errors}
+            disabled={field.type === 'date' || field.type === 'datetime-local' ? true : value.disabled}
           />
         );
       }
@@ -405,6 +436,7 @@ class InputForm extends React.Component {
                 />
               );
             } else {
+              console.log(subKey)
               return (
                 <InputField
                   key={subKey} // Add key prop here

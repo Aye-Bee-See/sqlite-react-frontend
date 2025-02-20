@@ -18,6 +18,8 @@ class UnitTests extends React.Component {
         getUser: null, getPrison: null, getPrisoner: null, getRule: null,
         updatePrison: null, updatePrisoner: null, updateUser: null, updateRule: null, 
         deletePrison: null, deletePrisoner: null, deleteRule: null, deleteUser: null,
+        createChat: null, createMessage: null, getChats: null, getMessages: null,
+        updateChat: null, updateMessage: null, deleteChat: null, deleteMessage: null,
       }
     };
     this.runTests = this.runTests.bind(this);
@@ -30,10 +32,10 @@ class UnitTests extends React.Component {
   }
 
   render() {
-    const createResults = ["createUser", "getToken", "createPrison", "createPrisoner", "createRule"];
-    const getResults = ["getUsers", "getPrisons", "getPrisoners", "getRules", "getUser", "getPrison", "getPrisoner", "getRule"];
-    const updateResults = ["updatePrison", "updatePrisoner", "updateUser", "updateRule"];
-    const deleteResults = ["deletePrison", "deletePrisoner", "deleteRule", "deleteUser"];
+    const createResults = ["createUser", "getToken", "createPrison", "createPrisoner", "createRule", "createChat", "createMessage"];
+    const getResults = ["getUsers", "getPrisons", "getPrisoners", "getRules", "getUser", "getPrison", "getPrisoner", "getRule", "getChats", "getMessages"];
+    const updateResults = ["updatePrison", "updatePrisoner", "updateUser", "updateRule", "updateChat", "updateMessage"];
+    const deleteResults = ["deletePrison", "deletePrisoner", "deleteRule", "deleteUser", "deleteChat", "deleteMessage"];
 
     return (
       <>

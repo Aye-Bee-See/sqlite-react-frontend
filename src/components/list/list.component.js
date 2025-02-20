@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import PrisonerNetworkService from '../../services/prisoner-network-service';
-import {Link } from 'react-router-dom';
-import InputForm from './inputform.component';
-import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, ListGroupItem, Row } from 'reactstrap';
-import fields from '../../global_vars/fields';
 import UserNetworkService from '../../services/user-network-service';
 import PrisonNetworkService from '../../services/prison-network-service';
 import RuleNetworkService from '../../services/rule-network-service';
+import MessageNetworkService from '../../services/messaging-network-service';
+import ChatNetworkService from '../../services/chat-network-service';
+import { Link } from 'react-router-dom';
+import InputForm from './inputform.component';
+import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input, InputGroup, List, ListGroup, ListGroupItem, Row } from 'reactstrap';
+import fields from '../../global_vars/fields';
 import Item from '../individual/item.component';
+import ChatBox from '../chat/chatbox.component';
 
 class ListPage extends Component {
 
@@ -17,13 +20,18 @@ class ListPage extends Component {
     this.getAllPrisoners = this.getAllPrisoners.bind(this);
     this.getAllUsers = this.getAllUsers.bind(this);
     this.getAllPrisons = this.getAllPrisons.bind(this);
-    this.getAllRules = this.getAllRules.bind(this)
+    this.getAllRules = this.getAllRules.bind(this);
     this.getPrisonersByPrison = this.getPrisonersByPrison.bind(this);
+    this.getChatsByUserOrPrisoner = this.getChatsByUserOrPrisoner.bind(this);
+    this.getMessagesByChat = this.getMessagesByChat.bind(this);
+    this.onChangeMessageType = this.onChangeMessageType.bind(this);
+    this.setActiveMessageUserOrPrisoner = this.setActiveMessageUserOrPrisoner.bind(this);
 
     this.setActivePrisoner = this.setActivePrisoner.bind(this);
     this.setActivePrison = this.setActivePrison.bind(this);
     this.setActiveUser = this.setActiveUser.bind(this);
     this.setActiveRule = this.setActiveRule.bind(this);
+    this.setActiveChat = this.setActiveChat.bind(this);
 
     this.onChangeSearchName = this.onChangeSearchName.bind(this);
     this.handleDataFromChild = this.handleDataFromChild.bind(this);
@@ -37,6 +45,8 @@ class ListPage extends Component {
       currentUser: null,
       currentPrison: null,
       currentRule: null,
+      currentMessageUserOrPrisoner: null,
+      currentChat: null,
       currentIndex: -1,
       prisoners: [],
       users: [],
@@ -45,7 +55,10 @@ class ListPage extends Component {
       searchName: '',
       token: '',
       errorText: '',
-      prisonersByPrison: []
+      prisonersByPrison: [],
+      messageType: 'User',
+      chats: [],
+      messages: [],
       }
   }
 
@@ -111,6 +124,54 @@ class ListPage extends Component {
     }).catch(error => {
       console.error(`Error fetching prisoners by prison:`, error.message);
     });
+  }
+
+  getChatsByUserOrPrisoner(user, prisoner) {
+    ChatNetworkService.getChatsByUserOrPrisoner(user, prisoner, this.state.token).then((response) => {
+      this.setState({
+        chats: Object.values(response.data.data)
+      }, () => { console.log(this.state.chats) });
+    }).catch(error => {
+      console.error(`Error fetching chats:`, error.message);
+    });
+  };
+
+  getMessagesByChat(chatId) {
+    MessageNetworkService.getMessagesByChat(chatId, this.state.token).then((response) => {
+      this.setState({
+        messages: response.data.data
+      }, () => { console.log(this.state.messages) })
+    })
+  }
+
+  onChangeMessageType(e) {
+    this.setState({
+      messageType: e.target.value,
+      currentMessageUserOrPrisoner: null,
+      chats: []
+    });
+  }
+
+  setActiveMessageUserOrPrisoner(item, index) {
+    this.setState({
+      currentMessageUserOrPrisoner: item,
+      currentIndex: index
+    }, () => {
+      if (this.state.messageType === 'User') {
+        this.getChatsByUserOrPrisoner(item.id, null);
+      } else {
+        this.getChatsByUserOrPrisoner(null, item.id);
+      }
+    });
+  }
+  
+  setActiveChat(item, index) {
+    this.setState({
+      currentChat: item,
+      currentIndex: index
+    }, () => {
+      this.getMessagesByChat(item.id)
+    })
   }
 
   deleteItem() {
@@ -186,7 +247,7 @@ class ListPage extends Component {
   }
 
   listData() {
-    const { searchName } = this.state;
+    const { searchName, messageType } = this.state;
     const filterItems = (items, displayField) => {
       return items.filter(item => {
         if (searchName.length >= 3) {
@@ -198,6 +259,14 @@ class ListPage extends Component {
       });
     };
   
+    if (this.props.subject === "Message") {
+      const items = messageType === 'User' ? this.state.users : this.state.prisoners;
+      const filteredItems = filterItems(items);
+      return filteredItems.map((item, index) => (
+        <Item key={item.id} settingFunction={this.setActiveMessageUserOrPrisoner} individual={item} index={index} toDisplay={messageType === 'User' ? 'username' : 'chosenName'} currentIndex={this.state.currentIndex} />
+      ));
+    }
+
     switch (this.props.subject) {
       case "Prisoner": {
         const filteredPrisoners = filterItems(this.state.prisoners, 'chosenName');
@@ -267,6 +336,11 @@ class ListPage extends Component {
         }));
         break;
       }
+      case "Message": {
+        this.setState(prevState => ({
+          messages: [...prevState.messages, item]
+        }));
+      }
       default: {
         console.error("Unknown subject:", this.props.subject);
       }
@@ -311,7 +385,7 @@ class ListPage extends Component {
     });
   }
 
-  displayFields(currentPrisoner, currentUser, currentPrison, currentRule) {
+  displayFields(currentPrisoner, currentUser, currentPrison, currentRule, currentChat) {
     const renderFields = (subject, currentItem) => {
       return Object.keys(fields[subject]).map((key) => {
         const field = fields[subject][key];
@@ -345,7 +419,7 @@ class ListPage extends Component {
         }
       });
     };
-  
+  //TODO: This can be simplified
     if (this.props.subject === "Prisoner" && currentPrisoner) {
       return renderFields("Prisoner", currentPrisoner);
     } else if (this.props.subject === "User" && currentUser) {
@@ -354,13 +428,34 @@ class ListPage extends Component {
       return renderFields("Prison", currentPrison);
     } else if (this.props.subject === "Rule" && currentRule) {
       return renderFields("Rule", currentRule);
+    } else if (this.props.subject === "Message" && currentChat) {
+      return renderFields("Chat", currentChat);
     } else {
       return null;
     }
   }
 
+  getNetworkService(subject) {
+    switch (subject) {
+      case "Prisoner":
+        return PrisonerNetworkService;
+      case "User":
+        return UserNetworkService;
+      case "Prison":
+        return PrisonNetworkService;
+      case "Rule":
+        return RuleNetworkService;
+      case "Message":
+        return MessageNetworkService;
+      case "Chat":
+        return ChatNetworkService;
+      default:
+        throw new Error("Invalid subject");
+    }
+  }
+
   render() {
-    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentIndex, prisonersByPrison } = this.state;
+    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentChat, currentIndex, prisonersByPrison, messageType, chats, currentMessageUserOrPrisoner, messages } = this.state;
     var editLink = this.editButton();
 
     return (
@@ -383,6 +478,18 @@ class ListPage extends Component {
           </InputGroup>
         </Col>
         </Row>
+        {this.props.subject === "Message" && (
+          <Row>
+            <Col md="8">
+              <InputGroup className='pb-3'>
+                <Input type="select" value={messageType} onChange={this.onChangeMessageType}>
+                  <option value="User">User</option>
+                  <option value="Prisoner">Prisoner</option>
+                </Input>
+              </InputGroup>
+            </Col>
+          </Row>
+        )}
         <List className="row">
         <div className='col-md-6'>
         <ListGroup>
@@ -395,17 +502,34 @@ class ListPage extends Component {
           </Button>
         </div>
         <Col md={6}>
-          {currentPrisoner || currentUser || currentPrison || currentRule ? (
+          {currentPrisoner || currentUser || currentPrison || currentRule || currentMessageUserOrPrisoner || currentChat ? (
             <>
+              {currentMessageUserOrPrisoner && chats.length > 0 && (
+                <Card className="mt-3">
+                  <CardHeader>Chats for {messageType === 'User' ? currentMessageUserOrPrisoner.username : currentMessageUserOrPrisoner.chosenName}</CardHeader>
+                  <CardText className='p-3' tag="span">
+                    <ListGroup>
+                      {chats.map((chat, index) => (
+                        <Item key={chat.id} settingFunction={this.setActiveChat} individual={chat} index={index} toDisplay={'id'} />
+                        // <Item key={item.id} settingFunction={this.setActiveMessageUserOrPrisoner} individual={item} index={index} toDisplay={messageType === 'User' ? 'username' : 'chosenName'} currentIndex={this.state.currentIndex} />
+                        // <ListGroupItem key={chat.id}>{chat.user} ⇢ {chat.prisoner}</ListGroupItem>
+                      ))}
+                    </ListGroup>
+                  </CardText>
+                </Card>
+              )}   
               <Card>
                 <CardHeader>{this.props.subject}</CardHeader> 
                 <CardSubtitle></CardSubtitle>
                 <CardText className='p-3' tag="span">
-                  {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule)}
+                  {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule, currentChat)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   <Button onClick={this.deleteItem} size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
-              </Card>              
+              </Card>
+              {this.props.subject === "Message" && messages.length > 0 && (
+                <ChatBox messages={messages} />
+              )}
               {currentPrison && prisonersByPrison.length > 0 && (
                 <Card className="mt-3">
                   <CardHeader>Prisoners in {currentPrison.prisonName}</CardHeader>
@@ -418,6 +542,7 @@ class ListPage extends Component {
                   </CardText>
                 </Card>
               )}
+
               <p className='text-danger'>{this.state.errorText}</p>
 
             </>

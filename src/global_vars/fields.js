@@ -95,6 +95,7 @@ var fields = {
     },
     address: {
       meta: true,
+      disabled: false,
       title: 'Address',
       subFields: {
         street: {
@@ -102,24 +103,28 @@ var fields = {
           type: 'text',
           default: '',
           rules: 'string',
+          disabled: false,
         },
         city: {
           title: 'City',
           type: 'text',
           default: '',
           rules: 'string',
+          disabled: false
         },
         state: {
           title: 'State',
           type: 'select',
           default: '',
           rules: 'string',
+          disabled: false
         },
         country: {
           title: 'Country',
           type: 'text',
           default: '',
           rules: 'string',
+          disabled: false,
         },
       },
     },
@@ -144,6 +149,73 @@ var fields = {
       rules: 'string',
     },
   },
+  Chat: {
+    id: {
+      title: 'ID',
+      type: 'number',
+      default: -1,
+      disabled: true,
+    },
+    user: {
+      title: 'User',
+      type: 'number',
+      default: -1,
+    },
+    prisoner: {
+      title: 'Prisoner',
+      type: 'number',
+      default: -1
+    }
+  },
+  // Todo: Add rules to these
+  Message: {
+    id: {
+      title: 'ID',
+      type: 'number',
+      default: -1,
+      disabled: true
+    },
+    chat: {
+      title: 'Chat ID',
+      type: 'number',
+      default: -1,
+    },
+    messageText: {
+      title: "Message Text",
+      type: 'text',
+      default: '',
+      disabled: true
+    },
+    sender: {
+      title: 'Sender',
+      type: 'select',
+      default: 'prisoner'
+    },
+    prisoner: {
+      title: 'Prisoner',
+      type: 'number',
+      default: -1
+    },
+    user: {
+      title: 'User',
+      type: 'number',
+      default: -1
+    },
+    createdAt: {
+      title: 'Created At',
+      type: 'datetime-local',
+      rules: 'date',
+      default: new Date().toISOString().slice(0, 16), // Current date and time
+      disabled: true
+    },
+    updatedAt: {
+      title: 'Update At',
+      type: 'datetime-local',
+      rules: 'date',
+      default: new Date().toISOString().slice(0, 16), // Current date and time
+      disabled: true
+    }
+  }
 };
 
 export default fields;

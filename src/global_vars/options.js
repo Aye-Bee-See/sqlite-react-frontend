@@ -11,4 +11,6 @@ const states = [
 
 const roles = ["admin", "user", "banned"]
 
-export { states, roles };
+const senders = ["prisoner", "user"]
+
+export { states, roles, senders };
