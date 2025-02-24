@@ -224,6 +224,7 @@ class InputForm extends React.Component {
   componentDidMount() {
     const { subject, solo } = this.props;
     const { id } = this.props.router.params;
+    console.log(`Subject: ${subject}, solo: ${solo}, id: ${id}`)
     try {
       const token = typeof this.props.token === 'string' && this.props.token.startsWith('{') ? JSON.parse(this.props.token) : this.props.token;
       this.setState({
@@ -251,8 +252,9 @@ class InputForm extends React.Component {
               this.getRule(id);
               break;
             }
-            case "Chapter:": {
+            case "Chapter": {
               this.getChapter(id);
+              break;
             }
             case "Message": {
               
@@ -322,6 +324,7 @@ class InputForm extends React.Component {
 
   getChapter(id) {
     ChapterNetworkService.getOne(id, this.state.token).then((response) => {
+      console.log(response.data.data);
       this.setState({
         fields: { ...response.data.data },
       })
@@ -423,7 +426,7 @@ class InputForm extends React.Component {
             handleChange={this.handleChange}
             handleBlurEvent={this.form.handleBlurEvent}
             errors={this.state.errors}
-            disabled={field.type === 'date' || field.type === 'datetime-local' ? true : value.disabled}
+            disabled={field?.type === 'date' || field?.type === 'datetime-local' ? true : field?.disabled}
           />
         );
       }

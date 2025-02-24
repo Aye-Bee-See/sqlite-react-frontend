@@ -227,6 +227,7 @@ var fields = {
       title: 'Chapter Name',
       type: 'text',
       default: '',
+      disabled: false
     },
     location: {
       meta: true,

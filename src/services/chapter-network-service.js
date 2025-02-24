@@ -22,7 +22,7 @@ class ChapterNetworkService {
 
   // Read one chapter
   async getOne(id, token) {
-    return http.get(`/chapter/chapters?id=${id}`, {
+    return http.get(`/chapter/chapter?id=${id}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
