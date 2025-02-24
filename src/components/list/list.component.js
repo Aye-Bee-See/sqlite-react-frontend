@@ -329,7 +329,7 @@ class ListPage extends Component {
       case "Rule": {
         return this.state.currentRule && `/rule/${this.state.currentRule.id}`}
       case "Chapter": {
-        return this.state.currentChapter && `/rule/${this.state.currentChapter.id}`
+        return this.state.currentChapter && `/chapter/${this.state.currentChapter.id}`
       }
       }
     }
