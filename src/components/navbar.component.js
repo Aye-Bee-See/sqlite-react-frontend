@@ -35,10 +35,14 @@ const NavBar = ({ token, logOut }) => {
             </NavItem>
             <NavItem>
               <Link to="/rules" className="nav-link">Rules</Link>
+            </NavItem>            
+            <NavItem>
+              <Link to="/chapters" className='nav-link'>Chapters</Link>
             </NavItem>
             <NavItem>
               <Link to="/tests" className='nav-link'>Tests</Link>
             </NavItem>
+
             <NavItem>
               <Button onClick={handleLogOut} className='nav-link'>Log Out</Button>
             </NavItem>

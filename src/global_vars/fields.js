@@ -215,6 +215,61 @@ var fields = {
       default: new Date().toISOString().slice(0, 16), // Current date and time
       disabled: true
     }
+  },
+  Chapter: {
+    id: {
+      title: 'ID',
+      type: 'number',
+      default: -1,
+      disabled: true
+    },
+    name: {
+      title: 'Chapter Name',
+      type: 'text',
+      default: '',
+      disabled: false
+    },
+    location: {
+      meta: true,
+      disabled: false,
+      title: 'Address',
+      subFields: {
+        street: {
+          title: 'Street',
+          type: 'text',
+          default: '',
+          rules: 'string',
+          disabled: false,
+        },
+        city: {
+          title: 'City',
+          type: 'text',
+          default: '',
+          rules: 'string',
+          disabled: false
+        },
+        state: {
+          title: 'State',
+          type: 'select',
+          default: '',
+          rules: 'string',
+          disabled: false
+        },
+        country: {
+          title: 'Country',
+          type: 'text',
+          default: '',
+          rules: 'string',
+          disabled: false,
+        },
+      },
+    },
+    lettersSent: {
+      title: 'Letters Sent',
+      type: 'number',
+      default: 0,
+      disabled: true
+    },
   }
 };
 

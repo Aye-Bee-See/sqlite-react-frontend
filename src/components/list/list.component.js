@@ -11,6 +11,7 @@ import { Button, Card, CardHeader, CardSubtitle, CardText, Col, Container, Input
 import fields from '../../global_vars/fields';
 import Item from '../individual/item.component';
 import ChatBox from '../chat/chatbox.component';
+import ChapterNetworkService from '../../services/chapter-network-service';
 
 class ListPage extends Component {
 
@@ -21,6 +22,7 @@ class ListPage extends Component {
     this.getAllUsers = this.getAllUsers.bind(this);
     this.getAllPrisons = this.getAllPrisons.bind(this);
     this.getAllRules = this.getAllRules.bind(this);
+    this.getAllChapters = this.getAllChapters.bind(this);
     this.getPrisonersByPrison = this.getPrisonersByPrison.bind(this);
     this.getChatsByUserOrPrisoner = this.getChatsByUserOrPrisoner.bind(this);
     this.getMessagesByChat = this.getMessagesByChat.bind(this);
@@ -32,6 +34,7 @@ class ListPage extends Component {
     this.setActiveUser = this.setActiveUser.bind(this);
     this.setActiveRule = this.setActiveRule.bind(this);
     this.setActiveChat = this.setActiveChat.bind(this);
+    this.setActiveChapter = this.setActiveChapter.bind(this);
 
     this.onChangeSearchName = this.onChangeSearchName.bind(this);
     this.handleDataFromChild = this.handleDataFromChild.bind(this);
@@ -45,6 +48,7 @@ class ListPage extends Component {
       currentUser: null,
       currentPrison: null,
       currentRule: null,
+      currentChapter: null,
       currentMessageUserOrPrisoner: null,
       currentChat: null,
       currentIndex: -1,
@@ -52,6 +56,7 @@ class ListPage extends Component {
       users: [],
       prisons: [],
       rules: [],
+      chapters: [],
       searchName: '',
       token: '',
       errorText: '',
@@ -72,6 +77,7 @@ class ListPage extends Component {
         this.getAllUsers();
         this.getAllPrisons();
         this.getAllRules();
+        this.getAllChapters();
       });
     } catch (error) {
       console.error("Invalid token format:", error);
@@ -112,6 +118,14 @@ class ListPage extends Component {
     RuleNetworkService.getAll(this.state.token).then((response) => {
       this.setState({
         rules: Object.values(response.data.data)
+      });
+    });
+  }
+
+  getAllChapters() {
+    ChapterNetworkService.getAll(this.state.token).then((response) => {
+      this.setState({
+        chapters: Object.values(response.data.data)
       });
     });
   }
@@ -292,6 +306,12 @@ class ListPage extends Component {
           <Item key={rule.id} settingFunction={this.setActiveRule} individual={rule} index={index} toDisplay='title' currentIndex={this.state.currentIndex} />
         ));
       }
+      case "Chapter": {
+        const filteredChapters = filterItems(this.state.chapters, 'name');
+        return filteredChapters.map((rule, index) => (
+          <Item key={rule.id} settingFunction={this.setActiveChapter} individual={rule} index={index} toDisplay='name' currentIndex={this.state.currentIndex} />
+        ))
+      }
       default: {
         return null;
       }
@@ -308,7 +328,11 @@ class ListPage extends Component {
         return this.state.currentPrison && `/prison/${this.state.currentPrison.id}`}
       case "Rule": {
         return this.state.currentRule && `/rule/${this.state.currentRule.id}`}
-      } }
+      case "Chapter": {
+        return this.state.currentChapter && `/chapter/${this.state.currentChapter.id}`
+      }
+      }
+    }
 
   async handleDataFromChild(item) {
     switch (this.props.subject) {
@@ -340,6 +364,11 @@ class ListPage extends Component {
         this.setState(prevState => ({
           messages: [...prevState.messages, item]
         }));
+      }
+      case "Chapter": {
+        this.setState(prevState => ({
+          chapters: [...prevState.chapters, item]
+        }))
       }
       default: {
         console.error("Unknown subject:", this.props.subject);
@@ -378,6 +407,13 @@ class ListPage extends Component {
     })
   }
 
+  setActiveChapter(chapter, index) {
+    this.setState({
+      currentChapter: chapter,
+      currentIndex: index
+    });
+  }
+
   onChangeSearchName(e) {
     const searchName = e.target.value;
     this.setState({
@@ -385,7 +421,7 @@ class ListPage extends Component {
     });
   }
 
-  displayFields(currentPrisoner, currentUser, currentPrison, currentRule, currentChat) {
+  displayFields(currentPrisoner, currentUser, currentPrison, currentRule, currentChat, currentChapter) {
     const renderFields = (subject, currentItem) => {
       return Object.keys(fields[subject]).map((key) => {
         const field = fields[subject][key];
@@ -421,6 +457,7 @@ class ListPage extends Component {
     };
   //TODO: This can be simplified
     if (this.props.subject === "Prisoner" && currentPrisoner) {
+      console.log("rendering prisoner")
       return renderFields("Prisoner", currentPrisoner);
     } else if (this.props.subject === "User" && currentUser) {
       return renderFields("User", currentUser);
@@ -430,6 +467,9 @@ class ListPage extends Component {
       return renderFields("Rule", currentRule);
     } else if (this.props.subject === "Message" && currentChat) {
       return renderFields("Chat", currentChat);
+    } else if (this.props.subject === "Chapter" && currentChapter) {
+      console.log("rendering chapter");
+      return renderFields("Chapter", currentChapter);
     } else {
       return null;
     }
@@ -449,13 +489,15 @@ class ListPage extends Component {
         return MessageNetworkService;
       case "Chat":
         return ChatNetworkService;
+      case "Chapter":
+        return ChapterNetworkService;
       default:
         throw new Error("Invalid subject");
     }
   }
 
   render() {
-    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentChat, currentIndex, prisonersByPrison, messageType, chats, currentMessageUserOrPrisoner, messages } = this.state;
+    const { searchName, currentPrisoner, currentUser, currentPrison, currentRule, currentChat, currentIndex, currentChapter, prisonersByPrison, messageType, chats, currentMessageUserOrPrisoner, messages } = this.state;
     var editLink = this.editButton();
 
     return (
@@ -502,7 +544,7 @@ class ListPage extends Component {
           </Button>
         </div>
         <Col md={6}>
-          {currentPrisoner || currentUser || currentPrison || currentRule || currentMessageUserOrPrisoner || currentChat ? (
+          {currentPrisoner || currentUser || currentPrison || currentRule || currentMessageUserOrPrisoner || currentChat || currentChapter ? (
             <>
               {currentMessageUserOrPrisoner && chats.length > 0 && (
                 <Card className="mt-3">
@@ -511,8 +553,6 @@ class ListPage extends Component {
                     <ListGroup>
                       {chats.map((chat, index) => (
                         <Item key={chat.id} settingFunction={this.setActiveChat} individual={chat} index={index} toDisplay={'id'} />
-                        // <Item key={item.id} settingFunction={this.setActiveMessageUserOrPrisoner} individual={item} index={index} toDisplay={messageType === 'User' ? 'username' : 'chosenName'} currentIndex={this.state.currentIndex} />
-                        // <ListGroupItem key={chat.id}>{chat.user} ⇢ {chat.prisoner}</ListGroupItem>
                       ))}
                     </ListGroup>
                   </CardText>
@@ -522,7 +562,7 @@ class ListPage extends Component {
                 <CardHeader>{this.props.subject}</CardHeader> 
                 <CardSubtitle></CardSubtitle>
                 <CardText className='p-3' tag="span">
-                  {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule, currentChat)}
+                  {this.displayFields(currentPrisoner, currentUser, currentPrison, currentRule, currentChat, currentChapter)}
                   <Link to={editLink}><Button className='mx-2' size='sm' color='primary'>Edit</Button></Link>
                   <Button onClick={this.deleteItem} size='sm' color='danger' className='mx-2'>Delete</Button>
                 </CardText>
