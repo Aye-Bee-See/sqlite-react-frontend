@@ -14,6 +14,7 @@ import PrisonNetworkService from "../../services/prison-network-service";
 import RuleNetworkService from "../../services/rule-network-service";
 import MessageNetworkService from "../../services/messaging-network-service";
 import ChatNetworkService from "../../services/chat-network-service";
+import ChapterNetworkService from "../../services/chapter-network-service";
 import fields from "../../global_vars/fields";
 import withRouter from "../withRouter";
 import { states, roles, senders } from "../../global_vars/options";
@@ -36,6 +37,7 @@ class InputForm extends React.Component {
     this.getUser = this.getUser.bind(this);
     this.getPrison = this.getPrison.bind(this);
     this.getRule = this.getRule.bind(this);
+    this.getChapter = this.getChapter.bind(this);
     this.fetchPrisons = this.fetchPrisons.bind(this);
 
     this.setMessage = this.setMessage.bind(this);
@@ -212,6 +214,8 @@ class InputForm extends React.Component {
         return MessageNetworkService;
       case "Chat":
         return ChatNetworkService;
+      case "Chapter":
+        return ChapterNetworkService;
       default:
         throw new Error("Invalid subject");
     }
@@ -246,6 +250,9 @@ class InputForm extends React.Component {
             case "Rule": {
               this.getRule(id);
               break;
+            }
+            case "Chapter:": {
+              this.getChapter(id);
             }
             case "Message": {
               
@@ -311,6 +318,14 @@ class InputForm extends React.Component {
         fields: { ...response.data.data },
       });
     });
+  }
+
+  getChapter(id) {
+    ChapterNetworkService.getOne(id, this.state.token).then((response) => {
+      this.setState({
+        fields: { ...response.data.data },
+      })
+    })
   }
 
   async clearFields() {
