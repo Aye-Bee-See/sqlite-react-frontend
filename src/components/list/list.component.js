@@ -248,6 +248,25 @@ class ListPage extends Component {
 					});
 				break;
 			}
+			case 'Chapter': {
+				const { id } = this.state.currentChapter;
+				ChapterNetworkService.deleteOne(id, this.state.token)
+					.then((response) => {
+						if (response.data.data === 1) {
+							this.setState((prevState) => ({
+								chapters: prevState.chapters.filter((chapter) => chapter.id !== id),
+								currentChapter: null,
+								currentIndex: -1
+							}));
+						} else {
+							this.setState(`Unable to delete ${this.props.subject}`);
+						}
+					})
+					.catch((error) => {
+						console.error(`Error deleting ${this.props.subject}:`, error.message);
+						this.setState({ errorText: error.message });
+					});
+			}
 			default: {
 			}
 		}
