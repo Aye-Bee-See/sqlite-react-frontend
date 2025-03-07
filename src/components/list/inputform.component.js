@@ -6,6 +6,7 @@ import PrisonNetworkService from '../../services/prison-network-service';
 import RuleNetworkService from '../../services/rule-network-service';
 import MessageNetworkService from '../../services/messaging-network-service';
 import ChatNetworkService from '../../services/chat-network-service';
+import ChapterNetworkService from '../../services/chapter-network-service';
 import fields from '../../global_vars/fields';
 import withRouter from '../withRouter';
 import { states, roles, senders } from '../../global_vars/options';
@@ -28,6 +29,7 @@ class InputForm extends React.Component {
 		this.getUser = this.getUser.bind(this);
 		this.getPrison = this.getPrison.bind(this);
 		this.getRule = this.getRule.bind(this);
+		this.getChapter = this.getChapter.bind(this);
 		this.fetchPrisons = this.fetchPrisons.bind(this);
 
 		this.setMessage = this.setMessage.bind(this);
@@ -103,10 +105,7 @@ class InputForm extends React.Component {
 			this.setState((prevState) => ({
 				fields: {
 					...prevState.fields,
-					[parentKey]: {
-						...prevState.fields[parentKey],
-						[subKey]: value
-					}
+					[parentKey]: { ...prevState.fields[parentKey], [subKey]: value }
 				}
 			}));
 		} else {
@@ -202,6 +201,8 @@ class InputForm extends React.Component {
 				return MessageNetworkService;
 			case 'Chat':
 				return ChatNetworkService;
+			case 'Chapter':
+				return ChapterNetworkService;
 			default:
 				throw new Error('Invalid subject');
 		}
@@ -210,46 +211,46 @@ class InputForm extends React.Component {
 	componentDidMount() {
 		const { subject, solo } = this.props;
 		const { id } = this.props.router.params;
+		console.log(`Subject: ${subject}, solo: ${solo}, id: ${id}`);
 		try {
 			const token =
 				typeof this.props.token === 'string' && this.props.token.startsWith('{')
 					? JSON.parse(this.props.token)
 					: this.props.token;
-			this.setState(
-				{
-					token: token['token'] || token
-				},
-				() => {
-					if (subject === 'Prisoner') {
-						this.fetchPrisons(this.state.token);
-					}
+			this.setState({ token: token['token'] || token }, () => {
+				if (subject === 'Prisoner') {
+					this.fetchPrisons(this.state.token);
+				}
 
-					if (solo) {
-						switch (subject) {
-							case 'Prisoner': {
-								this.getPrisoner(id);
-								break;
-							}
-							case 'User': {
-								this.getUser(id);
-								break;
-							}
-							case 'Prison': {
-								this.getPrison(id);
-								break;
-							}
-							case 'Rule': {
-								this.getRule(id);
-								break;
-							}
-							case 'Message': {
-							}
-							default: {
-							}
+				if (solo) {
+					switch (subject) {
+						case 'Prisoner': {
+							this.getPrisoner(id);
+							break;
+						}
+						case 'User': {
+							this.getUser(id);
+							break;
+						}
+						case 'Prison': {
+							this.getPrison(id);
+							break;
+						}
+						case 'Rule': {
+							this.getRule(id);
+							break;
+						}
+						case 'Chapter': {
+							this.getChapter(id);
+							break;
+						}
+						case 'Message': {
+						}
+						default: {
 						}
 					}
 				}
-			);
+			});
 		} catch (error) {
 			console.error('Invalid token format:', error);
 		}
@@ -269,48 +270,43 @@ class InputForm extends React.Component {
 	}
 
 	async setMessage(message) {
-		this.setState({
-			message: message
-		});
+		this.setState({ message: message });
 	}
 
 	getPrisoner(id) {
 		PrisonerNetworkService.getOne(id, this.state.token).then((response) => {
-			this.setState({
-				fields: { ...response.data.data }
-			});
+			this.setState({ fields: { ...response.data.data } });
 		});
 	}
 
 	getUser(id) {
 		UserNetworkService.getOne(id, this.state.token).then((response) => {
-			this.setState({
-				fields: { ...response.data.data }
-			});
+			this.setState({ fields: { ...response.data.data } });
 		});
 	}
 
 	getPrison(id) {
 		PrisonNetworkService.getOne(id, this.state.token).then((response) => {
-			this.setState({
-				fields: { ...response.data.data }
-			});
+			this.setState({ fields: { ...response.data.data } });
 		});
 	}
 
 	getRule(id) {
 		RuleNetworkService.getOne(id, this.state.token).then((response) => {
-			this.setState({
-				fields: { ...response.data.data }
-			});
+			this.setState({ fields: { ...response.data.data } });
+		});
+	}
+
+	getChapter(id) {
+		ChapterNetworkService.getOne(id, this.state.token).then((response) => {
+			console.log(response.data.data);
+			this.setState({ fields: { ...response.data.data } });
 		});
 	}
 
 	async clearFields() {
 		var po = this.propertyObject(this.props.subject);
-		this.setState({
-			fields: po
-		});
+		this.setState({ fields: po });
 	}
 	// TODO: Disable datepicker for message times
 	displayFields() {
@@ -404,7 +400,7 @@ class InputForm extends React.Component {
 						handleBlurEvent={this.form.handleBlurEvent}
 						errors={this.state.errors}
 						disabled={
-							field.type === 'date' || field.type === 'datetime-local' ? true : value.disabled
+							field?.type === 'date' || field?.type === 'datetime-local' ? true : field?.disabled
 						}
 					/>
 				);

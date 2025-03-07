@@ -1,37 +1,36 @@
-
 .chatbox {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  max-width: 600px;
-  margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	max-width: 600px;
+	margin: 0 auto;
 }
 
 .message {
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 10px;
-  max-width: 80%;
+	margin: 10px 0;
+	padding: 10px;
+	border-radius: 10px;
+	max-width: 80%;
 }
 
 .message.prisoner {
-  background-color: #f1f1f1;
-  align-self: flex-start;
+	background-color: #f1f1f1;
+	align-self: flex-start;
 }
 
 .message.user {
-  background-color: #007bff;
-  color: white;
-  align-self: flex-end;
+	background-color: #007bff;
+	color: white;
+	align-self: flex-end;
 }
 
 .message-text {
-  margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 .message-date {
-  font-size: 0.8em;
-  color: #666;
+	font-size: 0.8em;
+	color: #666;
 }
