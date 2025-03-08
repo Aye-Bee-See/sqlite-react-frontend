@@ -202,7 +202,7 @@ export async function runTests(token) {
 
 		// Update message
 		const updatedMessageParams = {
-			// id: newUserMessage.data.data.id,
+			id: newUserMessage.data.data.id,
 			user: newUser.data.data.id,
 			prisoner: newPrisoner.data.data.id,
 			messageText: 'Updated message from user'
