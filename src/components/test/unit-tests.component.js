@@ -41,8 +41,14 @@ class UnitTests extends React.Component {
 				updateChat: null,
 				updateMessage: null,
 				deleteChat: null,
-				deleteMessage: null
-			}
+				deleteMessage: null,
+				createChapter: null,
+				getChapters: null,
+				getChapter: null,
+				updateChapter: null,
+				deleteChapter: null
+			},
+			terminalMessages: []
 		};
 		this.runTests = this.runTests.bind(this);
 	}
@@ -50,7 +56,18 @@ class UnitTests extends React.Component {
 	async runTests() {
 		const token = this.props.token;
 		const results = await runTests(token);
-		this.setState({ results });
+		this.setState({ results }, () => {
+			this.updateTerminalMessages(results);
+		});
+	}
+
+	updateTerminalMessages(results) {
+		const messages = [];
+		for (const [task, result] of Object.entries(results)) {
+			const message = result === true ? `${task}: Success` : `${task}: Fail - ${result}`;
+			messages.push({ task, message, success: result === true });
+		}
+		this.setState({ terminalMessages: messages });
 	}
 
 	render() {
@@ -61,7 +78,8 @@ class UnitTests extends React.Component {
 			'createPrisoner',
 			'createRule',
 			'createChat',
-			'createMessage'
+			'createMessage',
+			'createChapter'
 		];
 		const getResults = [
 			'getUsers',
@@ -73,15 +91,16 @@ class UnitTests extends React.Component {
 			'getPrisoner',
 			'getRule',
 			'getChats',
-			'getMessages'
+			'getMessages',
+			'getChapters',
+			'getChapter'
 		];
 		const updateResults = [
 			'updatePrison',
 			'updatePrisoner',
 			'updateUser',
 			'updateRule',
-			'updateChat',
-			'updateMessage'
+			'updateChapter'
 		];
 		const deleteResults = [
 			'deletePrison',
@@ -89,7 +108,8 @@ class UnitTests extends React.Component {
 			'deleteRule',
 			'deleteUser',
 			'deleteChat',
-			'deleteMessage'
+			'deleteMessage',
+			'deleteChapter'
 		];
 
 		return (
@@ -122,6 +142,27 @@ class UnitTests extends React.Component {
 								tasks={deleteResults}
 								results={this.state.results}
 							/>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							<div
+								style={{
+									backgroundColor: 'green',
+									color: 'white',
+									padding: '10px',
+									fontFamily: 'monospace',
+									whiteSpace: 'pre-wrap',
+									height: '200px',
+									overflowY: 'scroll'
+								}}
+							>
+								{this.state.terminalMessages.map((msg, index) => (
+									<div key={index} style={{ color: msg.success ? 'white' : 'red' }}>
+										{msg.message}
+									</div>
+								))}
+							</div>
 						</Col>
 					</Row>
 				</Container>
