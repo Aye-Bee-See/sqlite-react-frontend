@@ -41,7 +41,12 @@ class UnitTests extends React.Component {
 				updateChat: null,
 				updateMessage: null,
 				deleteChat: null,
-				deleteMessage: null
+				deleteMessage: null,
+				createChapter: null,
+				getChapters: null,
+				getChapter: null,
+				updateChapter: null,
+				deleteChapter: null
 			}
 		};
 		this.runTests = this.runTests.bind(this);
@@ -61,7 +66,8 @@ class UnitTests extends React.Component {
 			'createPrisoner',
 			'createRule',
 			'createChat',
-			'createMessage'
+			'createMessage',
+			'createChapter'
 		];
 		const getResults = [
 			'getUsers',
@@ -73,15 +79,16 @@ class UnitTests extends React.Component {
 			'getPrisoner',
 			'getRule',
 			'getChats',
-			'getMessages'
+			'getMessages',
+			'getChapters',
+			'getChapter'
 		];
 		const updateResults = [
 			'updatePrison',
 			'updatePrisoner',
 			'updateUser',
-			'updateRule'
-			// 'updateChat',
-			// 'updateMessage'
+			'updateRule',
+			'updateChapter'
 		];
 		const deleteResults = [
 			'deletePrison',
@@ -89,7 +96,8 @@ class UnitTests extends React.Component {
 			'deleteRule',
 			'deleteUser',
 			'deleteChat',
-			'deleteMessage'
+			'deleteMessage',
+			'deleteChapter'
 		];
 
 		return (

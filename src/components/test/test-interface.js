@@ -5,6 +5,7 @@ import userNetworkService from '../../services/user-network-service';
 import loginNetworkService from '../../services/login-network-service';
 import chatNetworkService from '../../services/chat-network-service';
 import messageNetworkService from '../../services/messaging-network-service';
+import chapterNetworkService from '../../services/chapter-network-service';
 
 export async function runTests(token) {
 	const results = {
@@ -36,7 +37,12 @@ export async function runTests(token) {
 		updateChat: null,
 		updateMessage: null,
 		deleteChat: null,
-		deleteMessage: null
+		deleteMessage: null,
+		createChapter: null,
+		getChapters: null,
+		getChapter: null,
+		updateChapter: null,
+		deleteChapter: null
 	};
 
 	try {
@@ -106,6 +112,11 @@ export async function runTests(token) {
 		const newPrisonerMessage = await messageNetworkService.addOne(prisonerMessageParams, userToken);
 		results.createMessage = true;
 
+		// Create chapter
+		const chapterParams = { name: 'Test Chapter', location: { street: 'Test Chapter Street' } };
+		const newChapter = await chapterNetworkService.addOne(chapterParams, userToken);
+		results.createChapter = true;
+
 		// Get users
 		const users = await userNetworkService.getAll(userToken);
 		results.getUsers = users.data.data.some((p) => p.username === 'testuser');
@@ -136,6 +147,10 @@ export async function runTests(token) {
 			messages.data.data.some((m) => m.messageText === 'Hello from user') &&
 			messages.data.data.some((m) => m.messageText === 'Hello from prisoner');
 
+		// Get chapters
+		const chapters = await chapterNetworkService.getAll(userToken);
+		results.getChapters = chapters.data.data.some((c) => c.name === 'Test Chapter');
+
 		// Get user
 		const user = await userNetworkService.getOne(newUser.data.data.id, userToken);
 		results.getUser = user.data.data.name === newUser.data.data.name;
@@ -151,6 +166,10 @@ export async function runTests(token) {
 		// Get rule
 		const rule = await ruleNetworkService.getOne(newRule.data.data.id, userToken);
 		results.getRule = rule.data.data.title === newRule.data.data.title;
+
+		// Get chapter
+		const chapter = await chapterNetworkService.getOne(newChapter.data.data.id, userToken);
+		results.getChapter = chapter.data.data.name === newChapter.data.data.name;
 
 		// Update prison
 		const updatedPrisonParams = { id: newPrison.data.data.id, name: 'Updated Test Prison' };
@@ -191,6 +210,11 @@ export async function runTests(token) {
 		await messageNetworkService.updateOne(updatedMessageParams, userToken);
 		results.updateMessage = true;
 
+		// Update chapter
+		const updatedChapterParams = { id: newChapter.data.data.id, name: 'Updated Test Chapter' };
+		await chapterNetworkService.updateOne(updatedChapterParams, userToken);
+		results.updateChapter = true;
+
 		// Delete prison
 		await prisonNetworkService.deleteOne(newPrison.data.data.id, userToken);
 		results.deletePrison = true;
@@ -210,6 +234,10 @@ export async function runTests(token) {
 		// Delete message
 		await messageNetworkService.deleteOne(newUserMessage.data.data.id, userToken);
 		results.deleteMessage = true;
+
+		// Delete chapter
+		await chapterNetworkService.deleteOne(newChapter.data.data.id, userToken);
+		results.deleteChapter = true;
 
 		// Delete user
 		await userNetworkService.deleteOne(newUser.data.data.id, userToken);
