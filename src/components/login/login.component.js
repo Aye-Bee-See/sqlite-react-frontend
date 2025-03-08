@@ -1,6 +1,6 @@
 import { MDBInput } from 'mdb-react-ui-kit';
 import React, { Component } from 'react';
-import { Button, Col, Container, Row } from 'reactstrap';
+import { Button, Col, Container, Form, Row } from 'reactstrap';
 import { initMDB, Input } from 'mdb-ui-kit';
 import loginNetworkService from '../../services/login-network-service';
 import ReactFormInputValidation from 'react-form-input-validation';
@@ -81,6 +81,16 @@ class Login extends Component {
 		this.setState((prevState) => ({
 			fields: { ...prevState.fields, [e.target.name]: e.target.value }
 		}));
+	};
+
+	handleKeyDown = (e) => {
+		if (e.key === 'Enter') {
+			if (this.state.activeTab === 'login') {
+				this.login(e);
+			} else {
+				this.register(e);
+			}
+		}
 	};
 
 	login = (e) => {
@@ -173,6 +183,7 @@ class Login extends Component {
 									onBlur={this.form.handleBlurEvent}
 									value={this.state.fields.loginUsername}
 									onChange={this.handleChange}
+									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
 								/>
 							</Row>
@@ -189,6 +200,7 @@ class Login extends Component {
 									onBlur={this.form.handleBlurEvent}
 									value={this.state.fields.loginPassword}
 									onChange={this.handleChange}
+									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
 								/>
 								<Button onClick={this.login} disabled={hasLoginErrors}>
@@ -222,6 +234,7 @@ class Login extends Component {
 									value={this.state.fields.registerUsername}
 									onBlur={this.form.handleBlurEvent}
 									onChange={this.handleChange}
+									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
 								/>
 							</Row>
@@ -235,6 +248,7 @@ class Login extends Component {
 									onBlur={this.form.handleBlurEvent}
 									value={this.state.fields.registerName}
 									onChange={this.handleChange}
+									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
 								/>
 							</Row>
@@ -248,6 +262,7 @@ class Login extends Component {
 									onBlur={this.form.handleBlurEvent}
 									value={this.state.fields.registerEmail}
 									onChange={this.handleChange}
+									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
 								/>
 							</Row>
@@ -261,6 +276,7 @@ class Login extends Component {
 									onBlur={this.form.handleBlurEvent}
 									value={this.state.fields.registerPassword}
 									onChange={this.handleChange}
+									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
 								/>
 							</Row>
@@ -274,6 +290,7 @@ class Login extends Component {
 									onBlur={this.form.handleBlurEvent}
 									value={this.state.fields.registerPassword_confirmation}
 									onChange={this.handleChange}
+									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
 								/>
 							</Row>
