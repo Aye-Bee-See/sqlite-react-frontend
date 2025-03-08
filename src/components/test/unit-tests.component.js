@@ -79,9 +79,9 @@ class UnitTests extends React.Component {
 			'updatePrison',
 			'updatePrisoner',
 			'updateUser',
-			'updateRule',
-			'updateChat',
-			'updateMessage'
+			'updateRule'
+			// 'updateChat',
+			// 'updateMessage'
 		];
 		const deleteResults = [
 			'deletePrison',

@@ -49,6 +49,7 @@ export async function runTests(token) {
 			role: 'user'
 		};
 		const newUser = await loginNetworkService.register(userParams);
+		console.log(newUser);
 		results.createUser = true;
 
 		// Get token
@@ -183,6 +184,7 @@ export async function runTests(token) {
 		// Update message
 		const updatedMessageParams = {
 			id: newUserMessage.data.data.id,
+			user: newUser.data.data.id,
 			prisoner: newPrisoner.data.data.id,
 			messageText: 'Updated message from user'
 		};
@@ -211,6 +213,7 @@ export async function runTests(token) {
 
 		// Delete user
 		await userNetworkService.deleteOne(newUser.data.data.id, userToken);
+		console.log(newUser.data.data);
 		results.deleteUser = true;
 	} catch (error) {
 		console.error(error);
