@@ -47,7 +47,8 @@ class UnitTests extends React.Component {
 				getChapter: null,
 				updateChapter: null,
 				deleteChapter: null
-			}
+			},
+			terminalMessages: []
 		};
 		this.runTests = this.runTests.bind(this);
 	}
@@ -55,7 +56,18 @@ class UnitTests extends React.Component {
 	async runTests() {
 		const token = this.props.token;
 		const results = await runTests(token);
-		this.setState({ results });
+		this.setState({ results }, () => {
+			this.updateTerminalMessages(results);
+		});
+	}
+
+	updateTerminalMessages(results) {
+		const messages = [];
+		for (const [task, result] of Object.entries(results)) {
+			const message = result ? `${task}: Success` : `${task}: Fail`;
+			messages.push({ task, message, success: result });
+		}
+		this.setState({ terminalMessages: messages });
 	}
 
 	render() {
@@ -130,6 +142,27 @@ class UnitTests extends React.Component {
 								tasks={deleteResults}
 								results={this.state.results}
 							/>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							<div
+								style={{
+									backgroundColor: 'green',
+									color: 'white',
+									padding: '10px',
+									fontFamily: 'monospace',
+									whiteSpace: 'pre-wrap',
+									height: '200px',
+									overflowY: 'scroll'
+								}}
+							>
+								{this.state.terminalMessages.map((msg, index) => (
+									<div key={index} style={{ color: msg.success ? 'white' : 'red' }}>
+										{msg.message}
+									</div>
+								))}
+							</div>
 						</Col>
 					</Row>
 				</Container>
