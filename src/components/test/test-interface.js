@@ -202,7 +202,7 @@ export async function runTests(token) {
 
 		// Update message
 		const updatedMessageParams = {
-			id: newUserMessage.data.data.id,
+			// id: newUserMessage.data.data.id,
 			user: newUser.data.data.id,
 			prisoner: newPrisoner.data.data.id,
 			messageText: 'Updated message from user'
@@ -246,7 +246,7 @@ export async function runTests(token) {
 	} catch (error) {
 		console.error(error);
 		const failedTask = error.config.url.split('/').pop().split('?')[0];
-		results[failedTask] = false;
+		results[failedTask] = error.response?.data?.error || false;
 	}
 
 	return results;

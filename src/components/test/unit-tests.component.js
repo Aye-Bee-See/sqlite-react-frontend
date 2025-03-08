@@ -64,8 +64,8 @@ class UnitTests extends React.Component {
 	updateTerminalMessages(results) {
 		const messages = [];
 		for (const [task, result] of Object.entries(results)) {
-			const message = result ? `${task}: Success` : `${task}: Fail`;
-			messages.push({ task, message, success: result });
+			const message = result === true ? `${task}: Success` : `${task}: Fail - ${result}`;
+			messages.push({ task, message, success: result === true });
 		}
 		this.setState({ terminalMessages: messages });
 	}
