@@ -35,7 +35,7 @@ export default function App() {
 			<BrowserRouter>
 				<NavBar token={token} logOut={logOut} />
 				<Routes>
-					<Route path="/" element={<Home />} />
+					<Route path="/" element={<Home token={token} />} />
 					<Route
 						path="prisoners"
 						element={
