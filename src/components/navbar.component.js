@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Nav, NavItem, Button } from 'reactstrap';
+import { isAuthenticated } from './ProtectedRoute';
 
 const NavBar = ({ token, logOut }) => {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isAuth, setIsAuth] = useState(false);
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	useEffect(() => {
-		setIsAuthenticated(token !== null);
-	}, [token]);
+		setIsAuth(isAuthenticated());
+	}, [token, location]);
 
 	const handleLogOut = () => {
 		logOut();
@@ -21,7 +23,7 @@ const NavBar = ({ token, logOut }) => {
 				Aye Bee See
 			</Link>
 			<Nav className="ml-auto" navbar>
-				{isAuthenticated ? (
+				{isAuth ? (
 					<>
 						<NavItem>
 							<Link to="/prisoners" className="nav-link">
