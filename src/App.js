@@ -3,9 +3,10 @@ import 'jquery/dist/jquery.min.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import './App.css';
 import NavBar from './components/navbar.component';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
 import List from './components/list/list.component';
 import Home from './components/home/home.component';
+import AdminDash from './components/admindash/admindash.component';
 import InputForm from './components/list/inputform.component';
 import Login from './components/login/login.component.js';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -35,11 +36,21 @@ export default function App() {
 			<BrowserRouter>
 				<NavBar token={token} logOut={logOut} />
 				<Routes>
-					<Route path="/" element={<Home token={token} />} />
+					<Route 
+            path="/" 
+            element={
+              <ProtectedRoute 
+                element={<AdminDash token={token}/>} 
+                redirect={<Home token={token}/>}
+              />
+            }
+          />
 					<Route
 						path="prisoners"
 						element={
-							<ProtectedRoute element={<List subject="Prisoner" key="Prisoner" token={token} />} />
+							<ProtectedRoute 
+                element={<List subject="Prisoner" key="Prisoner" token={token} />}
+              />
 						}
 					/>
 					<Route
@@ -52,7 +63,10 @@ export default function App() {
 					/>
 					<Route
 						path="users"
-						element={<ProtectedRoute element={<List subject="User" key="User" token={token} />} />}
+						element={
+              <ProtectedRoute
+                element={<List subject="User" key="User" token={token} />}
+              />}
 					/>
 					<Route
 						path="user/:id"
