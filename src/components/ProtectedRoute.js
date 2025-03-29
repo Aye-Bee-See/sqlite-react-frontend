@@ -22,8 +22,8 @@ export const isAuthenticated = () => {
 	return true;
 };
 
-const ProtectedRoute = ({ element: Component, ...rest }) => {
-	return isAuthenticated() ? Component : <Navigate to="/login" />;
+const ProtectedRoute = ({ element: Component, redirect: AltComponent = <Navigate to="/login" />, ...rest }) => {
+	return isAuthenticated() ? Component : AltComponent;
 };
 
 export default ProtectedRoute;

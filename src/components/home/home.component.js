@@ -31,15 +31,7 @@ export default class Home extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.displayTable = this.displayTable.bind(this);
-
 		this.state = {
-			prisoners: [],
-			rules: [],
-			prisons: [],
-			chats: [],
-			users: [],
-			messages: [],
 			searchName: '',
 			token: '',
 			errorText: ''
@@ -53,11 +45,6 @@ export default class Home extends React.Component {
 					? JSON.parse(this.props.token)
 					: this.props.token;
 			this.setState({ token: token['token'] || token }, () => {
-				this.getAllPrisoners();
-				this.getAllUsers();
-				this.getAllPrisons();
-				this.getAllRules();
-				//this.getAllChapters();
 			});
 		} catch (error) {
 			console.error('Invalid token format:', error);
@@ -66,87 +53,16 @@ export default class Home extends React.Component {
 
 	componentDidUpdate(prevProps, prevState) {}
 
-	getAllPrisoners() {
-		PrisonerNetworkService.getAll(this.state.token).then((response) => {
-			this.setState({ prisoners: Object.values(response.data.data) });
-		});
-	}
-
-	getAllUsers() {
-		UserNetworkService.getAll(this.state.token).then((response) => {
-			this.setState({ users: Object.values(response.data.data) });
-		});
-	}
-
-	getAllPrisons() {
-		PrisonNetworkService.getAll(this.state.token).then((response) => {
-			this.setState({ prisons: Object.values(response.data.data) });
-		});
-	}
-
-	getAllRules() {
-		RuleNetworkService.getAll(this.state.token).then((response) => {
-			this.setState({ rules: Object.values(response.data.data) });
-		});
-	}
-
-	/*
-  getAllChapters() {
-          ChapterNetworkService.getAll(this.state.token).then((response) => {
-                  this.setState({ chapters: Object.values(response.data.data) });
-          });
-  }*/
-
-	displayTable(subject) {
-		let singularSubject = subject.slice(0, -1);
-		return (
-			<Card>
-				<CardHeader>
-					<h3>{subject}</h3>
-				</CardHeader>
-				<CardSubtitle></CardSubtitle>
-				<CardText className="p-3" tag="span">
-					<Table bordered hover responsive>
-						{this.state[subject].slice(0, 1).map((obj, index) => (
-							<tr key={index}>
-								{Object.entries(obj).map(([key, value]) => (
-									<th key="title">
-										<strong>{key}</strong>
-									</th>
-								))}
-							</tr>
-						))}
-
-						{this.state[subject].slice(-5).map((obj, index) => (
-							<tr key={index}>
-								{Object.entries(obj).map(([key, value]) => (
-									<td key={key}>
-										<Link to={`/${singularSubject}/${obj.id}`}>
-											{JSON.stringify(value, 2, null)}
-										</Link>
-									</td>
-								))}
-							</tr>
-						))}
-					</Table>
-				</CardText>
-			</Card>
-		);
-	}
-
 	render() {
 		//const jsonData = JSON.stringify(this.state, null, 2);
 		return (
 			<>
 				<Row>
-					<h1>Home</h1>
+					<h1>Welcome!</h1>
+					<h2>Do you have trouble sending letters to prisoners? Coordinating with support crews?</h2>
+					<p>Login or create an account to get started.</p>
 				</Row>
 				<Col md={10}>
-					{this.displayTable('prisons')}
-					{this.displayTable('prisoners')}
-					{this.displayTable('rules')}
-					{this.displayTable('chats')}
-					{this.displayTable('users')}
 					<pre>
 						<hr />
 					</pre>
