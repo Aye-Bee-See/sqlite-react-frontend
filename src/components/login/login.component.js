@@ -19,7 +19,8 @@ class Login extends Component {
 				registerName: '',
 				registerEmail: '',
 				registerPassword: '',
-				registerPassword_confirmation: ''
+				registerPassword_confirmation: '',
+				avatar: null // Add avatar field
 			},
 			errors: {},
 			errorMessage: ''
@@ -71,7 +72,8 @@ class Login extends Component {
 				registerName: '',
 				registerEmail: '',
 				registerPassword: '',
-				registerPassword_confirmation: ''
+				registerPassword_confirmation: '',
+				avatar: null
 			}
 		});
 	};
@@ -80,6 +82,12 @@ class Login extends Component {
 		console.log(this.state.errors);
 		this.setState((prevState) => ({
 			fields: { ...prevState.fields, [e.target.name]: e.target.value }
+		}));
+	};
+
+	handleFileChange = (e) => {
+		this.setState((prevState) => ({
+			fields: { ...prevState.fields, avatar: e.target.files[0] }
 		}));
 	};
 
@@ -114,25 +122,28 @@ class Login extends Component {
 
 	register = (e) => {
 		e.preventDefault();
-		this.form.onformsubmit = (fields) => {
-			const params = {
-				username: fields.registerUsername,
-				name: fields.registerName,
-				email: fields.registerEmail,
-				password: fields.registerPassword,
-				role: 'user'
-			};
-			loginNetworkService
-				.register(params)
-				.then(() => {
-					this.switchTab('login');
-				})
-				.catch((error) => {
-					if (error.response && (error.response.status === 400 || error.response.status === 401)) {
-						this.setState({ errorMessage: 'Incorrect username or password' });
-					}
-				});
-		};
+		console.log('registering');
+		const formData = new FormData();
+		formData.append('username', this.state.fields.registerUsername);
+		formData.append('name', this.state.fields.registerName);
+		formData.append('email', this.state.fields.registerEmail);
+		formData.append('password', this.state.fields.registerPassword);
+		formData.append('role', 'user');
+		if (this.state.fields.avatar) {
+			console.log(this.state.fields.avatar);
+			formData.append('avatar', this.state.fields.avatar); // Append avatar if provided
+		}
+
+		loginNetworkService
+			.register(formData)
+			.then(() => {
+				this.switchTab('login');
+			})
+			.catch((error) => {
+				if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+					this.setState({ errorMessage: 'Incorrect username or password' });
+				}
+			});
 	};
 
 	render() {
@@ -292,6 +303,15 @@ class Login extends Component {
 									onChange={this.handleChange}
 									onKeyDown={this.handleKeyDown}
 									errors={this.state.errors}
+								/>
+							</Row>
+							<Row>
+								<MDBInput
+									type="file"
+									name="avatar"
+									label="Avatar (optional)"
+									wrapperClass="mb-4"
+									onChange={this.handleFileChange}
 								/>
 							</Row>
 							<Row>
