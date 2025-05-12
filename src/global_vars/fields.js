@@ -34,7 +34,8 @@ var fields = {
 			default: 'admin',
 			rules: 'required|string|in:admin,user,banned'
 		},
-		name: { title: 'Name', type: 'text', default: '', rules: 'string' }
+		name: { title: 'Name', type: 'text', default: '', rules: 'string' },
+		avatar: { title: 'Avatar', type: 'file', default: '' }
 	},
 	Prison: {
 		id: { title: 'ID', type: 'number', default: null, disabled: true },

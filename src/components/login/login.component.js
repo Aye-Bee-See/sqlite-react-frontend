@@ -103,9 +103,13 @@ class Login extends Component {
 
 	login = (e) => {
 		e.preventDefault();
+		console.log(
+			`Username: ${this.state.fields.loginUsername}. Password: ${this.state.fields.loginPassword}`
+		);
 		loginNetworkService
 			.login(this.state.fields.loginUsername, this.state.fields.loginPassword)
 			.then((response) => {
+				console.log(response);
 				const token = response.data.data.token;
 				const user = response.data.data.user;
 				this.props.setToken(token, user);
@@ -113,6 +117,7 @@ class Login extends Component {
 				this.props.router.navigate('/');
 			})
 			.catch((error) => {
+				console.log(error);
 				if (error.response && (error.response.status === 400 || error.response.status === 401)) {
 					console.log(error.response);
 					this.setState({ errorMessage: 'Incorrect username or password' });
