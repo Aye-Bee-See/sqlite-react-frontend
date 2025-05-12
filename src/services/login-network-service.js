@@ -1,4 +1,5 @@
 import http from '../http-common';
+import httpMultipart from '../http-multipart';
 
 class LoginNetworkService {
 	login(username, password) {
@@ -6,7 +7,7 @@ class LoginNetworkService {
 	}
 
 	async register(params) {
-		return http.post('/auth/user', params);
+		return httpMultipart.post('/auth/user', params);
 	}
 
 	protected(token) {
