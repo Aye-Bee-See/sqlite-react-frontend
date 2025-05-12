@@ -11,7 +11,8 @@ var fields = {
 		bio: { title: 'Bio', type: 'textarea', default: '', rules: 'required|string|between:3,1500' },
 		prison: { title: 'Prison', type: 'select', default: -1, rules: 'required' },
 		inmateID: { title: 'Inmate ID', type: 'text', default: '', rules: 'string' },
-		releaseDate: { title: 'Release Date', type: 'date', default: '1999-09-09', rules: 'date' }
+		releaseDate: { title: 'Release Date', type: 'date', default: '1999-09-09', rules: 'date' },
+		avatar: { title: 'Avatar', type: 'file', default: '' } // Add avatar field
 	},
 	User: {
 		id: { title: 'ID', type: 'number', default: '', disabled: true },

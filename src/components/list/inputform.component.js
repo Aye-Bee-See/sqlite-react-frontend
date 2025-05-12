@@ -59,6 +59,7 @@ class InputForm extends React.Component {
 		}
 
 		Object.keys(subjectFields).forEach((key) => {
+			console.log(subjectFields);
 			const field = subjectFields[key];
 			if (field.meta && field.subFields) {
 				state[key] = {};
@@ -98,10 +99,19 @@ class InputForm extends React.Component {
 
 	handleChange(e) {
 		this.form.handleChangeEvent(e);
-		const { id, value } = e.target;
+		const { id, value, type, files } = e.target;
 		const [parentKey, subKey] = id.split('.');
 
-		if (subKey) {
+		if (type === 'file') {
+			// Handle file input
+			const file = files[0];
+			this.setState((prevState) => ({
+				fields: {
+					...prevState.fields,
+					[id]: file // Store the file object in the state
+				}
+			}));
+		} else if (subKey) {
 			this.setState((prevState) => ({
 				fields: {
 					...prevState.fields,
@@ -125,7 +135,11 @@ class InputForm extends React.Component {
 			console.log(response);
 			if (response && response.data) {
 				if (this.props.handleDataFromChild) {
-					const updatedFields = { ...this.state.fields, id: response.data.id }; // Use the id from the response
+					const updatedFields = {
+						...this.state.fields,
+						id: response.data.id,
+						avatar: response.data.avatar
+					}; // Use the id from the response
 					if (response) {
 						this.props.handleDataFromChild(updatedFields).then(this.clearFields());
 					}
@@ -151,19 +165,19 @@ class InputForm extends React.Component {
 				fields.prison = fields.prison.id;
 			}
 
-			// Strip the id field when adding an item
-			if (!this.props.solo) {
-				delete fields.id;
-			}
-
-			// Ensure the prison field contains only the id
-			if (fields.prison && typeof fields.prison === 'object') {
-				fields.prison = fields.prison.id;
-			}
+			// Convert fields to FormData for file uploads
+			const formData = new FormData();
+			Object.keys(fields).forEach((key) => {
+				if (fields[key] instanceof File) {
+					formData.append(key, fields[key]); // Append file
+				} else {
+					formData.append(key, fields[key]); // Append other fields
+				}
+			});
 
 			const networkService = this.getNetworkService(this.props.subject);
 			if (this.props.solo) {
-				response = await networkService.updateOne(fields, token);
+				response = await networkService.updateOne(formData, token);
 				if (response.status === 200) {
 					this.props.router.navigate(`/${this.props.subject.toLowerCase()}s`);
 					return false;
@@ -172,7 +186,7 @@ class InputForm extends React.Component {
 					return false;
 				}
 			} else {
-				response = await networkService.addOne(fields, token);
+				response = await networkService.addOne(formData, token);
 				console.log(response);
 				if (response.status === 200) {
 					return response.data;
@@ -182,7 +196,7 @@ class InputForm extends React.Component {
 				}
 			}
 		} catch (error) {
-			this.setMessage(error.response.data.error);
+			this.setMessage(error.response?.data?.error || 'An error occurred');
 			return false;
 		}
 	}
@@ -387,6 +401,19 @@ class InputForm extends React.Component {
 						handleBlurEvent={this.form.handleBlurEvent}
 						errors={this.state.errors}
 						disabled={true}
+					/>
+				);
+			} else if (key === 'avatar') {
+				return (
+					<InputField
+						key={key}
+						id={key}
+						field={field}
+						value={value}
+						handleChange={this.handleChange}
+						handleBlurEvent={this.form.handleBlurEvent}
+						errors={this.state.errors}
+						type="file" // Render as file input
 					/>
 				);
 			} else {

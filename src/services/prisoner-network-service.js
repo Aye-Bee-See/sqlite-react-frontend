@@ -1,4 +1,5 @@
 import http from '../http-common';
+import httpMultipart from '../http-multipart';
 
 class PrisonerDataService {
 	getAll(token) {
@@ -19,14 +20,14 @@ class PrisonerDataService {
 	}
 
 	async updateOne(params, token) {
-		const response = await http.put('/prisoner/prisoner', params, {
+		const response = await httpMultipart.put('/prisoner/prisoner', params, {
 			headers: { Authorization: `Bearer ${token}` }
 		});
 		return response;
 	}
 
 	async addOne(params, token) {
-		const response = await http.post('/prisoner/prisoner', params, {
+		const response = await httpMultipart.post('/prisoner/prisoner', params, {
 			headers: { Authorization: `Bearer ${token}` }
 		});
 		return response;

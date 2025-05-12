@@ -8,32 +8,43 @@ const InputField = ({
 	handleChange,
 	handleBlurEvent,
 	errors,
-	disabled = false
-}) => (
-	<div key={id}>
+	type,
+	disabled
+}) => {
+	if (type === 'file') {
+		return (
+			<FormGroup>
+				<Label for={id}>{field.title}</Label>
+				<input
+					type="file"
+					id={id}
+					name={id}
+					onChange={handleChange}
+					onBlur={handleBlurEvent}
+					disabled={disabled}
+					className={`form-control ${errors[id] ? 'is-invalid' : ''}`}
+				/>
+				{errors[id] && <div className="invalid-feedback">{errors[id]}</div>}
+			</FormGroup>
+		);
+	}
+
+	return (
 		<FormGroup>
-			<Label>{field.title}:</Label>
-			<Input
+			<Label for={id}>{field.title}</Label>
+			<input
+				type={type || 'text'}
 				id={id}
 				name={id}
 				value={value}
 				onChange={handleChange}
 				onBlur={handleBlurEvent}
-				type={field.type}
 				disabled={disabled}
-				data-attribute-name={field.title}
-				// Disable date picker if type is date or datetime and disabled is true
-				// {...(disabled && (field.type === 'date' || field.type === 'datetime-local') && { readOnly: true })}
+				className={`form-control ${errors[id] ? 'is-invalid' : ''}`}
 			/>
-			{errors[id] ? (
-				<Alert color="danger" className="error">
-					{errors[id]}
-				</Alert>
-			) : (
-				''
-			)}
+			{errors[id] && <div className="invalid-feedback">{errors[id]}</div>}
 		</FormGroup>
-	</div>
-);
+	);
+};
 
 export default InputField;
