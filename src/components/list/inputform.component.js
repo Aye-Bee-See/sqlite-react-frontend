@@ -14,6 +14,9 @@ import ReactFormInputValidation from 'react-form-input-validation';
 import InputField from './InputField';
 import SelectField from './SelectField';
 
+//TODO: Some of the form fields which should be editable aren't
+//TODO: Make image visible in message
+
 class InputForm extends React.Component {
 	constructor(props) {
 		super(props);
