@@ -474,33 +474,43 @@ class ListPage extends Component {
 							})}
 						</div>
 					);
+				} else if (key === 'avatar' && currentItem[key]) {
+					const avatarUrl = `http://localhost:3000/${currentItem[key]}`;
+					return (
+						<div key={key}>
+							<strong>{field.title}:</strong> {currentItem[key]}
+							<br />
+							<img
+								src={avatarUrl}
+								alt="Avatar"
+								style={{ width: '50px', height: '50px', borderRadius: '50%', marginTop: '5px' }}
+							/>
+						</div>
+					);
+				} else if (field.title === 'Prison') {
+					return (
+						<div key={key}>
+							<strong>{field.title}:</strong>{' '}
+							<Link to={`/prison/${currentItem[key]}`}>
+								{
+									this.state.prisons.filter((prison) => {
+										return prison.id === currentItem[key];
+									})[0].prisonName
+								}
+							</Link>
+						</div>
+					);
 				} else {
-					if (field.title === 'Prison') {
-						return (
-							<div key={key}>
-								<strong>{field.title}:</strong>{' '}
-								<Link to={`/prison/${currentItem[key]}`}>
-									{
-										this.state.prisons.filter((prison) => {
-											return prison.id === currentItem[key];
-										})[0].prisonName
-									}
-								</Link>
-							</div>
-						);
-					} else {
-						return (
-							<div key={key}>
-								<strong>{field.title}:</strong> {currentItem[key]}
-							</div>
-						);
-					}
+					return (
+						<div key={key}>
+							<strong>{field.title}:</strong> {currentItem[key]}
+						</div>
+					);
 				}
 			});
 		};
-		//TODO: This can be simplified
+
 		if (this.props.subject === 'Prisoner' && currentPrisoner) {
-			console.log('rendering prisoner');
 			return renderFields('Prisoner', currentPrisoner);
 		} else if (this.props.subject === 'User' && currentUser) {
 			return renderFields('User', currentUser);
@@ -511,7 +521,6 @@ class ListPage extends Component {
 		} else if (this.props.subject === 'Message' && currentChat) {
 			return renderFields('Chat', currentChat);
 		} else if (this.props.subject === 'Chapter' && currentChapter) {
-			console.log('rendering chapter');
 			return renderFields('Chapter', currentChapter);
 		} else {
 			return null;
