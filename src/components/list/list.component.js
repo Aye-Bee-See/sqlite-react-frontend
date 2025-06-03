@@ -31,6 +31,31 @@ class ListPage extends Component {
 	constructor(props) {
 		super(props);
 
+		this.state = {
+			currentPrisoner: null,
+			currentUser: null,
+			currentPrison: null,
+			currentRule: null,
+			currentChapter: null,
+			currentMessageUserOrPrisoner: null,
+			currentChat: null,
+			currentIndex: -1,
+			prisoners: [],
+			users: [],
+			prisons: [],
+			rules: [],
+			chapters: [],
+			searchName: '',
+			token: '',
+			errorText: '',
+			prisonersByPrison: [],
+			messageType: 'User',
+			chats: [],
+			messages: [],
+			page: 1,
+			page_size: 10
+		};
+
 		this.getAllPrisoners = this.getAllPrisoners.bind(this);
 		this.getAllUsers = this.getAllUsers.bind(this);
 		this.getAllPrisons = this.getAllPrisons.bind(this);
@@ -55,29 +80,8 @@ class ListPage extends Component {
 		this.listData = this.listData.bind(this);
 		this.editButton = this.editButton.bind(this);
 		this.deleteItem = this.deleteItem.bind(this);
-
-		this.state = {
-			currentPrisoner: null,
-			currentUser: null,
-			currentPrison: null,
-			currentRule: null,
-			currentChapter: null,
-			currentMessageUserOrPrisoner: null,
-			currentChat: null,
-			currentIndex: -1,
-			prisoners: [],
-			users: [],
-			prisons: [],
-			rules: [],
-			chapters: [],
-			searchName: '',
-			token: '',
-			errorText: '',
-			prisonersByPrison: [],
-			messageType: 'User',
-			chats: [],
-			messages: []
-		};
+		this.handlePageChange = this.handlePageChange.bind(this);
+		this.handlePageSizeChange = this.handlePageSizeChange.bind(this);
 	}
 
 	componentDidMount() {
@@ -105,31 +109,36 @@ class ListPage extends Component {
 	}
 
 	getAllPrisoners() {
-		PrisonerNetworkService.getAll(this.state.token).then((response) => {
+		const { token, page, page_size } = this.state;
+		PrisonerNetworkService.getAll(token, page_size, page).then((response) => {
 			this.setState({ prisoners: Object.values(response.data.data) });
 		});
 	}
 
 	getAllUsers() {
-		UserNetworkService.getAll(this.state.token).then((response) => {
+		const { token, page, page_size } = this.state;
+		UserNetworkService.getAll(token, page_size, page).then((response) => {
 			this.setState({ users: Object.values(response.data.data) });
 		});
 	}
 
 	getAllPrisons() {
-		PrisonNetworkService.getAll(this.state.token).then((response) => {
+		const { token, page, page_size } = this.state;
+		PrisonNetworkService.getAll(token, page_size, page).then((response) => {
 			this.setState({ prisons: Object.values(response.data.data) });
 		});
 	}
 
 	getAllRules() {
-		RuleNetworkService.getAll(this.state.token).then((response) => {
+		const { token, page, page_size } = this.state;
+		RuleNetworkService.getAll(token, page_size, page).then((response) => {
 			this.setState({ rules: Object.values(response.data.data) });
 		});
 	}
 
 	getAllChapters() {
-		ChapterNetworkService.getAll(this.state.token).then((response) => {
+		const { token, page, page_size } = this.state;
+		ChapterNetworkService.getAll(token, page_size, page).then((response) => {
 			this.setState({ chapters: Object.values(response.data.data) });
 		});
 	}
@@ -488,16 +497,16 @@ class ListPage extends Component {
 						</div>
 					);
 				} else if (field.title === 'Prison') {
+					// Check if the prison exists in the list of prisons
+					const prison = this.state.prisons.find((prison) => prison.id === currentItem[key]);
 					return (
 						<div key={key}>
 							<strong>{field.title}:</strong>{' '}
-							<Link to={`/prison/${currentItem[key]}`}>
-								{
-									this.state.prisons.filter((prison) => {
-										return prison.id === currentItem[key];
-									})[0].prisonName
-								}
-							</Link>
+							{prison ? (
+								<Link to={`/prison/${prison.id}`}>{prison.prisonName}</Link>
+							) : (
+								<span>{currentItem[key]}</span> // Fallback to displaying the prison ID
+							)}
 						</div>
 					);
 				} else {
@@ -548,6 +557,39 @@ class ListPage extends Component {
 		}
 	}
 
+	handlePageChange(direction) {
+		this.setState(
+			(prevState) => ({ page: prevState.page + direction }),
+			() => this.fetchData()
+		);
+	}
+
+	handlePageSizeChange(e) {
+		this.setState({ page_size: parseInt(e.target.value), page: 1 }, () => this.fetchData());
+	}
+
+	fetchData() {
+		switch (this.props.subject) {
+			case 'Prisoner':
+				this.getAllPrisoners();
+				break;
+			case 'User':
+				this.getAllUsers();
+				break;
+			case 'Prison':
+				this.getAllPrisons();
+				break;
+			case 'Rule':
+				this.getAllRules();
+				break;
+			case 'Chapter':
+				this.getAllChapters();
+				break;
+			default:
+				break;
+		}
+	}
+
 	render() {
 		const {
 			searchName,
@@ -562,7 +604,9 @@ class ListPage extends Component {
 			messageType,
 			chats,
 			currentMessageUserOrPrisoner,
-			messages
+			messages,
+			page,
+			page_size
 		} = this.state;
 		var editLink = this.editButton();
 
@@ -689,6 +733,31 @@ class ListPage extends Component {
 				</List>
 				<Row>
 					<Col></Col>
+				</Row>
+				<Row>
+					<Col md="4">
+						<label htmlFor="pageSize">Items per page:</label>
+						<select
+							id="pageSize"
+							value={page_size}
+							onChange={this.handlePageSizeChange}
+							className="form-control"
+						>
+							<option value="5">5</option>
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="100">100</option>
+						</select>
+					</Col>
+					<Col md="8" className="text-right">
+						<Button color="primary" onClick={() => this.handlePageChange(-1)} disabled={page === 1}>
+							Previous
+						</Button>
+						<span className="mx-2">Page {page}</span>
+						<Button color="primary" onClick={() => this.handlePageChange(1)}>
+							Next
+						</Button>
+					</Col>
 				</Row>
 				<InputForm
 					key={this.props}
