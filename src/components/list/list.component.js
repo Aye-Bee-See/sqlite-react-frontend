@@ -186,8 +186,16 @@ class ListPage extends Component {
 					} else {
 						this.getAllPrisoners();
 					}
-				} else {
-					this.fetchData();
+				} else if (this.props.subject === 'Prisoner') {
+					this.getAllPrisoners();
+				} else if (this.props.subject === 'User') {
+					this.getAllUsers();
+				} else if (this.props.subject === 'Prison') {
+					this.getAllPrisons();
+				} else if (this.props.subject === 'Rule') {
+					this.getAllRules();
+				} else if (this.props.subject === 'Chapter') {
+					this.getAllChapters();
 				}
 			}
 		);
@@ -201,8 +209,16 @@ class ListPage extends Component {
 				} else {
 					this.getAllPrisoners();
 				}
-			} else {
-				this.fetchData();
+			} else if (this.props.subject === 'Prisoner') {
+				this.getAllPrisoners();
+			} else if (this.props.subject === 'User') {
+				this.getAllUsers();
+			} else if (this.props.subject === 'Prison') {
+				this.getAllPrisons();
+			} else if (this.props.subject === 'Rule') {
+				this.getAllRules();
+			} else if (this.props.subject === 'Chapter') {
+				this.getAllChapters();
 			}
 		});
 	}
@@ -608,8 +624,16 @@ class ListPage extends Component {
 					} else {
 						this.getAllPrisoners();
 					}
-				} else {
-					this.fetchData();
+				} else if (this.props.subject === 'Prisoner') {
+					this.getAllPrisoners();
+				} else if (this.props.subject === 'User') {
+					this.getAllUsers();
+				} else if (this.props.subject === 'Prison') {
+					this.getAllPrisons();
+				} else if (this.props.subject === 'Rule') {
+					this.getAllRules();
+				} else if (this.props.subject === 'Chapter') {
+					this.getAllChapters();
 				}
 			}
 		);
@@ -623,8 +647,16 @@ class ListPage extends Component {
 				} else {
 					this.getAllPrisoners();
 				}
-			} else {
-				this.fetchData();
+			} else if (this.props.subject === 'Prisoner') {
+				this.getAllPrisoners();
+			} else if (this.props.subject === 'User') {
+				this.getAllUsers();
+			} else if (this.props.subject === 'Prison') {
+				this.getAllPrisons();
+			} else if (this.props.subject === 'Rule') {
+				this.getAllRules();
+			} else if (this.props.subject === 'Chapter') {
+				this.getAllChapters();
 			}
 		});
 	}
