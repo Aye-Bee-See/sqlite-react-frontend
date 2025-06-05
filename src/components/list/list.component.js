@@ -156,7 +156,8 @@ class ListPage extends Component {
 	}
 
 	getChatsByUserOrPrisoner(user, prisoner) {
-		ChatNetworkService.getChatsByUserOrPrisoner(user, prisoner, this.state.token)
+		const { token, page, page_size } = this.state;
+		ChatNetworkService.getChatsByUserOrPrisoner(user, prisoner, token, page, page_size)
 			.then((response) => {
 				this.setState({ chats: Object.values(response.data.data) }, () => {
 					console.log(this.state.chats);
@@ -175,12 +176,52 @@ class ListPage extends Component {
 		});
 	}
 
+	handlePageChange(direction) {
+		this.setState(
+			(prevState) => ({ page: prevState.page + direction }),
+			() => {
+				if (this.props.subject === 'Message') {
+					if (this.state.messageType === 'User') {
+						this.getAllUsers();
+					} else {
+						this.getAllPrisoners();
+					}
+				} else {
+					this.fetchData();
+				}
+			}
+		);
+	}
+
+	handlePageSizeChange(e) {
+		this.setState({ page_size: parseInt(e.target.value), page: 1 }, () => {
+			if (this.props.subject === 'Message') {
+				if (this.state.messageType === 'User') {
+					this.getAllUsers();
+				} else {
+					this.getAllPrisoners();
+				}
+			} else {
+				this.fetchData();
+			}
+		});
+	}
+
 	onChangeMessageType(e) {
-		this.setState({ messageType: e.target.value, currentMessageUserOrPrisoner: null, chats: [] });
+		this.setState(
+			{ messageType: e.target.value, currentMessageUserOrPrisoner: null, chats: [], page: 1 },
+			() => {
+				if (this.state.messageType === 'User') {
+					this.getAllUsers();
+				} else {
+					this.getAllPrisoners();
+				}
+			}
+		);
 	}
 
 	setActiveMessageUserOrPrisoner(item, index) {
-		this.setState({ currentMessageUserOrPrisoner: item, currentIndex: index }, () => {
+		this.setState({ currentMessageUserOrPrisoner: item, currentIndex: index, page: 1 }, () => {
 			if (this.state.messageType === 'User') {
 				this.getChatsByUserOrPrisoner(item.id, null);
 			} else {
@@ -560,34 +601,32 @@ class ListPage extends Component {
 	handlePageChange(direction) {
 		this.setState(
 			(prevState) => ({ page: prevState.page + direction }),
-			() => this.fetchData()
+			() => {
+				if (this.props.subject === 'Message') {
+					if (this.state.messageType === 'User') {
+						this.getAllUsers();
+					} else {
+						this.getAllPrisoners();
+					}
+				} else {
+					this.fetchData();
+				}
+			}
 		);
 	}
 
 	handlePageSizeChange(e) {
-		this.setState({ page_size: parseInt(e.target.value), page: 1 }, () => this.fetchData());
-	}
-
-	fetchData() {
-		switch (this.props.subject) {
-			case 'Prisoner':
-				this.getAllPrisoners();
-				break;
-			case 'User':
-				this.getAllUsers();
-				break;
-			case 'Prison':
-				this.getAllPrisons();
-				break;
-			case 'Rule':
-				this.getAllRules();
-				break;
-			case 'Chapter':
-				this.getAllChapters();
-				break;
-			default:
-				break;
-		}
+		this.setState({ page_size: parseInt(e.target.value), page: 1 }, () => {
+			if (this.props.subject === 'Message') {
+				if (this.state.messageType === 'User') {
+					this.getAllUsers();
+				} else {
+					this.getAllPrisoners();
+				}
+			} else {
+				this.fetchData();
+			}
+		});
 	}
 
 	render() {

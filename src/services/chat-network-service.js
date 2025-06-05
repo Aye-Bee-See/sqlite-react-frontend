@@ -51,22 +51,24 @@ class ChatNetworkService {
 	}
 
 	// Read chats by user or prisoner
-	async getChatsByUserOrPrisoner(user, prisoner, token) {
+	async getChatsByUserOrPrisoner(user, prisoner, token, page, pageSize) {
+		let url = '/chat/chats/';
 		if (user) {
-			return http.get(`/chat/chats/?user=${user}`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
+			url += `?user=${user}`;
 		} else if (prisoner) {
-			return http.get(`/chat/chats/?prisoner=${prisoner}`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
+			url += `?prisoner=${prisoner}`;
 		} else {
 			console.log('no user or prisoner provided');
+			return;
 		}
+
+		url += `&page=${page}&page_size=${pageSize}`;
+
+		return http.get(url, {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		});
 	}
 }
 
