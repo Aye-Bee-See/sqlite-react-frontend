@@ -10,8 +10,10 @@ class ChapterNetworkService {
 	}
 
 	// Read all chapters
-	async getAll(token) {
-		return http.get('/chapter/chapters', { headers: { Authorization: `Bearer ${token}` } });
+	async getAll(token, page_size = 10, page = 1) {
+		return http.get(`/chapter/chapters?page_size=${page_size}&page=${page}`, {
+			headers: { Authorization: `Bearer ${token}` }
+		});
 	}
 
 	// Read one chapter

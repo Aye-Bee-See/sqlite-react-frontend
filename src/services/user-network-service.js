@@ -1,8 +1,10 @@
 import http from '../http-common';
 
 class UserDataService {
-	getAll(token) {
-		return http.get('/auth/users', { headers: { Authorization: `Bearer ${token}` } });
+	getAll(token, page_size = 10, page = 1) {
+		return http.get(`/auth/users?page_size=${page_size}&page=${page}`, {
+			headers: { Authorization: `Bearer ${token}` }
+		});
 	}
 
 	async getOne(pid, token) {

@@ -2,8 +2,10 @@ import http from '../http-common';
 import httpMultipart from '../http-multipart';
 
 class PrisonerDataService {
-	getAll(token) {
-		return http.get('/prisoner/prisoners', { headers: { Authorization: `Bearer ${token}` } });
+	getAll(token, page_size = 10, page = 1) {
+		return http.get(`/prisoner/prisoners?page_size=${page_size}&page=${page}`, {
+			headers: { Authorization: `Bearer ${token}` }
+		});
 	}
 
 	async getByPrison(pid, token) {

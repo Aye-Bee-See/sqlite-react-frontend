@@ -1,8 +1,10 @@
 import http from '../http-common';
 
 class PrisonNetworkService {
-	getAll(token) {
-		return http.get('/prison/prisons', { headers: { Authorization: `Bearer ${token}` } });
+	getAll(token, page_size = 10, page = 1) {
+		return http.get(`/prison/prisons?page_size=${page_size}&page=${page}`, {
+			headers: { Authorization: `Bearer ${token}` }
+		});
 	}
 
 	async addOne(params, token) {
