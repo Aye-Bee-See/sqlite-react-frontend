@@ -1,4 +1,5 @@
 import http from '../http-common';
+import httpMultipart from '../http-multipart';
 
 class UserDataService {
 	getAll(token, page_size = 10, page = 1) {
@@ -22,9 +23,12 @@ class UserDataService {
 	}
 
 	async addOne(params, token) {
-		const response = await http.post('/auth/user', params, {
+		let response;
+
+		response = await httpMultipart.post('/auth/user', params, {
 			headers: { Authorization: `Bearer ${token}` }
 		});
+
 		return response;
 	}
 

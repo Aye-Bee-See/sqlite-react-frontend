@@ -541,7 +541,8 @@ class ListPage extends Component {
 						</div>
 					);
 				} else if (key === 'avatar' && currentItem[key]) {
-					const avatarUrl = `http://localhost:3000/${currentItem[key]}`;
+					console.log(currentItem[key]);
+					const avatarUrl = `http://localhost:3000${currentItem[key]}`;
 					return (
 						<div key={key}>
 							<strong>{field.title}:</strong> {currentItem[key]}
